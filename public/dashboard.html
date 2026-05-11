@@ -164,6 +164,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
     <div class="ns">Comunicaciones</div>
     <button class="ni" onclick="showView('contactos',this)"><i class="ti ti-file-import"></i>Importar contactos</button>
     <button class="ni" onclick="showView('templates',this)"><i class="ti ti-template"></i>Plantillas</button>
+    <button class="ni" onclick="showView('email',this)"><i class="ti ti-mail"></i>Email Marketing</button>
     <button class="ni" onclick="showView('inbox',this)"><i class="ti ti-message-circle"></i>Bandeja<span class="nbadge nr" id="nb-i" style="display:none">0</span></button>
     <button class="ni" onclick="showView('carritos',this)"><i class="ti ti-shopping-cart"></i>Carritos<span class="nbadge no" id="nb-c" style="display:none">0</span></button>
     <button class="ni" onclick="showView('campanas',this)"><i class="ti ti-speakerphone"></i>Campañas</button>
@@ -366,6 +367,179 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
           </div>
         </div>
         <div id="tpl-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+
+    <!-- EMAIL MODULE -->
+    <div id="vw-email" class="view">
+      <div class="tabs" id="email-tabs">
+        <button class="tab active" onclick="setEmailTab('plantillas',this)"><i class="ti ti-template"></i> Plantillas</button>
+        <button class="tab" onclick="setEmailTab('nueva-campana',this)"><i class="ti ti-speakerphone"></i> Nueva campaña</button>
+        <button class="tab" onclick="setEmailTab('historial',this)"><i class="ti ti-history"></i> Historial</button>
+        <button class="tab" onclick="setEmailTab('ses-stats',this)"><i class="ti ti-chart-bar"></i> Estadísticas</button>
+      </div>
+
+      <!-- TAB: Plantillas -->
+      <div id="etab-plantillas" class="etab active">
+        <div class="card">
+          <div class="chdr">
+            <span class="ctitle">Plantillas HTML de email</span>
+            <div style="display:flex;gap:8px">
+              <select id="etpl-cat" style="width:140px" onchange="loadEmailTemplates()"><option value="">Todas</option><option value="bienvenida">Bienvenida</option><option value="carrito">Carrito</option><option value="cotizacion">Cotización</option><option value="cierre">Cierre / Compra</option><option value="seguimiento">Seguimiento</option></select>
+              <button class="btn bts btp" onclick="openEmailBuilder()"><i class="ti ti-plus"></i>Nueva plantilla</button>
+            </div>
+          </div>
+          <div id="email-tpl-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px"><div class="loading">Cargando...</div></div>
+        </div>
+      </div>
+
+      <!-- TAB: Nueva campaña -->
+      <div id="etab-nueva-campana" class="etab" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 380px;gap:16px">
+          <div class="card">
+            <div class="chdr"><span class="ctitle">Configurar campaña</span></div>
+            <div class="fg"><label>Nombre de la campaña *</label><input id="ec-nombre" placeholder="Ej: Newsletter Mayo 2026"></div>
+            <div class="fg"><label>Asunto del email *</label><input id="ec-asunto" placeholder="Ej: Oferta especial para tu negocio 🔥" oninput="ecUpdatePreview()"></div>
+            <div class="fg">
+              <label>Plantilla HTML *</label>
+              <select id="ec-template" onchange="ecLoadTemplate()" style="margin-bottom:8px"><option value="">— Seleccionar plantilla —</option></select>
+              <div id="ec-tpl-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--t3);min-height:40px">Selecciona una plantilla para ver el preview</div>
+            </div>
+            <div class="fg">
+              <label>Segmento de audiencia</label>
+              <div class="seg-opts" id="ec-seg-opts">
+                <div class="so sel" onclick="ecSelSeg('todos',this)"><div class="so-icon">👥</div><div class="so-lbl">Todos</div><div class="so-cnt" id="ecs-t">—</div></div>
+                <div class="so" onclick="ecSelSeg('hot',this)"><div class="so-icon">🔥</div><div class="so-lbl">HOT</div><div class="so-cnt" id="ecs-h">—</div></div>
+                <div class="so" onclick="ecSelSeg('warm',this)"><div class="so-icon">☀️</div><div class="so-lbl">WARM</div><div class="so-cnt" id="ecs-w">—</div></div>
+              </div>
+            </div>
+            <div id="ec-audience-detail" style="font-size:12px;color:var(--t3);margin-bottom:14px;background:var(--bg3);border-radius:var(--r);padding:8px 12px"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn" onclick="ecSendTest()"><i class="ti ti-test-pipe"></i>Enviar prueba</button>
+              <button class="btn btp" style="flex:1" onclick="ecEnviar()"><i class="ti ti-send"></i>Enviar campaña ahora</button>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="chdr"><span class="ctitle">Preview del email</span>
+                <div style="display:flex;gap:4px">
+                  <button class="btn bts btg" id="prev-desk" onclick="setPreviewMode('desktop')" style="background:var(--bg3)"><i class="ti ti-device-desktop"></i></button>
+                  <button class="btn bts btg" id="prev-mob" onclick="setPreviewMode('mobile')"><i class="ti ti-device-mobile"></i></button>
+                </div>
+              </div>
+              <div id="email-preview-wrap" style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:#fff;min-height:400px;transition:max-width .3s">
+                <iframe id="email-preview-frame" style="width:100%;height:500px;border:none;display:block"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Historial -->
+      <div id="etab-historial" class="etab" style="display:none">
+        <div class="card">
+          <div class="chdr"><span class="ctitle">Historial de envíos</span><button class="btn bts" onclick="loadEmailHistorial()"><i class="ti ti-refresh"></i></button></div>
+          <div id="email-historial-tbl"><div class="loading">Cargando...</div></div>
+        </div>
+      </div>
+
+      <!-- TAB: Stats SES -->
+      <div id="etab-ses-stats" class="etab" style="display:none">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px" id="ses-stat-cards"><div class="loading" style="grid-column:1/-1">Cargando...</div></div>
+        <div class="card">
+          <div class="chdr"><span class="ctitle">Configuración AWS SES</span></div>
+          <div style="font-size:13px;color:var(--t2);line-height:1.8">
+            <p style="margin-bottom:12px">Agregar estas variables en <strong>Railway → Variables</strong>:</p>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;font-family:monospace;font-size:12px;line-height:2;color:var(--gb)">
+              AWS_ACCESS_KEY_ID=<span style="color:var(--t3)">tu_access_key</span><br>
+              AWS_SECRET_ACCESS_KEY=<span style="color:var(--t3)">tu_secret_key</span><br>
+              AWS_REGION=<span style="color:var(--t3)">us-east-1</span><br>
+              AWS_SES_FROM_EMAIL=<span style="color:var(--t3)">hola@klinge.cl</span><br>
+              AWS_SES_FROM_NAME=<span style="color:var(--t3)">Klinge</span><br>
+              AWS_SNS_TOPIC_ARN=<span style="color:var(--t3)">arn:aws:sns:... (opcional)</span>
+            </div>
+            <div style="margin-top:12px;padding:10px 14px;background:var(--odim);border:1px solid var(--ora);border-radius:var(--r);font-size:12px;color:var(--ora)">
+              ⚠️ Asegúrate de verificar el dominio <strong>klinge.cl</strong> en AWS SES antes de enviar. Sin verificar, los emails rebotan.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMAIL BUILDER MODAL -->
+    <div class="modal xl" id="m-email-builder" style="display:none">
+      <div class="mhdr">
+        <span class="mtitle" id="eb-title">Nueva plantilla de email</span>
+        <div style="display:flex;gap:6px">
+          <button class="btn bts btg" id="eb-prev-desk" onclick="setEbPreviewMode('desktop')" style="background:var(--bg3)"><i class="ti ti-device-desktop"></i> Desktop</button>
+          <button class="btn bts btg" id="eb-prev-mob" onclick="setEbPreviewMode('mobile')"><i class="ti ti-device-mobile"></i> Mobile</button>
+          <button class="btn btg bti" onclick="closeModal()"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:340px 1fr;height:580px;overflow:hidden">
+        <!-- Config panel -->
+        <div style="border-right:1px solid var(--border);overflow-y:auto;padding:16px;background:var(--bg2)">
+          <div class="fg"><label>Nombre de la plantilla *</label><input id="eb-nombre" placeholder="Ej: Carrito Abandonado v2"></div>
+          <div class="fr">
+            <div class="fg"><label>Categoría</label><select id="eb-cat"><option value="general">General</option><option value="bienvenida">Bienvenida</option><option value="carrito">Carrito</option><option value="cotizacion">Cotización</option><option value="cierre">Cierre</option><option value="seguimiento">Seguimiento</option></select></div>
+            <div class="fg"><label>Canal</label><select id="eb-canal"><option value="email">✉️ Email</option><option value="ambos">Ambos</option></select></div>
+          </div>
+          <div class="fg"><label>Asunto</label><input id="eb-asunto" placeholder="Asunto del email" oninput="ebUpdatePreview()"></div>
+          <div class="fg"><label>Texto preview (inbox)</label><input id="eb-preview-txt" placeholder="Texto que aparece en el inbox antes de abrir..." oninput="ebUpdatePreview()"></div>
+          <div class="divider"></div>
+          <div style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Cargar plantilla base</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px" id="eb-base-templates"></div>
+          <div class="divider"></div>
+          <div class="fg">
+            <label>HTML del email</label>
+            <textarea id="eb-html" rows="12" placeholder="&lt;!DOCTYPE html&gt;..." oninput="ebUpdatePreview()" style="font-family:monospace;font-size:11px;line-height:1.5"></textarea>
+          </div>
+          <div style="font-size:11px;color:var(--t3);margin-bottom:8px" id="eb-vars-info"></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn bts" onclick="ebInsertVar('[nombre]')">+[nombre]</button>
+            <button class="btn bts" onclick="ebInsertVar('[empresa]')">+[empresa]</button>
+            <button class="btn bts" onclick="ebInsertVar('[producto]')">+[producto]</button>
+          </div>
+        </div>
+        <!-- Preview -->
+        <div style="background:#f0f0f0;display:flex;flex-direction:column">
+          <div style="padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:11px;color:var(--t3);display:flex;align-items:center;gap:8px">
+            <span>Asunto:</span><span id="eb-asunto-prev" style="color:var(--text)">—</span>
+          </div>
+          <div style="flex:1;overflow:auto;display:flex;justify-content:center;padding:16px" id="eb-preview-wrap">
+            <iframe id="eb-preview-frame" style="border:none;border-radius:8px;box-shadow:0 4px 24px #0006;transition:width .3s" width="600" height="550"></iframe>
+          </div>
+        </div>
+      </div>
+      <div class="mfoot">
+        <button class="btn btd bts" id="eb-del-btn" style="display:none;margin-right:auto" onclick="ebDelete()"><i class="ti ti-trash"></i>Eliminar</button>
+        <button class="btn bts" onclick="ebSendTestFromBuilder()"><i class="ti ti-test-pipe"></i>Enviar prueba</button>
+        <button class="btn" onclick="closeModal()">Cancelar</button>
+        <button class="btn btp" onclick="ebSave()"><i class="ti ti-check"></i>Guardar plantilla</button>
+      </div>
+    </div>
+
+    <!-- TEST EMAIL MODAL -->
+    <div class="modal" id="m-test-email" style="display:none">
+      <div class="mhdr"><span class="mtitle">Enviar email de prueba</span><button class="btn btg bti" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+      <div class="mbody">
+        <div class="fg"><label>Destinatarios (separados por coma) *</label><input id="test-emails" placeholder="tumail@klinge.cl, otro@email.cl"></div>
+        <div class="fr">
+          <div class="fg"><label>[nombre] de prueba</label><input id="test-nombre" value="Carlos García"></div>
+          <div class="fg"><label>[empresa] de prueba</label><input id="test-empresa" value="Restaurante El Sol"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>[producto]</label><input id="test-producto" value="Panel LED 100x50cm"></div>
+          <div class="fg"><label>[monto]</label><input id="test-monto" value="$149.990"></div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--t2);margin-top:4px">
+          El email se enviará con el prefijo <strong>[PRUEBA]</strong> en el asunto.
+        </div>
+      </div>
+      <div class="mfoot">
+        <button class="btn" onclick="closeModal()">Cancelar</button>
+        <button class="btn btp" onclick="sendTestEmail()"><i class="ti ti-send"></i>Enviar prueba</button>
       </div>
     </div>
 
@@ -929,8 +1103,8 @@ function showView(name,btn){
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
   document.getElementById('vw-'+name).classList.add('active');
   if(btn)btn.classList.add('active');
-  document.getElementById('vt').textContent={pipeline:'Pipeline',leads:'Leads',inbox:'Bandeja de entrada',carritos:'Carritos abandonados',campanas:'Campañas',flows:'Automatizaciones',config:'Configuración',contactos:'Importar Contactos',templates:'Plantillas de Mensajes'}[name]||name;
-  if(name==='inbox')loadInbox();else if(name==='carritos')loadCarritos();else if(name==='campanas')loadCampanas();else if(name==='flows')loadFlows();else if(name==='config')loadConfig();else if(name==='contactos'){loadImpHistorial();}else if(name==='templates')loadTemplates();
+  document.getElementById('vt').textContent={pipeline:'Pipeline',leads:'Leads',inbox:'Bandeja de entrada',carritos:'Carritos abandonados',campanas:'Campañas',flows:'Automatizaciones',config:'Configuración',contactos:'Importar Contactos',templates:'Plantillas de Mensajes',email:'Email Marketing'}[name]||name;
+  if(name==='inbox')loadInbox();else if(name==='carritos')loadCarritos();else if(name==='campanas')loadCampanas();else if(name==='flows')loadFlows();else if(name==='config')loadConfig();else if(name==='contactos'){loadImpHistorial();}else if(name==='templates')loadTemplates();else if(name==='email'){setEmailTab('plantillas',document.querySelector('#email-tabs .tab'));}
 }
 
 
@@ -1111,6 +1285,268 @@ async function copyTemplate(id) {
   if (!t) return;
   try { await navigator.clipboard.writeText(t.cuerpo); toast('Copiado al portapapeles ✓'); }
   catch { toast('No se pudo copiar','err'); }
+}
+
+
+/* ── EMAIL MODULE ────────────── */
+let emailTplAll = [], ecSeg_ = 'todos', ebEditId = null, testTplId = null;
+
+// Tabs
+function setEmailTab(name, btn) {
+  document.querySelectorAll('.etab').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('#email-tabs .tab').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('etab-' + name);
+  if (el) el.style.display = '';
+  if (btn) btn.classList.add('active');
+  if (name === 'plantillas') loadEmailTemplates();
+  else if (name === 'historial') loadEmailHistorial();
+  else if (name === 'ses-stats') loadSesStats();
+  else if (name === 'nueva-campana') { loadEmailTemplates(); ecLoadAudienceCount(); }
+}
+
+// Plantillas email
+async function loadEmailTemplates() {
+  const cat = document.getElementById('etpl-cat')?.value || '';
+  const d = await get('/api/templates?canal=email' + (cat ? '&categoria=' + cat : ''));
+  emailTplAll = (d || []).filter(t => t.canal === 'email' || t.canal === 'ambos');
+
+  // Populate campaign template select
+  const sel = document.getElementById('ec-template');
+  if (sel) {
+    sel.innerHTML = '<option value="">— Seleccionar plantilla —</option>' +
+      emailTplAll.map(t => `<option value="${t.id}" data-asunto="${t.asunto||''}">${t.nombre} (${t.categoria})</option>`).join('');
+  }
+
+  const el = document.getElementById('email-tpl-grid');
+  if (!el) return;
+  if (!emailTplAll.length) { el.innerHTML = `<div class="empty-st" style="grid-column:1/-1"><i class="ti ti-mail"></i><p>Sin plantillas de email</p><button class="btn btp" onclick="openEmailBuilder()"><i class="ti ti-plus"></i>Crear primera plantilla</button></div>`; return; }
+
+  const catEmoji2 = {bienvenida:'👋',precio:'💰',cotizacion:'📋',carrito:'🛒',seguimiento:'📞',cierre:'✅',general:'💬'};
+  el.innerHTML = emailTplAll.map(t => `
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--border2)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="background:#f0f0f0;height:140px;overflow:hidden;position:relative;cursor:pointer" onclick='openEmailBuilderEdit(${JSON.stringify(t).replace(/'/g,"&#39;")})'>
+        ${t.html_body ? `<iframe srcdoc="${t.html_body.replace(/"/g,'&quot;').replace(/'/g,'&#39;').substring(0,8000)}" style="width:200%;height:280px;border:none;transform:scale(.5);transform-origin:top left;pointer-events:none" scrolling="no"></iframe>` :
+        `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:var(--bg2);color:var(--t3);font-size:40px">${catEmoji2[t.categoria]||'✉️'}</div>`}
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,#1c2128)"></div>
+        <div style="position:absolute;bottom:8px;left:10px;font-size:11px;font-weight:600;color:#fff">${t.nombre}</div>
+        <div style="position:absolute;top:8px;right:8px">${t.tipo==='html'?'<span class="pill pg" style="font-size:9px">HTML</span>':'<span class="pill pc" style="font-size:9px">Texto</span>'}</div>
+      </div>
+      <div style="padding:10px 12px;flex:1;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--t3)">${catEmoji2[t.categoria]||'💬'} ${t.categoria} · ${t.usos||0} usos</span>
+        </div>
+        ${t.asunto?`<div style="font-size:11px;color:var(--t2);font-style:italic">"${t.asunto.substring(0,50)}"</div>`:''}
+        <div style="display:flex;gap:5px;margin-top:auto">
+          <button class="btn bts btg" style="flex:1" onclick='openTestEmailModal("${t.id}")'><i class="ti ti-test-pipe"></i>Prueba</button>
+          <button class="btn bts" style="flex:1" onclick='ecUseTemplate("${t.id}")'><i class="ti ti-speakerphone"></i>Campaña</button>
+          <button class="btn bts btp bti" onclick='openEmailBuilderEdit(${JSON.stringify(t).replace(/'/g,"&#39;")})'><i class="ti ti-pencil"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// Email Builder
+function openEmailBuilder() {
+  ebEditId = null;
+  document.getElementById('eb-title').textContent = 'Nueva plantilla de email';
+  document.getElementById('eb-nombre').value = '';
+  document.getElementById('eb-cat').value = 'general';
+  document.getElementById('eb-canal').value = 'email';
+  document.getElementById('eb-asunto').value = '';
+  document.getElementById('eb-preview-txt').value = '';
+  document.getElementById('eb-html').value = '';
+  document.getElementById('eb-del-btn').style.display = 'none';
+  loadBaseTemplates();
+  ebUpdatePreview();
+  openModal('email-builder');
+}
+function openEmailBuilderEdit(t) {
+  ebEditId = t.id;
+  document.getElementById('eb-title').textContent = 'Editar: ' + t.nombre;
+  document.getElementById('eb-nombre').value = t.nombre || '';
+  document.getElementById('eb-cat').value = t.categoria || 'general';
+  document.getElementById('eb-canal').value = t.canal || 'email';
+  document.getElementById('eb-asunto').value = t.asunto || '';
+  document.getElementById('eb-preview-txt').value = t.preview_text || '';
+  document.getElementById('eb-html').value = t.html_body || t.cuerpo || '';
+  document.getElementById('eb-del-btn').style.display = '';
+  loadBaseTemplates();
+  ebUpdatePreview();
+  openModal('email-builder');
+}
+function loadBaseTemplates() {
+  const el = document.getElementById('eb-base-templates');
+  if (!el) return;
+  const bases = emailTplAll.filter(t => t.html_body);
+  el.innerHTML = bases.map(t => `<button class="btn bts btg" style="text-align:left;justify-content:flex-start" onclick="ebLoadBase('${t.id}')"><i class="ti ti-template"></i> ${t.nombre}</button>`).join('') || '<div style="font-size:11px;color:var(--t3)">Sin plantillas base disponibles</div>';
+}
+async function ebLoadBase(id) {
+  const t = emailTplAll.find(x => x.id === id);
+  if (!t?.html_body) return;
+  document.getElementById('eb-html').value = t.html_body;
+  if (!document.getElementById('eb-asunto').value && t.asunto) document.getElementById('eb-asunto').value = t.asunto;
+  ebUpdatePreview();
+  toast('Plantilla base cargada');
+}
+function ebUpdatePreview() {
+  const html = document.getElementById('eb-html')?.value || '';
+  const asunto = document.getElementById('eb-asunto')?.value || '';
+  const vars = (html.match(/\[([^\]]+)\]/g)||[]).map(v=>v.slice(1,-1)).filter((v,i,a)=>a.indexOf(v)===i);
+  document.getElementById('eb-asunto-prev').textContent = asunto || '—';
+  const info = document.getElementById('eb-vars-info');
+  if (info) info.textContent = vars.length ? 'Variables: ' + vars.map(v=>'['+v+']').join(' ') : '';
+  const sample = {nombre:'Carlos García',empresa:'Restaurante El Sol',producto:'Panel LED 100x50cm',monto:'$149.990',checkout_url:'#',unsubscribe_url:'#',folio:'KLG-001',orden_id:'#1042',tipo_negocio:'restaurante'};
+  let rendered = html;
+  Object.entries(sample).forEach(([k,v]) => { rendered = rendered.replace(new RegExp('\\['+k+'\\]','g'), v); });
+  const frame = document.getElementById('eb-preview-frame');
+  if (frame) frame.srcdoc = rendered || '<div style="padding:40px;text-align:center;color:#888">El HTML aparecerá aquí</div>';
+}
+function setEbPreviewMode(mode) {
+  const wrap = document.getElementById('eb-preview-frame');
+  if (!wrap) return;
+  wrap.style.width = mode === 'mobile' ? '375px' : '600px';
+  document.getElementById('eb-prev-desk').style.background = mode==='desktop'?'var(--bg3)':'none';
+  document.getElementById('eb-prev-mob').style.background = mode==='mobile'?'var(--bg3)':'none';
+}
+function ebInsertVar(v) {
+  const ta = document.getElementById('eb-html');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  ta.value = ta.value.slice(0,start) + v + ta.value.slice(end);
+  ta.setSelectionRange(start+v.length, start+v.length);
+  ebUpdatePreview();
+}
+async function ebSave() {
+  const n = document.getElementById('eb-nombre').value.trim();
+  if (!n) { toast('Nombre requerido','err'); return; }
+  const html = document.getElementById('eb-html').value;
+  const vars = (html.match(/\[([^\]]+)\]/g)||[]).map(v=>v.slice(1,-1)).filter((v,i,a)=>a.indexOf(v)===i);
+  const body = { nombre:n, canal:document.getElementById('eb-canal').value, categoria:document.getElementById('eb-cat').value, asunto:document.getElementById('eb-asunto').value, preview_text:document.getElementById('eb-preview-txt').value, html_body:html, cuerpo:html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().substring(0,500), tipo:'html', variables:vars };
+  const r = ebEditId ? await patch_('/api/templates/'+ebEditId,body) : await post('/api/templates',body);
+  if (r&&!r.error) { toast(ebEditId?'Plantilla actualizada ✓':'Plantilla creada ✓'); closeModal(); loadEmailTemplates(); }
+  else toast('Error al guardar','err');
+}
+async function ebDelete() {
+  if (!ebEditId||!confirm('¿Eliminar esta plantilla?')) return;
+  await del_('/api/templates/'+ebEditId);
+  toast('Plantilla eliminada'); closeModal(); loadEmailTemplates();
+}
+function ebSendTestFromBuilder() {
+  testTplId = ebEditId;
+  openTestEmailModal(ebEditId);
+}
+
+// Test email modal
+function openTestEmailModal(templateId) {
+  testTplId = templateId;
+  document.getElementById('test-emails').value = '';
+  openModal('test-email');
+}
+async function sendTestEmail() {
+  const emails = document.getElementById('test-emails').value.split(',').map(e=>e.trim()).filter(Boolean);
+  if (!emails.length) { toast('Ingresa al menos un email','err'); return; }
+  if (!testTplId) { toast('Selecciona una plantilla','err'); return; }
+  const datos = { nombre:document.getElementById('test-nombre').value, empresa:document.getElementById('test-empresa').value, producto:document.getElementById('test-producto').value, monto:document.getElementById('test-monto').value };
+  const r = await post('/api/email/test', { template_id:testTplId, destinatarios:emails, datos });
+  if (r?.ok) {
+    const ok = r.results?.filter(x=>x.ok).length;
+    toast(`Prueba enviada a ${ok} destinatario(s) ✓`);
+    closeModal();
+  } else toast('Error: '+(r?.error||'desconocido'),'err');
+}
+
+// Campaign
+function ecUseTemplate(id) {
+  setEmailTab('nueva-campana', document.querySelectorAll('#email-tabs .tab')[1]);
+  setTimeout(() => { if(document.getElementById('ec-template')) document.getElementById('ec-template').value = id; ecLoadTemplate(); }, 200);
+}
+async function ecLoadTemplate() {
+  const sel = document.getElementById('ec-template');
+  if (!sel?.value) return;
+  const r = await post('/api/email/preview', { template_id: sel.value, datos:{ nombre:'Carlos García', empresa:'Restaurante El Sol', producto:'Panel LED 100x50cm' } });
+  if (r?.html) {
+    document.getElementById('email-preview-frame').srcdoc = r.html;
+    if (!document.getElementById('ec-asunto').value && r.asunto) document.getElementById('ec-asunto').value = r.asunto;
+    document.getElementById('ec-tpl-preview').innerHTML = `<span style="color:var(--gb)">✓ ${sel.options[sel.selectedIndex].text}</span>`;
+  }
+}
+async function ecLoadAudienceCount() {
+  if (!leads.length) await loadAll();
+  document.getElementById('ecs-t').textContent = leads.length + ' leads';
+  document.getElementById('ecs-h').textContent = leads.filter(l=>l.segmento==='hot').length + ' leads';
+  document.getElementById('ecs-w').textContent = leads.filter(l=>l.segmento==='warm').length + ' leads';
+  ecUpdateAudienceDetail();
+}
+function ecSelSeg(s, el) {
+  ecSeg_ = s;
+  document.querySelectorAll('#ec-seg-opts .so').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  ecUpdateAudienceDetail();
+}
+function ecUpdateAudienceDetail() {
+  const filtered = leads.filter(l => (ecSeg_==='todos'||l.segmento===ecSeg_) && l.email);
+  const noEmail  = leads.filter(l => (ecSeg_==='todos'||l.segmento===ecSeg_) && !l.email);
+  const el = document.getElementById('ec-audience-detail');
+  if (el) el.innerHTML = `<span style="color:var(--gb)">✉️ ${filtered.length} con email</span> · <span style="color:var(--t3)">${noEmail.length} sin email (se omiten)</span>`;
+}
+function setPreviewMode(mode) {
+  const wrap = document.getElementById('email-preview-wrap');
+  if (!wrap) return;
+  wrap.style.maxWidth = mode === 'mobile' ? '390px' : '100%';
+  document.getElementById('prev-desk').style.background = mode==='desktop'?'var(--bg3)':'none';
+  document.getElementById('prev-mob').style.background = mode==='mobile'?'var(--bg3)':'none';
+}
+function ecSendTest() {
+  const sel = document.getElementById('ec-template');
+  if (!sel?.value) { toast('Selecciona una plantilla primero','err'); return; }
+  testTplId = sel.value;
+  document.getElementById('test-emails').value = '';
+  openModal('test-email');
+}
+async function ecEnviar() {
+  const nombre = document.getElementById('ec-nombre').value.trim();
+  const tplId  = document.getElementById('ec-template')?.value;
+  const asunto = document.getElementById('ec-asunto').value.trim();
+  if (!nombre) { toast('Nombre de campaña requerido','err'); return; }
+  if (!tplId)  { toast('Selecciona una plantilla','err'); return; }
+  if (!asunto) { toast('Asunto requerido','err'); return; }
+  const audiencia = leads.filter(l => (ecSeg_==='todos'||l.segmento===ecSeg_) && l.email);
+  if (!audiencia.length) { toast('Sin leads con email en el segmento seleccionado','err'); return; }
+  if (!confirm(`¿Enviar "${nombre}" a ${audiencia.length} destinatarios?`)) return;
+  const r = await post('/api/email/campana', { nombre, template_id:tplId, segmento:ecSeg_, asunto_override:asunto });
+  if (r?.ok) { toast(`Campaña iniciada: ${audiencia.length} emails en camino ✓`); }
+  else toast('Error al iniciar campaña','err');
+}
+
+// Historial
+async function loadEmailHistorial() {
+  const d = await get('/api/email/historial');
+  const el = document.getElementById('email-historial-tbl');
+  if (!d?.length) { el.innerHTML='<div class="empty-st"><i class="ti ti-mail"></i><p>Sin envíos registrados</p></div>'; return; }
+  const estadoColor = {enviado:'var(--blue)',entregado:'var(--gb)',abierto:'var(--gb)',click:'var(--pur)',rebotado:'var(--ora)',error:'var(--red)',test:'var(--t3)'};
+  el.innerHTML = `<table><thead><tr><th>Destinatario</th><th>Asunto</th><th>Plantilla</th><th>Tipo</th><th>Estado</th><th>Fecha</th></tr></thead><tbody>
+  ${d.map(s=>`<tr>
+    <td style="font-size:12px">${s.destinatario}</td>
+    <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.asunto||'—'}</td>
+    <td style="font-size:11px;color:var(--t3)">${s.upzy_templates?.nombre||'—'}</td>
+    <td><span class="pill pc" style="font-size:10px">${s.tipo}</span></td>
+    <td><span style="color:${estadoColor[s.estado]||'var(--t2)'};font-size:12px;font-weight:600">● ${s.estado}</span></td>
+    <td style="font-size:11px;color:var(--t3)">${new Date(s.created_at).toLocaleDateString('es-CL')}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+// SES Stats
+async function loadSesStats() {
+  const d = await get('/api/email/stats');
+  const el = document.getElementById('ses-stat-cards');
+  if (!el) return;
+  const quota = d?.ses || {};
+  const tot = d?.totales || {};
+  el.innerHTML = [
+    {label:'Cuota diaria SES', val: quota.simulated ? 'No configurado' : (quota.max24HourSend||'—'), sub: quota.simulated?'Agregar AWS keys':'emails máx/día', ac:'var(--blue)'},
+    {label:'Enviados hoy', val: quota.sentLast24Hours??tot.enviados??'—', sub:'en las últimas 24h', ac:'var(--gb)'},
+    {label:'Tasa apertura', val: tot.enviados>0 ? Math.round((tot.abiertos||0)/tot.enviados*100)+'%' : '—', sub:`${tot.abiertos||0} de ${tot.enviados||0}`, ac:'var(--pur)'},
+    {label:'Clics', val: tot.clicks??'—', sub:'en links del email', ac:'var(--ora)'},
+  ].map(s=>`<div class="scard" style="--ac:${s.ac}"><div class="slbl">${s.label}</div><div class="sval">${s.val}</div><div class="ssub">${s.sub}</div></div>`).join('');
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});

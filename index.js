@@ -28,6 +28,8 @@ app.use('/api/inbox',         require('./src/routes/api.inbox'));
 app.use('/api/flows',         require('./src/routes/api.flows'));
 app.use('/api/templates',     require('./src/routes/api.templates'));
 app.use('/api/import',        require('./src/routes/api.import'));
+app.use('/api/email',         require('./src/routes/api.email'));
+app.get('/unsubscribe', (req,res)=>res.redirect('/api/email/unsubscribe?'+require('url').parse(req.url).query));
 app.use('/api/agente',        require('./src/routes/api.agente'));
 
 // ── HEALTH CHECK ──────────────────────────────────────────────
