@@ -1,7 +1,7 @@
 {
   "name": "upzy-bot",
   "version": "1.0.0",
-  "description": "Upzy \u2014 Sistema de comunicaciones inteligente. Piloto: Klinge.",
+  "description": "Upzy — Sistema de comunicaciones inteligente. Piloto: Klinge.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -10,11 +10,11 @@
     "verify": "node scripts/verificar-setup.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
-    "@aws-sdk/client-ses": "3.600.0",
+    "@aws-sdk/client-ses": "^3.1045.0",
     "@aws-sdk/client-sns": "^3.1045.0",
     "@supabase/supabase-js": "^2.43.0",
     "axios": "^1.7.0",
