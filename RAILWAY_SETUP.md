@@ -105,3 +105,13 @@ Railway muestra los logs en tiempo real. Los errores del validador se ven así:
 ```
 
 Solo hay que agregar la variable que falta y Railway hace redeploy automático.
+
+---
+
+## Variables que DEBES verificar en Railway ahora mismo
+
+| Variable | Valor correcto |
+|---|---|
+| `NODE_ENV` | `production` |
+| `PUBLIC_URL` | `https://upzy-production.up.railway.app` |
+
