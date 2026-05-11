@@ -23,6 +23,7 @@ app.use('/webhook/shopify',   require('./src/routes/webhook.shopify'));
 app.use('/api/leads',         require('./src/routes/api.leads'));
 app.use('/api/campanas',      require('./src/routes/api.campanas'));
 app.use('/api/automations',   require('./src/routes/api.automations'));
+app.use('/api/agente',        require('./src/routes/api.agente'));
 
 // ── HEALTH CHECK ──────────────────────────────────────────────
 app.get('/health', (req, res) => {
