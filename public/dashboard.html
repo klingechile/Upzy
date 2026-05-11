@@ -162,6 +162,8 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
     <button class="ni active" onclick="showView('pipeline',this)"><i class="ti ti-layout-kanban"></i>Pipeline</button>
     <button class="ni" onclick="showView('leads',this)"><i class="ti ti-users"></i>Leads<span class="nbadge ng" id="nb-l" style="display:none">0</span></button>
     <div class="ns">Comunicaciones</div>
+    <button class="ni" onclick="showView('contactos',this)"><i class="ti ti-file-import"></i>Importar contactos</button>
+    <button class="ni" onclick="showView('templates',this)"><i class="ti ti-template"></i>Plantillas</button>
     <button class="ni" onclick="showView('inbox',this)"><i class="ti ti-message-circle"></i>Bandeja<span class="nbadge nr" id="nb-i" style="display:none">0</span></button>
     <button class="ni" onclick="showView('carritos',this)"><i class="ti ti-shopping-cart"></i>Carritos<span class="nbadge no" id="nb-c" style="display:none">0</span></button>
     <button class="ni" onclick="showView('campanas',this)"><i class="ti ti-speakerphone"></i>Campañas</button>
@@ -301,6 +303,73 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
       </div>
     </div>
 
+
+    <!-- IMPORTAR CONTACTOS -->
+    <div id="vw-contactos" class="view">
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:16px">
+        <div class="card">
+          <div class="chdr"><span class="ctitle">Importar contactos desde CSV</span><a href="/api/import/template" class="btn bts btg"><i class="ti ti-download"></i>Descargar plantilla</a></div>
+          <div style="border:2px dashed var(--border2);border-radius:var(--r);padding:32px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:16px" id="drop-zone" onclick="document.getElementById('csv-file').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gb)'" ondragleave="this.style.borderColor='var(--border2)'" ondrop="handleDrop(event)">
+            <i class="ti ti-file-spreadsheet" style="font-size:40px;color:var(--t3);display:block;margin-bottom:8px"></i>
+            <div style="font-size:14px;font-weight:600;margin-bottom:4px">Arrastra tu CSV aquí o haz click</div>
+            <div style="font-size:12px;color:var(--t3)">Soporta CSV con separador , ; o tabulación</div>
+            <input type="file" id="csv-file" accept=".csv,.txt" style="display:none" onchange="handleFile(this)">
+          </div>
+          <div id="csv-preview" style="display:none">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:14px">
+              <div style="font-size:12px;font-weight:600;margin-bottom:8px">Vista previa del archivo</div>
+              <div id="csv-preview-content"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="fg"><label>Nombre del import</label><input id="imp-nombre" placeholder="Ej: Clientes Mayo 2026"></div>
+              <div class="fg"><label>Canal principal</label><select id="imp-canal"><option value="">Detectar automáticamente</option><option value="whatsapp">📱 WhatsApp</option><option value="email">✉️ Email</option><option value="instagram">📸 Instagram</option></select></div>
+              <div style="display:flex;align-items:flex-end;padding-bottom:14px"><button class="btn btp" style="width:100%" onclick="importarCSV()"><i class="ti ti-upload"></i>Importar contactos</button></div>
+            </div>
+            <div id="imp-result" style="display:none"></div>
+          </div>
+          <div style="font-size:12px;color:var(--t2);margin-top:8px">
+            <strong>Columnas reconocidas:</strong> nombre, empresa, telefono, email, ciudad, tipo_negocio<br>
+            Los duplicados se actualizan automáticamente. El sistema detecta el separador (coma, punto y coma, tabulación).
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="chdr"><span class="ctitle">Historial de imports</span></div>
+            <div id="imp-historial"><div class="loading">Cargando...</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANTILLAS -->
+    <div id="vw-templates" class="view">
+      <div class="card">
+        <div class="chdr">
+          <span class="ctitle">Plantillas de mensajes</span>
+          <div style="display:flex;gap:8px">
+            <select id="tpl-cat-filter" style="width:140px" onchange="filterTemplates()">
+              <option value="">Todas las categorías</option>
+              <option value="bienvenida">Bienvenida</option>
+              <option value="precio">Precio</option>
+              <option value="cotizacion">Cotización</option>
+              <option value="carrito">Carrito</option>
+              <option value="seguimiento">Seguimiento</option>
+              <option value="cierre">Cierre</option>
+              <option value="general">General</option>
+            </select>
+            <select id="tpl-canal-filter" style="width:130px" onchange="filterTemplates()">
+              <option value="">Todos los canales</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="email">Email</option>
+            </select>
+            <button class="btn bts btp" onclick="openTplModal()"><i class="ti ti-plus"></i>Nueva plantilla</button>
+          </div>
+        </div>
+        <div id="tpl-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+
   </div>
 </div>
 
@@ -425,6 +494,38 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
       <button class="btn" onclick="closeModal()">Cerrar</button>
     </div>
   </div>
+
+
+  <!-- MODAL TEMPLATE -->
+  <div class="modal lg" id="m-template" style="display:none">
+    <div class="mhdr"><span class="mtitle" id="tpl-modal-title">Nueva plantilla</span><button class="btn btg bti" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="mbody">
+      <div class="fr">
+        <div class="fg"><label>Nombre de la plantilla *</label><input id="tpl-n" placeholder="Ej: Bienvenida restaurantes"></div>
+        <div class="fg"><label>Categoría</label><select id="tpl-cat"><option value="general">General</option><option value="bienvenida">Bienvenida</option><option value="precio">Precio</option><option value="cotizacion">Cotización</option><option value="carrito">Carrito</option><option value="seguimiento">Seguimiento</option><option value="cierre">Cierre</option></select></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Canal</label><select id="tpl-canal"><option value="whatsapp">📱 WhatsApp</option><option value="email">✉️ Email</option><option value="ambos">Ambos</option></select></div>
+        <div class="fg"><label>Asunto (email)</label><input id="tpl-asunto" placeholder="Solo para campañas de email"></div>
+      </div>
+      <div class="fg">
+        <label>Cuerpo del mensaje · Variables: <span style="font-family:monospace;background:var(--bg3);padding:1px 6px;border-radius:4px">[nombre]</span> <span style="font-family:monospace;background:var(--bg3);padding:1px 6px;border-radius:4px">[empresa]</span> <span style="font-family:monospace;background:var(--bg3);padding:1px 6px;border-radius:4px">[producto]</span> <span style="font-family:monospace;background:var(--bg3);padding:1px 6px;border-radius:4px">[url]</span></label>
+        <textarea id="tpl-body" rows="8" placeholder="Hola [nombre]! Escribe tu mensaje aquí..." oninput="updateTplPreview()"></textarea>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px" id="tpl-vars-detected"></div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:6px">Vista previa (con datos de ejemplo)</div>
+        <div style="font-size:13px;white-space:pre-wrap;line-height:1.6" id="tpl-preview-text">—</div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <div style="margin-right:auto;font-size:11px;color:var(--t3)" id="tpl-uses-info"></div>
+      <button class="btn btd bts" id="tpl-del-btn" style="display:none" onclick="deleteTemplate()"><i class="ti ti-trash"></i>Eliminar</button>
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btp" onclick="saveTemplate()"><i class="ti ti-check"></i>Guardar plantilla</button>
+    </div>
+  </div>
+
 
 </div>
 
@@ -828,8 +929,188 @@ function showView(name,btn){
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
   document.getElementById('vw-'+name).classList.add('active');
   if(btn)btn.classList.add('active');
-  document.getElementById('vt').textContent={pipeline:'Pipeline',leads:'Leads',inbox:'Bandeja de entrada',carritos:'Carritos abandonados',campanas:'Campañas',flows:'Automatizaciones',config:'Configuración'}[name]||name;
-  if(name==='inbox')loadInbox();else if(name==='carritos')loadCarritos();else if(name==='campanas')loadCampanas();else if(name==='flows')loadFlows();else if(name==='config')loadConfig();
+  document.getElementById('vt').textContent={pipeline:'Pipeline',leads:'Leads',inbox:'Bandeja de entrada',carritos:'Carritos abandonados',campanas:'Campañas',flows:'Automatizaciones',config:'Configuración',contactos:'Importar Contactos',templates:'Plantillas de Mensajes'}[name]||name;
+  if(name==='inbox')loadInbox();else if(name==='carritos')loadCarritos();else if(name==='campanas')loadCampanas();else if(name==='flows')loadFlows();else if(name==='config')loadConfig();else if(name==='contactos'){loadImpHistorial();}else if(name==='templates')loadTemplates();
+}
+
+
+/* ── IMPORTAR CSV ───── */
+let csvRawData = '';
+let csvParsedRows = [];
+
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => processCSV(e.target.result, file.name);
+  reader.readAsText(file, 'UTF-8');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').style.borderColor = 'var(--border2)';
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.match(/\.(csv|txt)$/i)) { toast('Solo archivos CSV o TXT', 'err'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => processCSV(ev.target.result, file.name);
+  reader.readAsText(file, 'UTF-8');
+}
+function processCSV(raw, filename) {
+  csvRawData = raw;
+  const lines = raw.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) { toast('CSV sin datos suficientes', 'err'); return; }
+  const sep = [',', ';', '\t'].sort((a,b) => (lines[0].split(b).length) - (lines[0].split(a).length))[0];
+  const headers = lines[0].split(sep).map(h => h.trim().replace(/['"]/g,''));
+  csvParsedRows = lines.slice(1).map(l => {
+    const vals = l.split(sep).map(v => v.trim().replace(/^["']|["']$/g,''));
+    const row = {};
+    headers.forEach((h,i) => row[h] = vals[i]||'');
+    return row;
+  }).filter(r => Object.values(r).some(v=>v));
+
+  document.getElementById('csv-preview').style.display = '';
+  document.getElementById('imp-nombre').value = filename.replace(/\.(csv|txt)$/i,'').replace(/_/g,' ');
+  document.getElementById('imp-result').style.display = 'none';
+
+  // Preview table (first 5 rows)
+  const preview = [headers, ...csvParsedRows.slice(0,5).map(r => headers.map(h => r[h]||''))];
+  document.getElementById('csv-preview-content').innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="font-size:11px;white-space:nowrap">
+        <thead><tr>${headers.map(h=>`<th style="padding:4px 8px;color:var(--gb)">${h}</th>`).join('')}</tr></thead>
+        <tbody>${preview.slice(1).map(row=>`<tr>${row.map(v=>`<td style="padding:3px 8px;color:var(--t2)">${v||'—'}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--t3);margin-top:6px">${csvParsedRows.length} filas detectadas · ${headers.length} columnas</div>`;
+}
+async function importarCSV() {
+  if (!csvRawData) { toast('Selecciona un archivo primero','err'); return; }
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = 'Importando...';
+  const r = await post('/api/import/csv', {
+    csv:          csvRawData,
+    canal:        document.getElementById('imp-canal').value || undefined,
+    nombre_import: document.getElementById('imp-nombre').value || 'Import sin nombre',
+  });
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-upload"></i>Importar contactos';
+  const el = document.getElementById('imp-result');
+  el.style.display = '';
+  if (r?.ok) {
+    el.innerHTML = `<div style="background:var(--gdim);border:1px solid var(--green);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--gb)">
+      <div style="font-weight:600;margin-bottom:8px">✅ Importación completada</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px">
+        <div><div style="color:var(--t3)">Total</div><div style="font-weight:700">${r.total}</div></div>
+        <div><div style="color:var(--t3)">Importados</div><div style="font-weight:700;color:var(--gb)">${r.importados}</div></div>
+        <div><div style="color:var(--t3)">Duplicados</div><div style="font-weight:700;color:var(--ora)">${r.duplicados}</div></div>
+        <div><div style="color:var(--t3)">Errores</div><div style="font-weight:700;color:var(--red)">${r.errores}</div></div>
+      </div>
+      ${r.errores_detalle?.length ? `<div style="margin-top:8px;font-size:11px;color:var(--red)">${r.errores_detalle.map(e=>e.lead+': '+e.error).join(' · ')}</div>` : ''}
+    </div>`;
+    toast(`${r.importados} contactos importados ✓`);
+    loadAll();
+    loadImpHistorial();
+  } else {
+    el.innerHTML = `<div style="background:var(--rdim);border:1px solid var(--red);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--red)">Error: ${r?.error||'Error desconocido'}</div>`;
+    toast('Error en importación','err');
+  }
+}
+async function loadImpHistorial() {
+  const d = await get('/api/import/historial');
+  const el = document.getElementById('imp-historial');
+  if (!d?.length) { el.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:12px">Sin imports anteriores</div>'; return; }
+  el.innerHTML = d.map(i => `<div style="border-bottom:1px solid var(--border);padding:10px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <div style="font-size:12px;font-weight:600">${i.nombre}</div>
+      <div style="font-size:10px;color:var(--t3)">${new Date(i.created_at).toLocaleDateString('es-CL')}</div>
+    </div>
+    <div style="display:flex;gap:8px;font-size:11px">
+      <span style="color:var(--gb)">✓ ${i.importados}</span>
+      ${i.duplicados?`<span style="color:var(--ora)">≈ ${i.duplicados}</span>`:''}
+      ${i.errores?`<span style="color:var(--red)">✗ ${i.errores}</span>`:''}
+      <span style="color:var(--t3)">${canal_b(i.canal)}</span>
+    </div>
+  </div>`).join('');
+}
+
+/* ── PLANTILLAS ──────── */
+let allTemplates = [];
+let editingTplId = null;
+
+async function loadTemplates() {
+  const d = await get('/api/templates');
+  allTemplates = d || [];
+  renderTemplates(allTemplates);
+}
+function filterTemplates() {
+  const cat = document.getElementById('tpl-cat-filter').value;
+  const canal = document.getElementById('tpl-canal-filter').value;
+  const f = allTemplates.filter(t => (!cat||t.categoria===cat) && (!canal||t.canal===canal||t.canal==='ambos'));
+  renderTemplates(f);
+}
+const catColors = {bienvenida:'var(--gb)',precio:'var(--blue)',cotizacion:'var(--pur)',carrito:'var(--ora)',seguimiento:'var(--t2)',cierre:'var(--red)',general:'var(--t3)'};
+const catEmoji  = {bienvenida:'👋',precio:'💰',cotizacion:'📋',carrito:'🛒',seguimiento:'📞',cierre:'✅',general:'💬'};
+function renderTemplates(list) {
+  const el = document.getElementById('tpl-grid');
+  if (!list.length) { el.innerHTML = `<div class="empty-st" style="grid-column:1/-1"><i class="ti ti-template"></i><p>Sin plantillas</p><button class="btn btp" onclick="openTplModal()"><i class="ti ti-plus"></i>Crear primera plantilla</button></div>`; return; }
+  el.innerHTML = list.map(t => `
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:border-color .15s" onclick='openTplModal(${JSON.stringify(t).replace(/'/g,"&#39;")})' onmouseenter="this.style.borderColor='var(--border2)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">${catEmoji[t.categoria]||'💬'}</span>
+          <div>
+            <div style="font-size:13px;font-weight:600">${t.nombre}</div>
+            <div style="font-size:10px;color:var(--t3)">${t.categoria} · ${t.usos||0} usos</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:5px">${canal_b(t.canal)}</div>
+      </div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.5;background:var(--bg2);border-radius:var(--r);padding:8px 10px;white-space:pre-wrap;max-height:80px;overflow:hidden">${(t.cuerpo||'').substring(0,140)}${t.cuerpo?.length>140?'...':''}</div>
+      ${t.variables?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px">${t.variables.map(v=>`<span style="font-size:10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;color:var(--t2)">[${v}]</span>`).join('')}</div>` : ''}
+      <div style="display:flex;gap:5px;margin-top:2px">
+        <button class="btn bts" style="flex:1" onclick="event.stopPropagation();copyTemplate('${t.id}')"><i class="ti ti-copy"></i>Copiar</button>
+        <button class="btn bts btp" style="flex:1" onclick="event.stopPropagation();openTplModal(${JSON.stringify(t).replace(/'/g,"&#39;")})"><i class="ti ti-pencil"></i>Editar</button>
+      </div>
+    </div>`).join('');
+}
+function openTplModal(t) {
+  editingTplId = t?.id || null;
+  document.getElementById('tpl-modal-title').textContent = t ? 'Editar plantilla' : 'Nueva plantilla';
+  document.getElementById('tpl-n').value     = t?.nombre || '';
+  document.getElementById('tpl-cat').value   = t?.categoria || 'general';
+  document.getElementById('tpl-canal').value = t?.canal || 'whatsapp';
+  document.getElementById('tpl-asunto').value= t?.asunto || '';
+  document.getElementById('tpl-body').value  = t?.cuerpo || '';
+  document.getElementById('tpl-del-btn').style.display = t ? '' : 'none';
+  document.getElementById('tpl-uses-info').textContent = t ? `Usos: ${t.usos||0}` : '';
+  updateTplPreview();
+  openModal('template');
+}
+function updateTplPreview() {
+  const body = document.getElementById('tpl-body').value;
+  const vars = (body.match(/\[([^\]]+)\]/g)||[]).map(v=>v.slice(1,-1)).filter((v,i,a)=>a.indexOf(v)===i);
+  const sample = {nombre:'Carlos',empresa:'Restaurante El Sol',producto:'Panel LED 100x50cm',url:'https://klinge.cl/checkout/abc',monto:'$149.990'};
+  let preview = body;
+  vars.forEach(v => { preview = preview.replace(new RegExp('\\['+v+'\\]','g'), sample[v]||`[${v}]`); });
+  document.getElementById('tpl-preview-text').textContent = preview || '—';
+  document.getElementById('tpl-vars-detected').textContent = vars.length ? `Variables detectadas: ${vars.map(v=>'['+v+']').join(', ')}` : '';
+}
+async function saveTemplate() {
+  const n = document.getElementById('tpl-n').value.trim();
+  if (!n) { toast('Nombre requerido','err'); return; }
+  const body = { nombre:n, categoria:document.getElementById('tpl-cat').value, canal:document.getElementById('tpl-canal').value, asunto:document.getElementById('tpl-asunto').value||null, cuerpo:document.getElementById('tpl-body').value };
+  const r = editingTplId ? await patch_('/api/templates/'+editingTplId, body) : await post('/api/templates', body);
+  if (r && !r.error) { toast(editingTplId?'Plantilla actualizada ✓':'Plantilla creada ✓'); closeModal(); loadTemplates(); }
+  else toast('Error al guardar','err');
+}
+async function deleteTemplate() {
+  if (!editingTplId || !confirm('¿Eliminar esta plantilla?')) return;
+  await del_('/api/templates/'+editingTplId);
+  toast('Plantilla eliminada'); closeModal(); loadTemplates();
+}
+async function copyTemplate(id) {
+  const t = allTemplates.find(x=>x.id===id);
+  if (!t) return;
+  try { await navigator.clipboard.writeText(t.cuerpo); toast('Copiado al portapapeles ✓'); }
+  catch { toast('No se pudo copiar','err'); }
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});

@@ -26,6 +26,8 @@ app.use('/api/campanas',      require('./src/routes/api.campanas'));
 app.use('/api/automations',   require('./src/routes/api.automations'));
 app.use('/api/inbox',         require('./src/routes/api.inbox'));
 app.use('/api/flows',         require('./src/routes/api.flows'));
+app.use('/api/templates',     require('./src/routes/api.templates'));
+app.use('/api/import',        require('./src/routes/api.import'));
 app.use('/api/agente',        require('./src/routes/api.agente'));
 
 // ── HEALTH CHECK ──────────────────────────────────────────────
