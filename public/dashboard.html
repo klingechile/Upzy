@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Upzy CRM — Klinge</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;
+  --border:#30363d;--text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+  --green:#00d97e;--green-dim:#00d97e22;
+  --red:#ff4757;--red-dim:#ff475722;
+  --orange:#ffa502;--orange-dim:#ffa50222;
+  --blue:#3b82f6;--blue-dim:#3b82f622;
+  --radius:8px;--radius-lg:12px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden}
+.sidebar{width:210px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.logo{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.logo h1{font-size:20px;font-weight:700;color:var(--green);letter-spacing:-0.5px}
+.logo p{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:1px}
+nav{padding:10px 8px;flex:1}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--green-dim);color:var(--green);border:1px solid #00d97e33}
+.nav-item i{font-size:16px}
+.badge{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;padding:1px 6px;font-size:10px;font-weight:600}
+.badge.g{background:var(--green);color:#000}
+.sidebar-bot{padding:12px 16px;border-top:1px solid var(--border)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;box-shadow:0 0 6px var(--green)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}
+.topbar-title{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.pill{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;display:inline-block}
+.ph{background:var(--red-dim);color:var(--red)}
+.pw{background:var(--orange-dim);color:var(--orange)}
+.pc{background:var(--blue-dim);color:var(--blue)}
+.pg{background:var(--green-dim);color:var(--green)}
+.content{flex:1;overflow-y:auto;padding:20px}
+.view{display:none}.view.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent,var(--green))}
+.stat-lbl{font-size:11px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px}
+.stat-val{font-size:26px;font-weight:700;font-family:'SF Mono',monospace;color:var(--accent,var(--text))}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:16px}
+.card-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;justify-content:space-between}
+.funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fcol h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.fbar{height:3px;border-radius:2px;margin-bottom:10px;opacity:.5}
+.lcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:all .15s}
+.lcard:hover{border-color:var(--green);transform:translateY(-1px)}
+.lname{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.lsub{font-size:10px;color:var(--text3)}
+.sbar{display:flex;gap:2px;margin-top:6px}
+.sd{width:5px;height:11px;border-radius:2px;background:var(--border)}
+.sd.h{background:var(--red)}
+.sd.w{background:var(--orange)}
+.sd.c{background:var(--blue)}
+.empty{border:1px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;font-size:11px;color:var(--text3)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.8px}
+td{padding:10px 12px;border-bottom:1px solid var(--bg3);color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.inbox{display:grid;grid-template-columns:260px 1fr;height:470px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.convlist{border-right:1px solid var(--border);overflow-y:auto;background:var(--bg2)}
+.ci{padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--bg3);transition:all .1s;border-left:3px solid transparent}
+.ci:hover{background:var(--bg3)}
+.ci.active{background:var(--bg3);border-left-color:var(--green)}
+.cn{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.cp{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat{display:flex;flex-direction:column;background:var(--bg)}
+.chatheader{padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.chatmsgs{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:72%;padding:8px 12px;border-radius:var(--radius-lg);font-size:12px;line-height:1.5}
+.msg.client{background:var(--bg2);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:3px}
+.msg.bot{background:var(--green);color:#000;align-self:flex-end;border-bottom-right-radius:3px}
+.msg.agent{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+.chatinput{padding:10px 14px;background:var(--bg2);border-top:1px solid var(--border);display:flex;gap:8px}
+.chatinput input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:7px 12px;color:var(--text);font-size:12px;font-family:inherit;outline:none}
+.chatinput input:focus{border-color:var(--green)}
+.btn{padding:7px 14px;font-size:12px;border-radius:var(--radius);background:var(--bg3);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{border-color:var(--green);color:var(--green)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#000;font-weight:600}
+.btn.primary:hover{opacity:.9}
+.fflow{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.ficon{width:38px;height:38px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.loading{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+.err{background:var(--red-dim);border:1px solid var(--red);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo"><h1>Upzy</h1><p>CRM · KLINGE</p></div>
+  <nav>
+    <button class="nav-item active" onclick="showView('pipeline',this)"><i class="ti ti-layout-kanban"></i>Pipeline</button>
+    <button class="nav-item" onclick="showView('leads',this)"><i class="ti ti-users"></i>Leads</button>
+    <button class="nav-item" onclick="showView('inbox',this)"><i class="ti ti-message"></i>Bandeja <span class="badge" id="ib" style="display:none">0</span></button>
+    <button class="nav-item" onclick="showView('carritos',this)"><i class="ti ti-shopping-cart"></i>Carritos <span class="badge" id="cb" style="display:none">0</span></button>
+    <button class="nav-item" onclick="showView('campanas',this)"><i class="ti ti-send"></i>Campañas</button>
+    <button class="nav-item" onclick="showView('auto',this)"><i class="ti ti-bolt"></i>Automatizaciones</button>
+  </nav>
+  <div class="sidebar-bot">
+    <div style="display:flex;align-items:center;font-size:11px;color:var(--text2)"><span class="dot"></span>Backend activo</div>
+    <div style="font-size:10px;color:var(--text3);margin-top:3px" id="uptime-txt">upzy-production.up.railway.app</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="view-title">Pipeline</span>
+    <span id="th" class="pill ph" style="display:none"></span>
+    <span id="tw" class="pill pw" style="display:none"></span>
+    <span id="tc" class="pill pc" style="display:none"></span>
+  </div>
+  <div class="content">
+
+    <div id="vw-pipeline" class="view active">
+      <div class="stats" id="stats">
+        <div class="stat" style="--accent:var(--blue)"><div class="stat-lbl">Total leads</div><div class="stat-val" id="s-tot">—</div></div>
+        <div class="stat" style="--accent:var(--red)"><div class="stat-lbl">HOT 🔥</div><div class="stat-val" id="s-hot">—</div></div>
+        <div class="stat" style="--accent:var(--green)"><div class="stat-lbl">Flows activos</div><div class="stat-val" id="s-fl">—</div></div>
+        <div class="stat" style="--accent:var(--orange)"><div class="stat-lbl">Carritos pendientes</div><div class="stat-val" id="s-ct">—</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Funnel de ventas <button class="btn" onclick="loadAll()" style="padding:4px 10px;font-size:11px"><i class="ti ti-refresh"></i></button></div>
+        <div class="funnel" id="funnel"><div class="loading">Cargando leads...</div></div>
+      </div>
+    </div>
+
+    <div id="vw-leads" class="view">
+      <div class="card">
+        <div class="card-title">Leads <span id="lc" style="font-weight:400;font-size:11px"></span></div>
+        <div id="ltbl"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+    <div id="vw-inbox" class="view">
+      <div class="inbox">
+        <div class="convlist" id="convlist"><div class="loading" style="font-size:12px">Sin conversaciones</div></div>
+        <div class="chat">
+          <div class="chatheader">
+            <div>
+              <div style="font-size:13px;font-weight:600" id="cn">Selecciona conversación</div>
+              <div style="font-size:11px;color:var(--text3)" id="cs"></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn" id="btn-ag" onclick="tomarAgente()" style="display:none">Tomar control</button>
+              <button class="btn" id="btn-bt" onclick="devolverBot()" style="display:none">Devolver a bot</button>
+            </div>
+          </div>
+          <div class="chatmsgs" id="chatmsgs"><div style="margin:auto;font-size:12px;color:var(--text3)">Selecciona una conversación</div></div>
+          <div class="chatinput">
+            <input id="mi" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
+            <button class="btn primary" onclick="sendMsg()"><i class="ti ti-send"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="vw-carritos" class="view">
+      <div class="card">
+        <div class="card-title">Carritos abandonados</div>
+        <div id="ctbl"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+    <div id="vw-campanas" class="view">
+      <div class="card">
+        <div class="card-title">Campañas</div>
+        <div id="clist"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+    <div id="vw-auto" class="view">
+      <div class="card">
+        <div class="card-title">Automatizaciones</div>
+        <div id="flist"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API='https://upzy-production.up.railway.app';
+let leads=[],activeConv=null,activeEstado=null;
+
+async function get(p){try{const r=await fetch(API+p);if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){console.error(p,e.message);return null;}}
+async function post(p,d){try{const r=await fetch(API+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return await r.json();}catch(e){console.error(p,e.message);return null;}}
+
+const seg=s=>({hot:'<span class="pill ph">HOT 🔥</span>',warm:'<span class="pill pw">WARM</span>',cold:'<span class="pill pc">COLD</span>'}[s]||s);
+const canal=c=>({whatsapp:'<i class="ti ti-brand-whatsapp" style="color:#25d366"></i>',instagram:'<i class="ti ti-brand-instagram" style="color:#e1306c"></i>',email:'<i class="ti ti-mail" style="color:var(--blue)"></i>'}[c]||'<i class="ti ti-message"></i>');
+const sbar=(score,s)=>Array.from({length:10},(_,i)=>`<div class="sd ${i<score?(s==='hot'?'h':s==='warm'?'w':'c'):''}" ></div>`).join('');
+const clp=n=>'$'+Number(n||0).toLocaleString('es-CL');
+
+async function loadAll(){
+  const [st,fl,lds]=await Promise.all([get('/api/agente/stats'),get('/api/automations'),get('/api/leads')]);
+  if(st){
+    document.getElementById('s-tot').textContent=st.leads?.total??'—';
+    document.getElementById('s-hot').textContent=st.leads?.hot??'—';
+    document.getElementById('s-fl').textContent=fl?.defaults?.length??'—';
+    document.getElementById('s-ct').textContent=st.carritos_pendientes?.total??'—';
+    const h=st.leads?.hot,w=st.leads?.warm,c=st.leads?.cold;
+    if(h){const e=document.getElementById('th');e.textContent=h+' HOT';e.style.display='';}
+    if(w){const e=document.getElementById('tw');e.textContent=w+' WARM';e.style.display='';}
+    if(c){const e=document.getElementById('tc');e.textContent=c+' COLD';e.style.display='';}
+    const cb2=st.carritos_pendientes?.total;if(cb2>0){const e=document.getElementById('cb');e.textContent=cb2;e.style.display='';}
+    const ab=st.conversaciones?.agente;if(ab>0){const e=document.getElementById('ib');e.textContent=ab;e.style.display='';}
+    document.getElementById('uptime-txt').textContent='Uptime: '+(st.uptime_seconds?Math.round(st.uptime_seconds/60)+'m':'—');
+  }
+  if(lds){
+    leads=lds;
+    document.getElementById('lc').textContent='('+lds.length+')';
+    const stages=['nuevo','contactado','calificado','propuesta','cerrado'];
+    const labels={nuevo:'Nuevo',contactado:'Contactado',calificado:'Calificado',propuesta:'Propuesta',cerrado:'Cerrado'};
+    const colors={nuevo:'#6b7888',contactado:'#3b82f6',calificado:'#ffa502',propuesta:'#ff6b35',cerrado:'#00d97e'};
+    document.getElementById('funnel').innerHTML=stages.map(s=>{
+      const items=lds.filter(l=>l.etapa===s);
+      return`<div class="fcol">
+        <h4 style="color:${colors[s]}">${labels[s]}<span style="background:${colors[s]}22;color:${colors[s]};border-radius:99px;padding:1px 7px;font-size:10px">${items.length}</span></h4>
+        <div class="fbar" style="background:${colors[s]};width:${Math.max(20,items.length/Math.max(lds.length,1)*100+20)}%"></div>
+        ${items.length?items.slice(0,5).map(l=>`<div class="lcard">
+          <div class="lname">${l.nombre||'Sin nombre'}</div>
+          <div class="lsub">${l.empresa||l.tipo_negocio||l.canal}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+            ${seg(l.segmento)}<div class="sbar">${sbar(l.score,l.segmento)}</div>
+          </div>
+        </div>`).join('')+(items.length>5?`<div style="font-size:10px;color:var(--text3);text-align:center;padding:4px">+${items.length-5} más</div>`:''): '<div class="empty">Sin leads</div>'}
+      </div>`;
+    }).join('');
+  }
+}
+
+async function loadLeads(){
+  if(!leads.length){const d=await get('/api/leads');if(d)leads=d;}
+  document.getElementById('ltbl').innerHTML=leads.length?`<table>
+    <thead><tr><th>Nombre</th><th>Canal</th><th>Segmento</th><th>Score</th><th>Etapa</th><th>Último contacto</th></tr></thead>
+    <tbody>${leads.map(l=>`<tr>
+      <td><div style="font-weight:600">${l.nombre||'—'}</div><div style="font-size:11px;color:var(--text3)">${l.empresa||''}</div></td>
+      <td>${canal(l.canal)}</td><td>${seg(l.segmento)}</td>
+      <td><div class="sbar">${sbar(l.score,l.segmento)}</div></td>
+      <td style="color:var(--text2)">${l.etapa}</td>
+      <td style="font-size:11px;color:var(--text3)">${l.ultimo_contacto?new Date(l.ultimo_contacto).toLocaleDateString('es-CL'):'—'}</td>
+    </tr>`).join('')}</tbody></table>`:'<div class="loading">Sin leads</div>';
+}
+
+async function loadInbox(){
+  const convs=await get('/api/agente/bandeja');
+  const list=document.getElementById('convlist');
+  if(!convs?.length){list.innerHTML='<div class="loading" style="font-size:12px">Sin conversaciones activas</div>';return;}
+  list.innerHTML=convs.map(c=>`<div class="ci ${c.id===activeConv?'active':''}" onclick="selConv('${c.id}','${c.estado}','${(c.upzy_leads?.nombre||'').replace(/'/g,"\\'")}','${c.canal}')">
+    <div class="cn">${c.upzy_leads?.nombre||'Sin nombre'} <span class="pill ${c.estado==='agente'?'ph':'pg'}" style="font-size:10px">${c.estado}</span></div>
+    <div class="cp">${c.ultimo_mensaje?.contenido||'Sin mensajes'}</div>
+  </div>`).join('');
+}
+
+async function selConv(id,estado,nombre,canal2){
+  activeConv=id;activeEstado=estado;
+  document.getElementById('cn').textContent=nombre||'Conversación';
+  document.getElementById('cs').textContent=canal2+' · '+estado;
+  document.getElementById('btn-ag').style.display=estado==='bot'?'':'none';
+  document.getElementById('btn-bt').style.display=estado==='agente'?'':'none';
+  const msgs=await get('/api/agente/conversacion/'+id+'/mensajes');
+  const box=document.getElementById('chatmsgs');
+  if(!msgs?.length){box.innerHTML='<div style="margin:auto;font-size:12px;color:var(--text3)">Sin mensajes aún</div>';return;}
+  box.innerHTML=msgs.map(m=>`<div class="msg ${m.origen}">${m.contenido}<div style="font-size:10px;opacity:.5;margin-top:4px;text-align:right">${new Date(m.created_at).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}</div></div>`).join('');
+  box.scrollTop=box.scrollHeight;
+  await loadInbox();
+}
+
+async function sendMsg(){
+  if(!activeConv)return;
+  const inp=document.getElementById('mi'),txt=inp.value.trim();
+  if(!txt)return;inp.value='';
+  await post('/api/agente/responder',{conversacion_id:activeConv,mensaje:txt});
+  await selConv(activeConv,activeEstado,'','');
+}
+
+async function tomarAgente(){if(!activeConv)return;await post('/api/agente/tomar/'+activeConv,{});activeEstado='agente';document.getElementById('btn-ag').style.display='none';document.getElementById('btn-bt').style.display='';await loadInbox();}
+async function devolverBot(){if(!activeConv)return;await post('/api/agente/devolver-bot/'+activeConv,{});activeEstado='bot';document.getElementById('btn-bt').style.display='none';document.getElementById('btn-ag').style.display='';await loadInbox();}
+
+async function loadCarritos(){
+  const d=await get('/api/leads/carritos');
+  document.getElementById('ctbl').innerHTML=d?.length?`<table>
+    <thead><tr><th>Cliente</th><th>Producto</th><th>Monto</th><th>Horas</th><th>Estado</th></tr></thead>
+    <tbody>${d.map(c=>`<tr>
+      <td><div style="font-weight:600">${c.customer_name||'—'}</div><div style="font-size:11px;color:var(--text3)">${c.customer_email||c.customer_phone||''}</div></td>
+      <td style="font-size:12px">${c.productos?.[0]?.title||'—'}</td>
+      <td style="font-weight:600;color:var(--orange)">${clp(c.monto)}</td>
+      <td style="color:var(--text2)">${Math.round(c.horas_abandonado||0)}h</td>
+      <td><span class="pill pw">${c.recuperacion_estado}</span></td>
+    </tr>`).join('')}</tbody></table>`:'<div class="loading">Sin carritos pendientes</div>';
+}
+
+async function loadCampanas(){
+  const d=await get('/api/campanas');
+  document.getElementById('clist').innerHTML=d?.length?`<table>
+    <thead><tr><th>Nombre</th><th>Canal</th><th>Segmento</th><th>Estado</th><th>Enviados</th><th>Apertura</th></tr></thead>
+    <tbody>${d.map(c=>`<tr>
+      <td style="font-weight:600">${c.nombre}</td>
+      <td>${canal(c.tipo)}</td>
+      <td style="font-size:12px;color:var(--text2)">${c.segmento}</td>
+      <td><span class="pill ${c.estado==='enviada'?'pg':'pc'}">${c.estado}</span></td>
+      <td>${c.enviados||0}/${c.total_destinatarios||0}</td>
+      <td>${c.total_destinatarios>0?Math.round((c.abiertos||0)/c.total_destinatarios*100)+'%':'—'}</td>
+    </tr>`).join('')}</tbody></table>`:`<div style="text-align:center;padding:32px"><div style="color:var(--text3);font-size:13px;margin-bottom:12px">Sin campañas creadas aún</div></div>`;
+}
+
+async function loadAuto(){
+  const d=await get('/api/automations');
+  const all=[...(d?.defaults||[]),...(d?.personalizados||[])];
+  const icons={bienvenida_wa:'ti-hand-stop',carrito_abandonado:'ti-shopping-cart',calificacion_lead:'ti-clipboard-check',followup_frio:'ti-clock'};
+  const colors={bienvenida_wa:'#00d97e',carrito_abandonado:'#ffa502',calificacion_lead:'#3b82f6',followup_frio:'#6b7888'};
+  document.getElementById('flist').innerHTML=all.length?all.map(f=>`<div class="fflow">
+    <div class="ficon" style="background:${(colors[f.id]||'#6b7888')}22;color:${colors[f.id]||'#6b7888'}"><i class="ti ${icons[f.id]||'ti-bolt'}"></i></div>
+    <div style="flex:1"><div style="font-size:13px;font-weight:600">${f.nombre}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Trigger: ${f.trigger} · ${f.pasos} pasos · ${f.canal}</div></div>
+    <span class="pill pg">activo</span>
+  </div>`).join(''):'<div class="loading">Sin automatizaciones</div>';
+}
+
+function showView(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('vw-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  const titles={pipeline:'Pipeline',leads:'Leads',inbox:'Bandeja de entrada',carritos:'Carritos abandonados',campanas:'Campañas',auto:'Automatizaciones'};
+  document.getElementById('view-title').textContent=titles[name]||name;
+  if(name==='leads')loadLeads();
+  else if(name==='inbox')loadInbox();
+  else if(name==='carritos')loadCarritos();
+  else if(name==='campanas')loadCampanas();
+  else if(name==='auto')loadAuto();
+}
+
+loadAll();
+</script>
+</body>
+</html>

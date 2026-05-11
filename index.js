@@ -9,6 +9,7 @@ const app = express();
 
 // ── MIDDLEWARE ────────────────────────────────────────────────
 app.use(cors());
+app.use(express.static('public'));
 app.use(logger);
 app.use((req, res, next) => {
   express.json({
@@ -41,7 +42,8 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/', (req, res) => res.redirect('/health'));
+app.get('/', (req, res) => res.redirect('/dashboard'));
+app.get('/dashboard', (req, res) => res.sendFile('dashboard.html', { root: 'public' }));
 
 // ── ERROR HANDLERS ────────────────────────────────────────────
 app.use(notFound);
