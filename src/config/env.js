@@ -76,7 +76,8 @@ const config = {
   // Email — ya existente en Railway
   email: {
     from:     process.env.EMAIL_FROM     || '',  // ← ya existe
-    provider: process.env.EMAIL_PROVIDER || '',  // ← ya existe
+    provider: process.env.EMAIL_PROVIDER || '',
+    resendKey: process.env.RESEND_API_KEY  || '',  // ← ya existe
     enabled:  !!process.env.EMAIL_FROM,
   },
 
