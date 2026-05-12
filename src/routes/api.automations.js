@@ -1,20 +1,47 @@
-const express     = require('express');
-const router      = express.Router();
-const automations = require('../services/automations');
-const supabase    = require('../db/supabase');
-const config      = require('../config/env');
-const TENANT_ID   = config.tenantId;
+const express      = require('express');
+const router       = express.Router();
+const automations  = require('../services/automations');
+const supabase     = require('../db/supabase');
+const config       = require('../config/env');
+const cartRecovery = require('../services/cart-recovery');
+const TENANT_ID    = config.tenantId;
 
 // GET /api/automations
 router.get('/', async (req, res) => {
   try {
+    const cartSetting = await cartRecovery.getCartRecoverySetting(TENANT_ID);
     const defaults = Object.entries(automations.FLOWS_DEFAULT).map(([id, f]) => ({
       id, nombre: f.nombre, trigger: f.trigger, canal: f.canal,
-      pasos: f.pasos.length, activo: true, tipo: 'default', pasos_json: f.pasos,
+      pasos: f.pasos.length,
+      activo: f.trigger === cartRecovery.TRIGGER ? cartSetting.activo !== false : true,
+      tipo: 'default', pasos_json: f.pasos,
     }));
     const { data: custom } = await supabase.from('upzy_automatizaciones')
       .select('*').eq('tenant_id', TENANT_ID).order('created_at', { ascending: false });
-    res.json({ defaults, personalizados: custom || [] });
+    res.json({ defaults, personalizados: custom || [], cart_recovery: cartSetting });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// GET /api/automations/cart-recovery — estado del carro abandonado Shopify
+router.get('/cart-recovery', async (req, res) => {
+  try {
+    const [setting, stats] = await Promise.all([
+      cartRecovery.getCartRecoverySetting(TENANT_ID),
+      cartRecovery.getCartRecoveryStats(TENANT_ID),
+    ]);
+    res.json({ ok: true, ...setting, stats });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// PATCH /api/automations/cart-recovery — activar/desactivar carro abandonado Shopify
+router.patch('/cart-recovery', async (req, res) => {
+  try {
+    if (typeof req.body.activo !== 'boolean') {
+      return res.status(400).json({ error: 'activo boolean requerido' });
+    }
+    const setting = await cartRecovery.setCartRecoveryEnabled(TENANT_ID, req.body.activo);
+    const stats = await cartRecovery.getCartRecoveryStats(TENANT_ID);
+    res.json({ ok: true, ...setting, stats });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
