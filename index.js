@@ -56,8 +56,21 @@ app.get('/health', (req, res) => {
   });
 });
 
+function sendDashboard(res) {
+  const dashboardPath = path.join(__dirname, 'public', 'dashboard.html');
+  fs.readFile(dashboardPath, 'utf8', (err, html) => {
+    if (err) return res.status(500).send('No se pudo cargar el dashboard');
+    const scripts = [
+      '<script src="/professional-ui.js?v=20260512-1"></script>',
+      '<script src="/cart-recovery-control.js?v=20260512-1"></script>',
+    ].join('\n');
+    const output = html.includes('</body>') ? html.replace('</body>', `${scripts}\n</body>`) : `${html}\n${scripts}`;
+    res.type('html').send(output);
+  });
+}
+
 app.get('/', (req, res) => res.redirect('/dashboard'));
-app.get('/dashboard', (req, res) => res.sendFile('dashboard.html', { root: 'public' }));
+app.get('/dashboard', (req, res) => sendDashboard(res));
 app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
 
 // ── ERROR HANDLERS ────────────────────────────────────────────
