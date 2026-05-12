@@ -1,30 +1,35 @@
-const express = require('express');
-const router = express.Router();
-const tasks = require('../services/tasks');
-const TENANT_ID = require('../config/env').tenantId;
+// src/routes/api.tasks.js
+// Rutas de tareas CRM — protegidas con requireAuth desde index.js
+// tenant_id viene de req.tenantId (auth middleware), no hardcodeado
 
-// GET /api/tasks
+const express = require('express');
+const router  = express.Router();
+const tasks   = require('../services/tasks');
+
+// GET /api/tasks?lead_id=&estado=&prioridad=&assigned_to=&limit=
 router.get('/', async (req, res) => {
   try {
-    const data = await tasks.listTasks(TENANT_ID, {
-      lead_id: req.query.lead_id,
-      estado: req.query.estado,
-      prioridad: req.query.prioridad,
-      assigned_to: req.query.assigned_to,
-      limit: req.query.limit,
+    const data = await tasks.listTasks(req.tenantId, {
+      lead_id:     req.query.lead_id     || undefined,
+      estado:      req.query.estado      || undefined,
+      prioridad:   req.query.prioridad   || undefined,
+      assigned_to: req.query.assigned_to || undefined,
+      limit:       req.query.limit       || 100,
     });
     res.json(data);
   } catch (err) {
+    console.error('[tasks] list error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
-// GET /api/tasks/stats
+// GET /api/tasks/stats — DEBE ir antes de /:id
 router.get('/stats', async (req, res) => {
   try {
-    const data = await tasks.getStats(TENANT_ID);
+    const data = await tasks.getStats(req.tenantId);
     res.json(data);
   } catch (err) {
+    console.error('[tasks] stats error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -32,7 +37,8 @@ router.get('/stats', async (req, res) => {
 // GET /api/tasks/:id
 router.get('/:id', async (req, res) => {
   try {
-    const data = await tasks.getTask(TENANT_ID, req.params.id);
+    const data = await tasks.getTask(req.tenantId, req.params.id);
+    if (!data) return res.status(404).json({ error: 'Tarea no encontrada' });
     res.json(data);
   } catch (err) {
     res.status(404).json({ error: 'Tarea no encontrada' });
@@ -42,9 +48,10 @@ router.get('/:id', async (req, res) => {
 // POST /api/tasks
 router.post('/', async (req, res) => {
   try {
-    const data = await tasks.createTask(TENANT_ID, req.body || {});
+    const data = await tasks.createTask(req.tenantId, req.body || {});
     res.status(201).json(data);
   } catch (err) {
+    console.error('[tasks] create error:', err.message);
     res.status(400).json({ error: err.message });
   }
 });
@@ -52,9 +59,10 @@ router.post('/', async (req, res) => {
 // PATCH /api/tasks/:id
 router.patch('/:id', async (req, res) => {
   try {
-    const data = await tasks.updateTask(TENANT_ID, req.params.id, req.body || {});
+    const data = await tasks.updateTask(req.tenantId, req.params.id, req.body || {});
     res.json(data);
   } catch (err) {
+    console.error('[tasks] update error:', err.message);
     res.status(400).json({ error: err.message });
   }
 });
@@ -62,9 +70,10 @@ router.patch('/:id', async (req, res) => {
 // POST /api/tasks/:id/complete
 router.post('/:id/complete', async (req, res) => {
   try {
-    const data = await tasks.completeTask(TENANT_ID, req.params.id);
+    const data = await tasks.completeTask(req.tenantId, req.params.id);
     res.json(data);
   } catch (err) {
+    console.error('[tasks] complete error:', err.message);
     res.status(400).json({ error: err.message });
   }
 });
@@ -72,9 +81,10 @@ router.post('/:id/complete', async (req, res) => {
 // DELETE /api/tasks/:id
 router.delete('/:id', async (req, res) => {
   try {
-    const data = await tasks.deleteTask(TENANT_ID, req.params.id);
+    const data = await tasks.deleteTask(req.tenantId, req.params.id);
     res.json(data);
   } catch (err) {
+    console.error('[tasks] delete error:', err.message);
     res.status(400).json({ error: err.message });
   }
 });
