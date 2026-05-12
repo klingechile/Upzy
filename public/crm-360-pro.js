@@ -55,11 +55,8 @@
 
   function patchShowView(){
     if(window.__crm360ProPatched) return; window.__crm360ProPatched = true;
-    const original = window.showView;
-    window.showView = function(name, btn){
-      if(typeof original === 'function') original(name, btn);
-      if(name === 'crm360') showCrm360(btn);
-    };
+    // showView hook removed — uses dashboard's native showView
+;
   }
 
   function showCrm360(btn){
