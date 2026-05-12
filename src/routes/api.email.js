@@ -288,7 +288,7 @@ router.post('/test-carrito', async (req, res) => {
     nombre:       nombre  || 'Carlos García',
     producto:     producto || 'Panel LED 100x50cm',
     monto:        monto   || 149990,
-    checkout_url: `${process.env.SHOPIFY_STORE_URL || 'https://klingecl.myshopify.com'}/checkout/test`,
+    checkout_url: `${require('../config/env').shopify.storeUrl || 'https://klingecl.myshopify.com'}/checkout/test`,
     unsubscribe_url: `https://upzy-production.up.railway.app/api/email/unsubscribe?email=${encodeURIComponent(email)}`,
   };
 
