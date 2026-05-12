@@ -274,3 +274,42 @@ router.use((error, req, res, next) => {
 });
 
 module.exports = router;
+
+// ── TEST CARRITO ABANDONADO ───────────────────────────────────
+// POST /api/email/test-carrito — dispara email de prueba del flujo carrito
+router.post('/test-carrito', async (req, res) => {
+  const { email, nombre, producto, monto, etapa = 1 } = req.body;
+  if (!email) return res.status(400).json({ error: 'email requerido' });
+
+  const emailTemplates = require('../services/email-templates');
+  const ses2 = require('../services/ses');
+
+  const datos = {
+    nombre:       nombre  || 'Carlos García',
+    producto:     producto || 'Panel LED 100x50cm',
+    monto:        monto   || 149990,
+    checkout_url: `${process.env.SHOPIFY_STORE_URL || 'https://klingecl.myshopify.com'}/checkout/test`,
+    unsubscribe_url: `https://upzy-production.up.railway.app/api/email/unsubscribe?email=${encodeURIComponent(email)}`,
+  };
+
+  try {
+    const fn = etapa === 2
+      ? emailTemplates.carritoAbandonado24h
+      : emailTemplates.carritoAbandonado1h;
+
+    const { asunto, html } = await fn(TENANT_ID, datos);
+    const r = await ses2.enviarEmail({ to: email, subject: `[PRUEBA] ${asunto}`, html });
+
+    // Log
+    await supabase.from('upzy_email_sends').insert({
+      tenant_id: TENANT_ID, tipo: 'test',
+      destinatario: email, asunto: `[PRUEBA] ${asunto}`,
+      estado: 'enviado', ses_message_id: r.MessageId || 'simulated',
+      enviado_at: new Date().toISOString(),
+    });
+
+    res.json({ ok: true, etapa, asunto, destinatario: email, messageId: r.MessageId });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});

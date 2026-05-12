@@ -4,7 +4,8 @@ const crypto       = require('crypto');
 const scoring      = require('../services/scoring');
 const automations  = require('../services/automations');
 const config       = require('../config/env');
-const cartRecovery = require('../services/cart-recovery');
+const cartRecovery     = require('../services/cart-recovery');
+const cartRecoveryEmail = require('../services/cart-recovery-email');
 
 const TENANT_ID = config.tenantId;
 
@@ -79,8 +80,23 @@ router.post('/', async (req, res) => {
       payload_raw: payload,
     });
 
-    // El abandono real se detecta por cron después del tiempo configurado.
-    // Si en el futuro llega un evento externo checkout_abandoned, respeta el toggle.
+    // Flujo de recuperación por email al detectar checkout creado/actualizado
+    if (['checkout_created', 'checkout_updated'].includes(tipo) && lead && evento) {
+      const enabled = await cartRecovery.isCartRecoveryEnabled(TENANT_ID);
+      if (enabled && lead.email) {
+        // Disparar después de 1h (sin bloquear el webhook)
+        setTimeout(async () => {
+          try {
+            await cartRecoveryEmail.dispararFlujoCarrito(evento.id);
+          } catch (e) {
+            console.error('[Shopify] cart email error:', e.message);
+          }
+        }, 60 * 60 * 1000); // 1 hora
+        console.log(`[Shopify] Flujo email carrito programado en 1h → ${lead.email}`);
+      }
+    }
+
+    // Automations WA para checkout_abandoned
     if (tipo === 'checkout_abandoned' && lead && evento) {
       const enabled = await cartRecovery.isCartRecoveryEnabled(TENANT_ID);
       if (!enabled) return;
