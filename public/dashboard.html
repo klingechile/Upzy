@@ -802,7 +802,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
       <input type="hidden" id="nu-id">
       <div class="fg" id="nu-email"><label>Email *</label><input id="nu-email-input" type="email" placeholder="usuario@klinge.cl"></div>
       <div class="fg"><label>Nombre *</label><input id="nu-nombre" placeholder="Nombre completo"></div>
-      <div class="fg" id="nu-pass"><label>Contraseña inicial *</label><input id="nu-pass-input" type="password" placeholder="Mínimo 8 caracteres"></div>
+      <div class="fg" id="nu-pass"><label>Contraseña inicial *</label><input id="nu-pass-input" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"></div>
       <div class="fg"><label>Rol</label>
         <select id="nu-rol">
           <option value="admin">🔑 Admin — acceso total</option>
@@ -1551,49 +1551,40 @@ async function loadEmailTemplates() {
   const catEmoji2 = {bienvenida:'👋',precio:'💰',cotizacion:'📋',carrito:'🛒',seguimiento:'📞',cierre:'✅',general:'💬'};
   const catLabel = {bienvenida:'Bienvenida',carrito:'Carrito',cotizacion:'Cotización',cierre:'Cierre',seguimiento:'Seguimiento',general:'General'};
 
+  // Render cards - html_body set via JS after DOM insert to avoid escaping issues
   el.innerHTML = emailTplAll.map(t => {
     const color = catColor[t.categoria] || '#545d68';
-    const safeHtml = t.html_body
-      ? t.html_body.replace(/\/g,'\\').replace(/`/g,'\`').replace(/\$/g,'\$')
-      : null;
+    const catLbl = {bienvenida:'Bienvenida',carrito:'Carrito',cotizacion:'Cotización',cierre:'Cierre',seguimiento:'Seguimiento',general:'General'};
+    const asuntoPreview = (t.asunto||'').replace('[nombre]','Carlos').substring(0,55);
     return `
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column;transition:all .15s;cursor:pointer"
+    <div data-tpl-id="${t.id}" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column;transition:all .15s;cursor:pointer"
          onmouseenter="this.style.borderColor='${color}';this.style.transform='translateY(-2px)'"
          onmouseleave="this.style.borderColor='var(--border)';this.style.transform='translateY(0)'">
-
-      <!-- Thumbnail del email -->
-      <div style="height:180px;overflow:hidden;position:relative;background:#f0f0f0"
-           onclick='openEmailBuilderEdit(${JSON.stringify(t).replace(/'/g,"&#39;")})'>
+      <div style="height:180px;overflow:hidden;position:relative;background:#f0f0f0" onclick='openEmailBuilderEdit(${JSON.stringify(t).replace(/'/g,"&#39;")})'>
         ${t.html_body
-          ? `<iframe srcdoc="${t.html_body.replace(/"/g,'&quot;').substring(0,12000)}"
-               style="width:200%;height:360px;border:none;transform:scale(.5);transform-origin:top left;pointer-events:none"
-               scrolling="no" title="${t.nombre}"></iframe>
+          ? `<iframe data-src-id="${t.id}" style="width:200%;height:360px;border:none;transform:scale(.5);transform-origin:top left;pointer-events:none" scrolling="no" title="${t.nombre}"></iframe>
              <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(22,27,34,.95))"></div>`
           : `<div style="height:100%;background:linear-gradient(135deg,${color}22,${color}44);display:flex;align-items:center;justify-content:center">
-               <div style="text-align:center">
+               <div style="text-align:center;padding:20px">
                  <div style="font-size:42px;margin-bottom:8px">${catEmoji2[t.categoria]||'✉️'}</div>
                  <div style="font-size:11px;color:var(--t2);font-weight:600">${t.nombre}</div>
                </div>
              </div>
              <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(22,27,34,.95))"></div>`
         }
-
-        <!-- Overlay info -->
         <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px">
           <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">${t.nombre}</div>
           <div style="display:flex;align-items:center;gap:6px">
-            <span style="background:${color};color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.8px">${catLabel[t.categoria]||t.categoria}</span>
+            <span style="background:${color};color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.8px">${catLbl[t.categoria]||t.categoria}</span>
             ${t.tipo==='html'?'<span style="background:#ffffff22;color:#fff;font-size:9px;padding:2px 6px;border-radius:2px">HTML</span>':''}
           </div>
         </div>
       </div>
-
-      <!-- Info + acciones -->
       <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:8px">
-        ${t.asunto ? `<div style="font-size:11px;color:var(--t2);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">"${t.asunto.replace('[nombre]','Carlos')}"</div>` : ''}
+        ${asuntoPreview ? `<div style="font-size:11px;color:var(--t2);line-height:1.4">"${asuntoPreview}${t.asunto&&t.asunto.length>55?'...':''}"</div>` : ''}
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span style="font-size:10px;color:var(--t3)">${t.usos||0} envíos</span>
-          <span style="font-size:10px;color:var(--t3)">${(t.variables||[]).map(v=>'['+v+']').slice(0,3).join(' ')}</span>
+          <span style="font-size:10px;color:var(--t3)">${(t.variables||[]).slice(0,3).map(v=>'['+v+']').join(' ')}</span>
         </div>
         <div style="display:flex;gap:5px;margin-top:auto">
           <button class="btn bts" style="flex:1;font-size:11px" onclick='openTestEmailModal("${t.id}")'><i class="ti ti-send"></i>Prueba</button>
@@ -1602,6 +1593,15 @@ async function loadEmailTemplates() {
         </div>
       </div>
     </div>`}).join('');
+
+  // Set iframe srcdoc AFTER DOM insert to avoid JS escaping issues
+  requestAnimationFrame(() => {
+    emailTplAll.forEach(t => {
+      if (!t.html_body) return;
+      const iframe = el.querySelector(`iframe[data-src-id="${t.id}"]`);
+      if (iframe) iframe.srcdoc = t.html_body;
+    });
+  });
 }
 
 // Email Builder
