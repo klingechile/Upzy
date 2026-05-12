@@ -20,11 +20,14 @@ Aunque una funcionalidad toque frontend, backend, configuración y base de datos
 
 | Claude | GPT |
 |---|---|
-| `src/services/` | `public/` |
-| `src/routes/` | `docs/` |
-| `src/config/` | `tests/` |
-| `src/db/` | `scripts/` |
+| `src/services/` | `docs/` |
+| `src/routes/` | `tests/` |
+| `src/config/` | `scripts/` |
+| `src/db/` | `public/*.js` (archivos JS auxiliares) |
+| `src/middleware/` |  |
 | `database/` |  |
+
+> ⚠️ `public/dashboard.html` y `index.js` son **bloqueo manual** — ninguno tiene ownership exclusivo.
 
 ---
 
@@ -32,9 +35,10 @@ Aunque una funcionalidad toque frontend, backend, configuración y base de datos
 
 Estos archivos pueden impactar deploy, dependencias, runtime o integración general. No se deben tocar sin aviso previo.
 
-| Archivo | Regla |
-|---|---|
-| `index.js` | Solo con aviso previo y bloqueo temporal |
+| Archivo | Owner real | Regla |
+|---|---|---|
+| `index.js` | Claude | Aviso obligatorio antes de tocar. GPT no debe modificarlo sin confirmación |
+| `public/dashboard.html` | Compartido | Nunca al mismo tiempo. Declarar sección que se toca |
 | `package.json` | Solo con aviso previo |
 | `package-lock.json` | Solo si cambia dependencia y con aviso previo |
 | `.nvmrc` | Solo si cambia versión de Node |
@@ -369,3 +373,31 @@ Después de una emergencia, se debe documentar qué se tocó y dejar el ownershi
 - Idealmente cada agente trabaja en su propia rama.
 - Los archivos sensibles requieren bloqueo manual.
 - El merge final lo hace el responsable del repositorio.
+
+---
+
+## Cómo declarar bloqueo rápido (formato corto)
+
+Antes de empezar, escribe en el chat:
+
+```
+BLOQUEO: voy a tocar index.js y src/routes/api.flows.js
+Tarea: agregar endpoint de test de flow
+Tiempo estimado: 10 min
+```
+
+El otro agente espera o trabaja en archivos distintos.
+
+---
+
+## Estado actual del repo
+
+| Módulo | Owner | Estado |
+|---|---|---|
+| Auth / Login | Claude | ✅ Activo |
+| Email + SES | Claude | ✅ Activo |
+| Templates | Claude (backend) + GPT (UI) | ✅ Activo |
+| Flows builder | Claude (backend) + GPT (UI) | ✅ Activo |
+| Cart recovery | Claude (backend) + GPT (toggle UI) | ✅ Activo |
+| Inbox bridge | Claude | ✅ Activo |
+| Import CSV | Claude | ✅ Activo |
