@@ -18,12 +18,53 @@ const normalizeCanal = (canal = '') => {
   return c || 'whatsapp';
 };
 
+const compact = (value = '') => String(value || '').replace(/\s+/g, ' ').trim();
+const digitsOnly = (value = '') => String(value || '').replace(/\D/g, '');
+const isUuid = (value = '') => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(value || '').trim());
+const isPhoneLike = (value = '') => {
+  const d = digitsOnly(value);
+  return d.length >= 8 && d.length >= String(value || '').replace(/\s/g, '').length - 3;
+};
+const isIdLike = (value = '') => {
+  const v = compact(value);
+  if (!v) return true;
+  if (isUuid(v)) return true;
+  if (/^\d{6,}$/.test(v)) return true;
+  if (isPhoneLike(v)) return true;
+  if (/^(cliente|customer|usuario|user)\s*(instagram|whatsapp|wa|ig)?$/i.test(v)) return true;
+  if (/^(instagram|whatsapp|wa|ig)\s*\d+$/i.test(v)) return true;
+  return false;
+};
+
 const pickDisplayName = (lead, canal) => {
-  const nombre = lead?.nombre || lead?.full_name || lead?.name || lead?.empresa || lead?.email || lead?.telefono;
-  if (nombre && !/^cliente instagram$/i.test(nombre)) return nombre;
-  if (canal === 'instagram' && lead?.canal_id) return `Instagram ${String(lead.canal_id).slice(-6)}`;
-  if (canal === 'instagram' && lead?.instagram_id) return `Instagram ${String(lead.instagram_id).slice(-6)}`;
-  return canal === 'instagram' ? 'Cliente Instagram' : 'Cliente WhatsApp';
+  const forbidden = new Set([
+    compact(lead?.id),
+    compact(lead?.canal_id),
+    compact(lead?.instagram_id),
+    compact(lead?.phone),
+    compact(lead?.telefono),
+  ].filter(Boolean));
+
+  const candidates = [
+    lead?.nombre,
+    lead?.full_name,
+    lead?.name,
+    lead?.profile_name,
+    lead?.username,
+    lead?.empresa,
+    lead?.email,
+  ];
+
+  for (const candidate of candidates) {
+    const value = compact(candidate);
+    if (!value) continue;
+    if (forbidden.has(value)) continue;
+    if (isIdLike(value)) continue;
+    return value;
+  }
+
+  // Si Meta todavía no entregó nombre, no mostramos IDs parciales: dejamos claro que falta nombre real.
+  return canal === 'instagram' ? 'Cliente Instagram sin nombre' : 'Cliente WhatsApp sin nombre';
 };
 
 const messageDate = (msg) => msg?.created_at || msg?.updated_at || null;
