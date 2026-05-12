@@ -4,6 +4,7 @@ const automations  = require('../services/automations');
 const supabase     = require('../db/supabase');
 const config       = require('../config/env');
 const cartRecovery = require('../services/cart-recovery');
+const { detectarCarritosAbandonados } = require('../jobs/carritos');
 const TENANT_ID    = config.tenantId;
 
 // GET /api/automations
@@ -29,7 +30,21 @@ router.get('/cart-recovery', async (req, res) => {
       cartRecovery.getCartRecoverySetting(TENANT_ID),
       cartRecovery.getCartRecoveryStats(TENANT_ID),
     ]);
-    res.json({ ok: true, ...setting, stats });
+    res.json({
+      ok: true,
+      ...setting,
+      stats,
+      shopify: {
+        enabled: config.shopify.enabled,
+        store_url: config.shopify.storeUrl || null,
+        webhook_secret_configured: !!config.shopify.webhookSecret,
+        skip_verify: config.shopify.skipVerify,
+      },
+      channels: {
+        whatsapp: config.whatsapp.enabled,
+        email: config.email.enabled,
+      },
+    });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -42,6 +57,21 @@ router.patch('/cart-recovery', async (req, res) => {
     const setting = await cartRecovery.setCartRecoveryEnabled(TENANT_ID, req.body.activo);
     const stats = await cartRecovery.getCartRecoveryStats(TENANT_ID);
     res.json({ ok: true, ...setting, stats });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// POST /api/automations/cart-recovery/run — ejecución manual urgente
+router.post('/cart-recovery/run', async (req, res) => {
+  try {
+    const enabled = await cartRecovery.isCartRecoveryEnabled(TENANT_ID);
+    if (!enabled) return res.status(409).json({ ok: false, error: 'Recuperación de carrito está desactivada' });
+
+    await detectarCarritosAbandonados(TENANT_ID);
+    const [setting, stats] = await Promise.all([
+      cartRecovery.getCartRecoverySetting(TENANT_ID),
+      cartRecovery.getCartRecoveryStats(TENANT_ID),
+    ]);
+    res.json({ ok: true, message: 'Revisión de carritos ejecutada', ...setting, stats });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
