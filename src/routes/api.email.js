@@ -1,172 +1,276 @@
 // src/routes/api.email.js
-// Módulo completo de email: templates HTML, preview, test, campañas, stats
+// Email Marketing Klinge/Upzy.
+// Email sí vive y se edita en Upzy. WhatsApp usa templates aprobados en Meta y se orquesta en flows.
 
-const express  = require('express');
-const router   = express.Router();
+const express = require('express');
+const router = express.Router();
 const supabase = require('../db/supabase');
-const ses      = require('../services/ses');
-const config   = require('../config/env');
+const ses = require('../services/ses');
+const config = require('../config/env');
+const marketing = require('../services/klinge-email-marketing');
 
 const TENANT_ID = config.tenantId;
 
-// ── PREVIEW ──────────────────────────────────────────────────
-// POST /api/email/preview — renderiza template con datos de ejemplo
-router.post('/preview', async (req, res) => {
+const sampleData = {
+  nombre: 'Carlos',
+  empresa: 'Restaurante Demo',
+  tipo_negocio: 'restaurant',
+  productos: 'Panel LED publicitario 60x90',
+  cart_url: 'https://www.klinge.cl/cart/demo',
+  order_url: 'https://www.klinge.cl/account/orders/demo',
+  review_url: 'https://www.klinge.cl/pages/resenas',
+  discount_code: 'KLINGE10',
+  whatsapp_url: marketing.getWhatsAppUrl('Hola Klinge, quiero cotizar un panel LED'),
+};
+
+const asyncHandler = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
+// ── BRANDING ──────────────────────────────────────────────────
+router.get('/branding', (req, res) => {
+  res.json({ ok: true, brand: marketing.BRAND, variables: marketing.SUPPORTED_VARIABLES });
+});
+
+// ── DASHBOARD / MÉTRICAS ──────────────────────────────────────
+router.get('/metrics', asyncHandler(async (req, res) => {
+  const [metrics, quota] = await Promise.all([marketing.getMetrics(), ses.getQuota()]);
+  res.json({ ok: true, metrics, ses: quota, brand: marketing.BRAND });
+}));
+
+// Alias legacy para la UI actual
+router.get('/stats', asyncHandler(async (req, res) => {
+  const [metrics, quota] = await Promise.all([marketing.getMetrics(), ses.getQuota()]);
+  res.json({
+    ses: quota,
+    metrics,
+    totales: {
+      enviados: metrics.sent,
+      entregados: metrics.delivered,
+      abiertos: metrics.opens,
+      clicks: metrics.clicks,
+      rebotados: 0,
+      errores: metrics.errors,
+      carritos_recuperados: metrics.recovered_carts,
+      revenue_atribuido: metrics.attributed_revenue,
+    },
+  });
+}));
+
+// ── TEMPLATES EMAIL ───────────────────────────────────────────
+router.get('/templates', asyncHandler(async (req, res) => {
+  const templates = await marketing.listTemplates({ category: req.query.category });
+  res.json({ ok: true, templates, variables: marketing.SUPPORTED_VARIABLES });
+}));
+
+router.post('/templates', asyncHandler(async (req, res) => {
+  const template = await marketing.createTemplate(req.body);
+  res.status(201).json({ ok: true, template });
+}));
+
+router.put('/templates/:id', asyncHandler(async (req, res) => {
+  const template = await marketing.updateTemplate(req.params.id, req.body);
+  res.json({ ok: true, template });
+}));
+
+router.patch('/templates/:id', asyncHandler(async (req, res) => {
+  const template = await marketing.updateTemplate(req.params.id, req.body);
+  res.json({ ok: true, template });
+}));
+
+router.post('/templates/:id/preview', asyncHandler(async (req, res) => {
+  const template = await marketing.getTemplateById(req.params.id);
+  if (!template) return res.status(404).json({ error: 'Template no encontrado' });
+  const rendered = await marketing.renderTemplate(template, { ...sampleData, ...(req.body?.datos || req.body || {}) });
+  res.json({ ok: true, ...rendered });
+}));
+
+router.post('/templates/:id/test', asyncHandler(async (req, res) => {
+  const { destinatarios, email, datos = {} } = req.body;
+  const to = destinatarios || (email ? [email] : []);
+  if (!to?.length) return res.status(400).json({ error: 'destinatarios requerido' });
+
+  const template = await marketing.getTemplateById(req.params.id);
+  if (!template) return res.status(404).json({ error: 'Template no encontrado' });
+
+  const rendered = await marketing.renderTemplate(template, { ...sampleData, ...datos });
+  const recipients = Array.isArray(to) ? to : [to];
+  const results = [];
+
+  for (const recipient of recipients) {
+    try {
+      const result = await ses.enviarEmail({
+        to: recipient,
+        subject: `[PRUEBA] ${rendered.subject || rendered.asunto}`,
+        html: rendered.html,
+      });
+
+      await supabase.from('upzy_email_sends').insert({
+        tenant_id: TENANT_ID,
+        template_id: template.is_seed ? null : template.id,
+        tipo: 'test',
+        destinatario: recipient,
+        asunto: `[PRUEBA] ${rendered.subject || rendered.asunto}`,
+        estado: 'enviado',
+        ses_message_id: result.MessageId,
+        enviado_at: new Date().toISOString(),
+      });
+
+      results.push({ email: recipient, ok: true, messageId: result.MessageId, simulated: result.simulated });
+    } catch (error) {
+      results.push({ email: recipient, ok: false, error: error.message });
+    }
+  }
+
+  res.json({ ok: true, results });
+}));
+
+// Legacy preview: acepta template_id en body
+router.post('/preview', asyncHandler(async (req, res) => {
   const { template_id, datos = {} } = req.body;
   if (!template_id) return res.status(400).json({ error: 'template_id requerido' });
 
-  const { data: template } = await supabase
-    .from('upzy_templates').select('*').eq('id', template_id).single();
+  const template = await marketing.getTemplateById(template_id);
   if (!template) return res.status(404).json({ error: 'Template no encontrado' });
 
-  const { html, asunto, preview } = ses.renderTemplate(template, datos);
-  res.json({ html, asunto, preview, template });
-});
+  const rendered = await marketing.renderTemplate(template, { ...sampleData, ...datos });
+  res.json({ ok: true, html: rendered.html, asunto: rendered.subject, preview: rendered.preheader, template });
+}));
 
-// ── ENVÍO DE PRUEBA ───────────────────────────────────────────
-// POST /api/email/test
-router.post('/test', async (req, res) => {
+// Legacy test: acepta template_id en body
+router.post('/test', asyncHandler(async (req, res) => {
   const { template_id, destinatarios, datos = {} } = req.body;
   if (!template_id) return res.status(400).json({ error: 'template_id requerido' });
   if (!destinatarios?.length) return res.status(400).json({ error: 'destinatarios requerido' });
 
-  try {
-    const results = await ses.enviarPrueba({ templateId: template_id, destinatarios, datosEjemplo: datos });
-    res.json({ ok: true, results });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  const template = await marketing.getTemplateById(template_id);
+  if (!template) return res.status(404).json({ error: 'Template no encontrado' });
+
+  const rendered = await marketing.renderTemplate(template, { ...sampleData, ...datos });
+  const results = [];
+
+  for (const recipient of Array.isArray(destinatarios) ? destinatarios : [destinatarios]) {
+    const result = await ses.enviarEmail({ to: recipient, subject: `[PRUEBA] ${rendered.subject}`, html: rendered.html });
+    results.push({ email: recipient, ok: true, messageId: result.MessageId, simulated: result.simulated });
   }
+
+  res.json({ ok: true, results });
+}));
+
+// ── SEGMENTOS ─────────────────────────────────────────────────
+router.get('/segments', asyncHandler(async (req, res) => {
+  const segments = await marketing.listSegments();
+  res.json({ ok: true, segments });
+}));
+
+router.get('/segments/:id/estimate', asyncHandler(async (req, res) => {
+  const count = await marketing.estimateSegmentCount(req.params.id);
+  res.json({ ok: true, segment: req.params.id, count });
+}));
+
+// ── FLOWS EMAIL ────────────────────────────────────────────────
+router.get('/flows', (req, res) => {
+  res.json({ ok: true, flows: marketing.FLOW_DEFINITIONS });
 });
 
-// ── ENVIAR CAMPAÑA ────────────────────────────────────────────
-// POST /api/email/campana
-router.post('/campana', async (req, res) => {
-  const { nombre, template_id, segmento, asunto_override } = req.body;
+router.put('/flows/:id', (req, res) => {
+  const flow = marketing.FLOW_DEFINITIONS.find(f => f.id === req.params.id);
+  if (!flow) return res.status(404).json({ error: 'Flujo no encontrado' });
+  res.json({ ok: true, flow: { ...flow, ...req.body }, note: 'Actualización preparada. Persistencia configurable en Supabase.' });
+});
+
+// ── CAMPAÑAS EMAIL ────────────────────────────────────────────
+router.post('/campaigns', asyncHandler(async (req, res) => {
+  const campaign = await marketing.createCampaign(req.body);
+  res.status(201).json({ ok: true, campaign });
+}));
+
+router.post('/campaigns/:id/send', asyncHandler(async (req, res) => {
+  const { template_id, segmento, asunto_override, limit } = req.body;
   if (!template_id) return res.status(400).json({ error: 'template_id requerido' });
 
-  // Crear registro de campaña
-  const { data: campana } = await supabase
-    .from('upzy_campanas')
-    .insert({ tenant_id: TENANT_ID, nombre: nombre || 'Campaña Email', tipo: 'email', segmento: segmento || 'todos', estado: 'enviando' })
-    .select().single();
+  const template = await marketing.getTemplateById(template_id);
+  if (!template) return res.status(404).json({ error: 'Template no encontrado' });
 
-  res.json({ ok: true, campana, status: 'iniciado' });
+  const recipients = await marketing.getRecipientsForSegment(segmento || 'todos', limit || 1000);
+  res.json({ ok: true, status: 'iniciado', campaign_id: req.params.id, total: recipients.length });
 
-  // Envío asíncrono
   setImmediate(async () => {
-    try {
-      const result = await ses.enviarCampana({
-        campanaId:      campana?.id,
-        templateId:     template_id,
-        segmento,
-        asuntoOverride: asunto_override,
-      });
-      console.log(`[email/campana] Completado: ${result.enviados}/${result.total}`);
-    } catch (err) {
-      console.error('[email/campana] Error:', err.message);
+    let sent = 0;
+    let errors = 0;
+
+    for (const lead of recipients) {
+      try {
+        const rendered = await marketing.renderTemplate(template, {
+          nombre: lead.nombre,
+          empresa: lead.empresa,
+          tipo_negocio: lead.tipo_negocio,
+          whatsapp_url: marketing.getWhatsAppUrl(`Hola Klinge, soy ${lead.nombre || ''} y quiero cotizar un panel LED`),
+        });
+
+        const result = await ses.enviarEmail({
+          to: lead.email,
+          subject: asunto_override || rendered.subject,
+          html: rendered.html,
+        });
+
+        await supabase.from('upzy_email_sends').insert({
+          tenant_id: TENANT_ID,
+          template_id: template.is_seed ? null : template.id,
+          campana_id: req.params.id?.startsWith('draft-') ? null : req.params.id,
+          lead_id: lead.id,
+          tipo: 'campana',
+          destinatario: lead.email,
+          asunto: asunto_override || rendered.subject,
+          estado: 'enviado',
+          ses_message_id: result.MessageId,
+          enviado_at: new Date().toISOString(),
+        });
+
+        sent++;
+      } catch (error) {
+        errors++;
+        console.error('[email campaign]', error.message);
+      }
     }
+
+    console.log(`[email/campaigns] ${req.params.id}: ${sent} enviados, ${errors} errores`);
   });
-});
+}));
 
-// ── STATS ─────────────────────────────────────────────────────
-// GET /api/email/stats
-router.get('/stats', async (req, res) => {
-  const [quota, sends] = await Promise.all([
-    ses.getQuota(),
-    supabase.from('upzy_email_sends').select('estado').eq('tenant_id', TENANT_ID),
-  ]);
-
-  const data = sends.data || [];
-  res.json({
-    ses:    quota,
-    totales: {
-      enviados:   data.filter(s => s.estado !== 'pendiente').length,
-      entregados: data.filter(s => s.estado === 'entregado').length,
-      abiertos:   data.filter(s => s.estado === 'abierto').length,
-      clicks:     data.filter(s => s.estado === 'click').length,
-      rebotados:  data.filter(s => s.estado === 'rebotado').length,
-      errores:    data.filter(s => s.estado === 'error').length,
-    },
+// Legacy campaña
+router.post('/campana', asyncHandler(async (req, res) => {
+  const campaign = await marketing.createCampaign({
+    name: req.body.nombre || 'Campaña Email Klinge',
+    template_id: req.body.template_id,
+    segment: req.body.segmento || 'todos',
   });
-});
+  res.json({ ok: true, campana: campaign, status: 'iniciado' });
+}));
 
-// GET /api/email/historial — últimos 50 envíos
-router.get('/historial', async (req, res) => {
+// ── HISTORIAL ─────────────────────────────────────────────────
+router.get('/historial', asyncHandler(async (req, res) => {
   const { data } = await supabase
     .from('upzy_email_sends')
-    .select(`*, upzy_templates(nombre), upzy_leads(nombre,empresa)`)
+    .select('*, upzy_templates(nombre), upzy_leads(nombre,empresa)')
     .eq('tenant_id', TENANT_ID)
     .order('created_at', { ascending: false })
     .limit(50);
   res.json(data || []);
-});
+}));
 
 // ── UNSUBSCRIBE ───────────────────────────────────────────────
-router.get('/unsubscribe', async (req, res) => {
+router.get('/unsubscribe', asyncHandler(async (req, res) => {
   const { email } = req.query;
   if (email) {
     await supabase.from('upzy_leads').update({ activo: false }).eq('email', email).eq('tenant_id', TENANT_ID);
     console.log(`[email] Unsubscribe: ${email}`);
   }
-  res.send(`<!DOCTYPE html><html><body style="font-family:sans-serif;max-width:400px;margin:80px auto;text-align:center;color:#333"><h2>✅ Suscripción cancelada</h2><p>No recibirás más emails de Klinge.</p><a href="https://www.klinge.cl" style="color:#2ea043">Volver a Klinge</a></body></html>`);
+
+  res.send(`<!DOCTYPE html><html lang="es"><body style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#0B0D12;color:#F8FAFC;max-width:520px;margin:80px auto;text-align:center"><h2>Suscripción cancelada</h2><p style="color:#94A3B8">No recibirás más emails comerciales de Klinge.</p><a href="https://www.klinge.cl" style="color:#E1251B">Volver a Klinge</a></body></html>`);
+}));
+
+router.use((error, req, res, next) => {
+  console.error('[api.email]', error);
+  res.status(500).json({ error: error.message || 'Error interno en módulo de email' });
 });
 
 module.exports = router;
-
-// ── BRANDING ─────────────────────────────────────────────────
-// GET /api/email/branding — obtener configuración de marca
-router.get('/branding', async (req, res) => {
-  const emailTemplates = require('../services/email-templates');
-  const b = await emailTemplates.getBranding(TENANT_ID);
-  // No exponer datos sensibles
-  res.json({
-    nombre:    b.nombre,
-    primary:   b.primary,
-    secondary: b.secondary,
-    sitio:     b.sitio,
-    hasLogo:   !!b.logoHtml,
-  });
-});
-
-// POST /api/email/branding — actualizar logo y colores
-router.post('/branding', async (req, res) => {
-  const { logo_svg, logo_url, brand_color, brand_color2 } = req.body;
-  const updates = {};
-  if (logo_svg    !== undefined) updates.logo_svg    = logo_svg;
-  if (logo_url    !== undefined) updates.logo_url    = logo_url;
-  if (brand_color !== undefined) updates.brand_color = brand_color;
-  if (brand_color2!== undefined) updates.brand_color2= brand_color2;
-
-  const { data, error } = await supabase
-    .from('tenants')
-    .update(updates)
-    .eq('id', TENANT_ID)
-    .select('id, name, brand_color, brand_color2')
-    .single();
-
-  if (error) return res.status(400).json({ error: error.message });
-  res.json({ ok: true, tenant: data });
-});
-
-// POST /api/email/preview-branded — preview con templates branded
-router.post('/preview-branded', async (req, res) => {
-  const { categoria, datos = {} } = req.body;
-  const emailTemplates = require('../services/email-templates');
-
-  const fn = {
-    carrito:     emailTemplates.carritoAbandonado,
-    bienvenida:  emailTemplates.bienvenida,
-    cotizacion:  emailTemplates.cotizacion,
-    cierre:      emailTemplates.confirmacionCompra,
-    seguimiento: emailTemplates.recuperacionCliente,
-  }[categoria];
-
-  if (!fn) return res.status(400).json({ error: 'Categoría no válida' });
-
-  try {
-    const result = await fn(TENANT_ID, datos);
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
