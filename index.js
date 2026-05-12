@@ -3,6 +3,8 @@ const config = require('./src/config/env');
 const express = require('express');
 const cors    = require('cors');
 const cron    = require('node-cron');
+const path    = require('path');
+const fs      = require('fs');
 const { logger, errorHandler, notFound } = require('./src/middleware/logger');
 
 const app = express();
@@ -49,7 +51,14 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => res.redirect('/dashboard'));
-app.get('/dashboard', (req, res) => res.sendFile('dashboard.html', { root: 'public' }));
+app.get('/dashboard', (req, res) => {
+  const dashboardPath = path.join(__dirname, 'public', 'dashboard.html');
+  fs.readFile(dashboardPath, 'utf8', (err, html) => {
+    if (err) return res.status(500).send('No se pudo cargar el dashboard');
+    const scriptTag = '<script src="/templates-polish.js?v=20260511"></script>';
+    res.type('html').send(html.includes('</body>') ? html.replace('</body>', `${scriptTag}\n</body>`) : `${html}\n${scriptTag}`);
+  });
+});
 
 // ── ERROR HANDLERS ────────────────────────────────────────────
 app.use(notFound);
