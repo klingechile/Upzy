@@ -313,3 +313,62 @@ router.post('/test-carrito', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ── POPULATE HTML ─────────────────────────────────────────────
+// POST /api/email/populate-html — genera y guarda html_body en todas las plantillas
+router.post('/populate-html', async (req, res) => {
+  const emailTpl = require('../services/email-templates');
+  const { data: templates } = await supabase
+    .from('upzy_templates')
+    .select('id, nombre, categoria, canal, asunto, cuerpo, variables')
+    .eq('tenant_id', TENANT_ID)
+    .in('canal', ['email', 'ambos']);
+
+  if (!templates?.length) return res.json({ ok: true, updated: 0 });
+
+  const resultados = [];
+  const datos = {
+    nombre: 'Carlos García', empresa: 'Restaurante El Sol',
+    producto: 'Panel LED 100x50cm', monto: 149990,
+    checkout_url: 'https://klingecl.myshopify.com/checkout/preview',
+    folio: 'KLG-001', orden_id: '#1042',
+    tipo_negocio: 'restaurante',
+    unsubscribe_url: 'https://upzy-production.up.railway.app/api/email/unsubscribe?email=preview',
+  };
+
+  const fnMap = {
+    bienvenida:  emailTpl.bienvenida,
+    carrito:     emailTpl.carritoAbandonado1h,
+    cotizacion:  emailTpl.cotizacion,
+    cierre:      emailTpl.confirmacionCompra,
+    seguimiento: emailTpl.recuperacionCliente,
+  };
+
+  // Mapeo especial por nombre para los que comparten categoría
+  const nameMap = {
+    'Carrito Abandonado — 24h + Descuento': emailTpl.carritoAbandonado24h,
+    'Pedir Reseña — 7 días post-compra':    emailTpl.pedirResena,
+    'Upsell — Productos complementarios':   emailTpl.upsell,
+    'Garantía y Soporte Post-Venta':        emailTpl.garantia,
+    'Recuperación de Cliente Frío':         emailTpl.recuperacionCliente,
+  };
+
+  for (const tpl of templates) {
+    try {
+      const fn = nameMap[tpl.nombre] || fnMap[tpl.categoria];
+      if (!fn) { resultados.push({ id: tpl.id, ok: false, reason: 'sin función' }); continue; }
+
+      const { html, asunto, preview } = await fn(TENANT_ID, datos);
+
+      await supabase.from('upzy_templates')
+        .update({ html_body: html, preview_text: preview, tipo: 'html' })
+        .eq('id', tpl.id);
+
+      resultados.push({ id: tpl.id, nombre: tpl.nombre, ok: true, html_size: html.length });
+    } catch (err) {
+      resultados.push({ id: tpl.id, nombre: tpl.nombre, ok: false, error: err.message });
+    }
+  }
+
+  res.json({ ok: true, updated: resultados.filter(r => r.ok).length, total: templates.length, resultados });
+});
