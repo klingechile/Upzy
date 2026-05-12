@@ -61,8 +61,9 @@ function sendDashboard(res) {
   fs.readFile(dashboardPath, 'utf8', (err, html) => {
     if (err) return res.status(500).send('No se pudo cargar el dashboard');
     const scripts = [
-      '<script src="/professional-ui.js?v=20260512-1"></script>',
-      '<script src="/cart-recovery-control.js?v=20260512-1"></script>',
+      '<script src="/professional-ui.js?v=20260512-2"></script>',
+      '<script src="/cart-recovery-control.js?v=20260512-2"></script>',
+      '<script src="/crm-360.js?v=20260512-1"></script>',
     ].join('\n');
     const output = html.includes('</body>') ? html.replace('</body>', `${scripts}\n</body>`) : `${html}\n${scripts}`;
     res.type('html').send(output);
