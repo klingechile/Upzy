@@ -1,9 +1,10 @@
 // src/services/ses.js
 // AWS SES — servicio de envío de email para Upzy/Klinge
 
-const { SESClient, SendEmailCommand, SendTemplatedEmailCommand, GetSendQuotaCommand } = require('@aws-sdk/client-ses');
-const supabase = require('../db/supabase');
-const config   = require('../config/env');
+const { SESClient, SendEmailCommand, GetSendQuotaCommand } = require('@aws-sdk/client-ses');
+const supabase       = require('../db/supabase');
+const config         = require('../config/env');
+const emailTemplates = require('./email-templates');
 
 const sesClient = new SESClient({
   region:      config.aws.region,
@@ -47,35 +48,12 @@ const enviarEmail = async ({ to, subject, html, text, replyTo, headers = {} }) =
 };
 
 /**
- * Reemplaza variables en el cuerpo del template
- * [nombre] → Carlos, [empresa] → Restaurante El Sol, etc.
+ * Renderiza template con branding real del tenant
+ * Usa el servicio email-templates.js para generar HTML de calidad
  */
-const renderTemplate = (template, datos = {}) => {
-  const defaults = {
-    nombre:    datos.nombre    || 'estimado cliente',
-    empresa:   datos.empresa   || 'tu empresa',
-    producto:  datos.producto  || 'Panel LED 100x50cm',
-    monto:     datos.monto     ? '$' + Number(datos.monto).toLocaleString('es-CL') : '$149.990',
-    checkout_url:   datos.checkout_url   || 'https://klingecl.myshopify.com',
-    unsubscribe_url: datos.unsubscribe_url || 'https://upzy-production.up.railway.app/unsubscribe',
-    folio:      datos.folio    || 'KLG-' + Date.now().toString().slice(-6),
-    orden_id:   datos.orden_id || '#' + Math.floor(Math.random() * 9000 + 1000),
-    tipo_negocio: datos.tipo_negocio || 'negocio',
-    ...datos,
-  };
-
-  let html    = template.html_body  || `<p>${template.cuerpo}</p>`;
-  let asunto  = template.asunto     || '';
-  let preview = template.preview_text || '';
-
-  Object.entries(defaults).forEach(([k, v]) => {
-    const regex = new RegExp(`\\[${k}\\]`, 'g');
-    html    = html.replace(regex, v);
-    asunto  = asunto.replace(regex, v);
-    preview = preview.replace(regex, v);
-  });
-
-  return { html, asunto, preview };
+const renderTemplate = async (template, datos = {}, tenantId = config.tenantId) => {
+  const result = await emailTemplates.renderBranded(tenantId, template, datos);
+  return result;
 };
 
 /**
@@ -90,7 +68,7 @@ const enviarPrueba = async ({ templateId, destinatarios, datosEjemplo = {} }) =>
 
   if (!template) throw new Error('Template no encontrado');
 
-  const { html, asunto } = renderTemplate(template, {
+  const { html, asunto } = await renderTemplate(template, {
     ...datosEjemplo,
     nombre:  datosEjemplo.nombre  || 'Usuario de Prueba',
     empresa: datosEjemplo.empresa || 'Empresa de Prueba',
@@ -153,7 +131,7 @@ const enviarCampana = async ({ campanaId, templateId, segmento, asuntoOverride, 
 
     await Promise.allSettled(batch.map(async (lead) => {
       try {
-        const { html, asunto } = renderTemplate(template, {
+        const { html, asunto } = await renderTemplate(template, {
           nombre:       lead.nombre,
           empresa:      lead.empresa,
           tipo_negocio: lead.tipo_negocio,

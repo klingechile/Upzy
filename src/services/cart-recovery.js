@@ -7,7 +7,7 @@ const TABLE = 'upzy_automatizaciones';
 const TRIGGER = 'checkout_abandoned';
 
 function getDelayMinutes() {
-  const value = parseInt(process.env.SHOPIFY_ABANDONED_CART_MINUTES || '60', 10);
+  const value = parseInt(require('../config/env').shopify.abandonedCheckoutDelayMinutes || 60, 10);
   return Number.isFinite(value) && value > 0 ? value : 60;
 }
 

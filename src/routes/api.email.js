@@ -112,3 +112,61 @@ router.get('/unsubscribe', async (req, res) => {
 });
 
 module.exports = router;
+
+// ── BRANDING ─────────────────────────────────────────────────
+// GET /api/email/branding — obtener configuración de marca
+router.get('/branding', async (req, res) => {
+  const emailTemplates = require('../services/email-templates');
+  const b = await emailTemplates.getBranding(TENANT_ID);
+  // No exponer datos sensibles
+  res.json({
+    nombre:    b.nombre,
+    primary:   b.primary,
+    secondary: b.secondary,
+    sitio:     b.sitio,
+    hasLogo:   !!b.logoHtml,
+  });
+});
+
+// POST /api/email/branding — actualizar logo y colores
+router.post('/branding', async (req, res) => {
+  const { logo_svg, logo_url, brand_color, brand_color2 } = req.body;
+  const updates = {};
+  if (logo_svg    !== undefined) updates.logo_svg    = logo_svg;
+  if (logo_url    !== undefined) updates.logo_url    = logo_url;
+  if (brand_color !== undefined) updates.brand_color = brand_color;
+  if (brand_color2!== undefined) updates.brand_color2= brand_color2;
+
+  const { data, error } = await supabase
+    .from('tenants')
+    .update(updates)
+    .eq('id', TENANT_ID)
+    .select('id, name, brand_color, brand_color2')
+    .single();
+
+  if (error) return res.status(400).json({ error: error.message });
+  res.json({ ok: true, tenant: data });
+});
+
+// POST /api/email/preview-branded — preview con templates branded
+router.post('/preview-branded', async (req, res) => {
+  const { categoria, datos = {} } = req.body;
+  const emailTemplates = require('../services/email-templates');
+
+  const fn = {
+    carrito:     emailTemplates.carritoAbandonado,
+    bienvenida:  emailTemplates.bienvenida,
+    cotizacion:  emailTemplates.cotizacion,
+    cierre:      emailTemplates.confirmacionCompra,
+    seguimiento: emailTemplates.recuperacionCliente,
+  }[categoria];
+
+  if (!fn) return res.status(400).json({ error: 'Categoría no válida' });
+
+  try {
+    const result = await fn(TENANT_ID, datos);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});

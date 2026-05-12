@@ -378,6 +378,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
         <button class="tab" onclick="setEmailTab('nueva-campana',this)"><i class="ti ti-speakerphone"></i> Nueva campaña</button>
         <button class="tab" onclick="setEmailTab('historial',this)"><i class="ti ti-history"></i> Historial</button>
         <button class="tab" onclick="setEmailTab('ses-stats',this)"><i class="ti ti-chart-bar"></i> Estadísticas</button>
+        <button class="tab" onclick="setEmailTab('branding',this)"><i class="ti ti-palette"></i> Branding</button>
       </div>
 
       <!-- TAB: Plantillas -->
@@ -464,6 +465,52 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
             </div>
           </div>
         </div>
+
+      <!-- TAB: Branding (dentro de Email Marketing) -->
+      <div id="etab-branding" class="etab" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="chdr"><span class="ctitle">Identidad de marca en emails</span></div>
+            <div class="fg">
+              <label>Color principal (botones, bordes, énfasis)</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="color" id="brand-color" value="#C0392B" style="width:50px;height:36px;padding:2px;cursor:pointer">
+                <input id="brand-color-hex" value="#C0392B" placeholder="#C0392B" style="flex:1" oninput="document.getElementById('brand-color').value=this.value">
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+                <span onclick="setBrandColor('#C0392B')" style="width:28px;height:28px;background:#C0392B;border-radius:4px;cursor:pointer;border:2px solid #fff" title="Rojo Klinge"></span>
+                <span onclick="setBrandColor('#111111')" style="width:28px;height:28px;background:#111111;border-radius:4px;cursor:pointer;border:1px solid #555" title="Negro"></span>
+                <span onclick="setBrandColor('#2563EB')" style="width:28px;height:28px;background:#2563EB;border-radius:4px;cursor:pointer" title="Azul"></span>
+                <span onclick="setBrandColor('#16A34A')" style="width:28px;height:28px;background:#16A34A;border-radius:4px;cursor:pointer" title="Verde"></span>
+                <span onclick="setBrandColor('#7C3AED')" style="width:28px;height:28px;background:#7C3AED;border-radius:4px;cursor:pointer" title="Púrpura"></span>
+                <span onclick="setBrandColor('#D97706')" style="width:28px;height:28px;background:#D97706;border-radius:4px;cursor:pointer" title="Naranja"></span>
+              </div>
+            </div>
+            <div class="fg">
+              <label>Color secundario (header/footer)</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="color" id="brand-color2" value="#111111" style="width:50px;height:36px;padding:2px;cursor:pointer">
+                <input id="brand-color2-hex" value="#111111" placeholder="#111111" style="flex:1" oninput="document.getElementById('brand-color2').value=this.value">
+              </div>
+            </div>
+            <div class="fg">
+              <label>Logo personalizado (SVG o HTML inline)</label>
+              <textarea id="brand-logo-svg" rows="6" placeholder="Pega aquí el código SVG o HTML de tu logo...&#10;&#10;Si lo dejas vacío, se usa el logo por defecto de Klinge (K con triángulo rojo)." style="font-family:monospace;font-size:11px"></textarea>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn" onclick="previewBrandedEmail()"><i class="ti ti-eye"></i>Preview</button>
+              <button class="btn btp" style="flex:1" onclick="saveBranding()"><i class="ti ti-check"></i>Guardar branding</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chdr"><span class="ctitle">Preview del header</span></div>
+            <div id="brand-preview" style="background:#f0f0f0;border-radius:var(--r);overflow:hidden;min-height:300px">
+              <iframe id="brand-preview-frame" style="width:100%;height:400px;border:none" srcdoc="<p style='padding:40px;color:#888;text-align:center'>Haz click en Preview para ver</p>"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
       </div>
     </div>
 
@@ -1288,6 +1335,38 @@ async function copyTemplate(id) {
 }
 
 
+
+/* ── BRANDING ──── */
+function setBrandColor(hex) {
+  document.getElementById('brand-color').value = hex;
+  document.getElementById('brand-color-hex').value = hex;
+}
+
+async function loadBranding() {
+  const d = await get('/api/email/branding');
+  if (!d) return;
+  document.getElementById('brand-color').value     = d.primary   || '#C0392B';
+  document.getElementById('brand-color-hex').value = d.primary   || '#C0392B';
+  document.getElementById('brand-color2').value    = d.secondary || '#111111';
+  document.getElementById('brand-color2-hex').value= d.secondary || '#111111';
+}
+
+async function saveBranding() {
+  const r = await post('/api/email/branding', {
+    brand_color:  document.getElementById('brand-color').value,
+    brand_color2: document.getElementById('brand-color2').value,
+    logo_svg:     document.getElementById('brand-logo-svg').value || null,
+  });
+  if (r?.ok) { toast('Branding guardado ✓'); previewBrandedEmail(); }
+  else toast('Error al guardar','err');
+}
+
+async function previewBrandedEmail() {
+  const r = await post('/api/email/preview-branded', { categoria: 'bienvenida', datos: { nombre: 'Carlos García', empresa: 'Restaurante El Sol' } });
+  if (r?.html) document.getElementById('brand-preview-frame').srcdoc = r.html;
+  else toast('Error al cargar preview','err');
+}
+
 /* ── EMAIL MODULE ────────────── */
 let emailTplAll = [], ecSeg_ = 'todos', ebEditId = null, testTplId = null;
 
@@ -1301,6 +1380,7 @@ function setEmailTab(name, btn) {
   if (name === 'plantillas') loadEmailTemplates();
   else if (name === 'historial') loadEmailHistorial();
   else if (name === 'ses-stats') loadSesStats();
+  else if (name === 'branding') { loadBranding(); }
   else if (name === 'nueva-campana') { loadEmailTemplates(); ecLoadAudienceCount(); }
 }
 
