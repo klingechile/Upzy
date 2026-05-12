@@ -3,6 +3,8 @@ const config = require('./src/config/env');
 const express = require('express');
 const cors    = require('cors');
 const cron    = require('node-cron');
+const path    = require('path');
+const fs      = require('fs');
 const { logger, errorHandler, notFound } = require('./src/middleware/logger');
 const { requireAuth } = require('./src/middleware/auth');
 
