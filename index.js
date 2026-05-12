@@ -30,6 +30,7 @@ app.use('/webhook/instagram', require('./src/routes/webhook.instagram'));
 app.use('/webhook/shopify',   require('./src/routes/webhook.shopify'));
 // API protegida (requiere JWT)
 app.use('/api/leads',         requireAuth, require('./src/routes/api.leads'));
+app.use('/api/tasks',         requireAuth, require('./src/routes/api.tasks'));
 app.use('/api/campanas',      requireAuth, require('./src/routes/api.campanas'));
 app.use('/api/automations',   requireAuth, require('./src/routes/api.automations'));
 app.use('/api/inbox',         requireAuth, require('./src/routes/api.inbox'));
@@ -61,9 +62,9 @@ function sendDashboard(res) {
   fs.readFile(dashboardPath, 'utf8', (err, html) => {
     if (err) return res.status(500).send('No se pudo cargar el dashboard');
     const scripts = [
-      '<script src="/professional-ui.js?v=20260512-2"></script>',
-      '<script src="/cart-recovery-control.js?v=20260512-2"></script>',
-      '<script src="/crm-360.js?v=20260512-1"></script>',
+      '<script src="/professional-ui.js?v=20260512-3"></script>',
+      '<script src="/cart-recovery-control.js?v=20260512-3"></script>',
+      '<script src="/crm-360.js?v=20260512-2"></script>',
     ].join('\n');
     const output = html.includes('</body>') ? html.replace('</body>', `${scripts}\n</body>`) : `${html}\n${scripts}`;
     res.type('html').send(output);
