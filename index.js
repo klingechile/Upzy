@@ -59,6 +59,59 @@ app.get('/', (req, res) => res.redirect('/dashboard'));
 app.get('/dashboard', (req, res) => res.sendFile('dashboard.html', { root: 'public' }));
 app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
 
+
+// Auto-populate email template HTML on startup
+setTimeout(async () => {
+  try {
+    const emailTpl  = require('./src/services/email-templates');
+    const supabase  = require('./src/db/supabase');
+    const TENANT_ID = require('./src/config/env').tenantId;
+
+    const { data: templates } = await supabase
+      .from('upzy_templates')
+      .select('id, nombre, categoria, canal')
+      .eq('tenant_id', TENANT_ID)
+      .in('canal', ['email', 'ambos'])
+      .is('html_body', null);
+
+    if (!templates?.length) return;
+
+    const datos = {
+      nombre:'Carlos García', empresa:'Restaurante El Sol',
+      producto:'Panel LED 100x50cm', monto:149990,
+      checkout_url:'https://klingecl.myshopify.com/checkout/preview',
+      folio:'KLG-001', orden_id:'#1042', tipo_negocio:'restaurante',
+      unsubscribe_url:'https://upzy-production.up.railway.app/api/email/unsubscribe?email=preview',
+    };
+
+    const fnMap = {
+      bienvenida: emailTpl.bienvenida,
+      carrito: emailTpl.carritoAbandonado1h,
+      cotizacion: emailTpl.cotizacion,
+      cierre: emailTpl.confirmacionCompra,
+      seguimiento: emailTpl.recuperacionCliente,
+    };
+    const nameMap = {
+      'Carrito Abandonado — 24h + Descuento': emailTpl.carritoAbandonado24h,
+      'Pedir Reseña — 7 días post-compra':    emailTpl.pedirResena,
+      'Upsell — Productos complementarios':   emailTpl.upsell,
+      'Garantía y Soporte Post-Venta':        emailTpl.garantia,
+    };
+
+    for (const tpl of templates) {
+      const fn = nameMap[tpl.nombre] || fnMap[tpl.categoria];
+      if (!fn) continue;
+      const { html, preview } = await fn(TENANT_ID, datos);
+      await supabase.from('upzy_templates')
+        .update({ html_body: html, preview_text: preview, tipo: 'html' })
+        .eq('id', tpl.id);
+      console.log(`[startup] Template HTML generado: ${tpl.nombre}`);
+    }
+  } catch (err) {
+    console.error('[startup] Error generando templates HTML:', err.message);
+  }
+}, 3000); // 3 segundos después de arrancar
+
 // ── ERROR HANDLERS ────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
