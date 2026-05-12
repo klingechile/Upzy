@@ -1,21 +1,37 @@
 // src/jobs/carritos.js
-const supabase = require('../db/supabase');
-const scoring  = require('../services/scoring');
-const wa       = require('../services/whatsapp');
+const supabase      = require('../db/supabase');
+const scoring       = require('../services/scoring');
+const wa            = require('../services/whatsapp');
 const { enviarEmail, emailCarritoAbandonado } = require('../services/email');
 const { getTemplate } = require('../services/templates');
-const config   = require('../config/env');
+const config        = require('../config/env');
+const cartRecovery  = require('../services/cart-recovery');
 
 const detectarCarritosAbandonados = async (tenantId) => {
-  const unaHoraAtras = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const enabled = await cartRecovery.isCartRecoveryEnabled(tenantId);
+  if (!enabled) {
+    console.log('[cron/carritos] Recuperación de carritos desactivada.');
+    return;
+  }
+
+  const delayMinutes = cartRecovery.getDelayMinutes();
+  const limite = new Date(Date.now() - delayMinutes * 60 * 1000).toISOString();
   const { data: checkouts } = await supabase
     .from('upzy_eventos_shopify').select('*')
-    .eq('tenant_id', tenantId).eq('tipo', 'checkout_created').lt('created_at', unaHoraAtras);
+    .eq('tenant_id', tenantId)
+    .in('tipo', ['checkout_created', 'checkout_updated'])
+    .lt('created_at', limite)
+    .order('created_at', { ascending: true });
 
   if (!checkouts?.length) return;
-  console.log(`[cron/carritos] Revisando ${checkouts.length} checkouts...`);
+  console.log(`[cron/carritos] Revisando ${checkouts.length} checkouts Shopify...`);
 
+  const vistos = new Set();
   for (const checkout of checkouts) {
+    const checkoutId = checkout.shopify_checkout_id || checkout.shopify_order_id || checkout.id;
+    if (!checkoutId || vistos.has(checkoutId)) continue;
+    vistos.add(checkoutId);
+
     const { data: orden } = await supabase.from('upzy_eventos_shopify').select('id')
       .eq('tenant_id', tenantId).eq('shopify_checkout_id', checkout.shopify_checkout_id)
       .in('tipo', ['order_created','order_paid']).maybeSingle();
@@ -26,13 +42,13 @@ const detectarCarritosAbandonados = async (tenantId) => {
       .eq('shopify_checkout_id', checkout.shopify_checkout_id).maybeSingle();
     if (yaAbandonado) continue;
 
-    console.log(`[cron/carritos] Abandono: ${checkout.shopify_checkout_id}`);
+    console.log(`[cron/carritos] Abandono detectado: ${checkout.shopify_checkout_id}`);
     const { evento } = await scoring.procesarEventoShopify(tenantId, {
       tipo: 'checkout_abandoned', shopify_checkout_id: checkout.shopify_checkout_id,
       customer_email: checkout.customer_email, customer_phone: checkout.customer_phone,
       customer_name: checkout.customer_name, monto: checkout.monto,
       checkout_url: checkout.checkout_url, productos: checkout.productos,
-      payload_raw: { source: 'cron_detection' },
+      payload_raw: { source: 'cron_detection', delay_minutes: delayMinutes },
     });
     if (!evento) continue;
 
