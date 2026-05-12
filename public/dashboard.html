@@ -151,6 +151,41 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
 </style>
 </head>
 <body>
+<script>
+// ── AUTH GUARD ────────────────────────────────────────────────
+(function(){
+  const token     = sessionStorage.getItem('upzy_token');
+  const expiresAt = sessionStorage.getItem('upzy_expires_at');
+  const user      = JSON.parse(sessionStorage.getItem('upzy_user') || 'null');
+
+  // Si no hay sesión, redirigir al login
+  if (!token || !user) {
+    window.location.href = '/login';
+    return;
+  }
+
+  // Si el token expiró, intentar refresh
+  if (expiresAt && Date.now() / 1000 > parseInt(expiresAt) - 60) {
+    const rt = sessionStorage.getItem('upzy_refresh_token');
+    if (rt) {
+      fetch('/api/auth/refresh', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ refresh_token: rt }) })
+        .then(r => r.json())
+        .then(d => {
+          if (d.token) {
+            sessionStorage.setItem('upzy_token', d.token);
+            sessionStorage.setItem('upzy_refresh_token', d.refresh_token);
+            sessionStorage.setItem('upzy_expires_at', d.expires_at);
+          } else { window.location.href = '/login'; }
+        }).catch(() => window.location.href = '/login');
+    } else { window.location.href = '/login'; }
+  }
+
+  // Exponer user y token globalmente
+  window._upzyUser  = user;
+  window._upzyToken = token;
+})();
+</script>
+
 
 <div class="sb">
   <div class="logo">
@@ -184,6 +219,15 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
     <span id="tp-h" class="pill ph" style="display:none"></span>
     <span id="tp-w" class="pill pw" style="display:none"></span>
     <span id="tp-c" class="pill pc" style="display:none"></span>
+    <div style="display:flex;align-items:center;gap:10px" id="user-info">
+      <div style="text-align:right"><div style="font-size:12px;font-weight:600" id="user-nombre">—</div><div style="font-size:10px;color:var(--t3)" id="user-rol">—</div></div>
+      <div id="user-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer" onclick="toggleUserMenu()">?</div>
+      <div id="user-menu" style="display:none;position:absolute;top:52px;right:16px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:6px;min-width:180px;z-index:50;box-shadow:0 8px 24px #0006">
+        <div style="padding:8px 12px;font-size:12px;color:var(--t3);border-bottom:1px solid var(--border);margin-bottom:4px" id="menu-email">—</div>
+        <button class="btn btg" style="width:100%;justify-content:flex-start;font-size:12px" onclick="showView('config',nv('config'))"><i class="ti ti-settings"></i>Configuración</button>
+        <button class="btn btg" style="width:100%;justify-content:flex-start;font-size:12px;color:var(--red)" onclick="logout()"><i class="ti ti-logout"></i>Cerrar sesión</button>
+      </div>
+    </div>
     <button class="btn bts btg" onclick="loadAll()"><i class="ti ti-refresh"></i></button>
   </div>
   <div class="content">
@@ -750,6 +794,30 @@ tr:last-child td{border-bottom:none} tr:hover td{background:var(--bg3);cursor:po
 
 </div>
 
+
+  <!-- NUEVO USUARIO -->
+  <div class="modal" id="m-nuevo-usuario" style="display:none">
+    <div class="mhdr"><span class="mtitle">Usuario del dashboard</span><button class="btn btg bti" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="mbody">
+      <input type="hidden" id="nu-id">
+      <div class="fg" id="nu-email"><label>Email *</label><input id="nu-email-input" type="email" placeholder="usuario@klinge.cl"></div>
+      <div class="fg"><label>Nombre *</label><input id="nu-nombre" placeholder="Nombre completo"></div>
+      <div class="fg" id="nu-pass"><label>Contraseña inicial *</label><input id="nu-pass-input" type="password" placeholder="Mínimo 8 caracteres"></div>
+      <div class="fg"><label>Rol</label>
+        <select id="nu-rol">
+          <option value="admin">🔑 Admin — acceso total</option>
+          <option value="agente" selected>👤 Agente — ventas y conversaciones</option>
+          <option value="soporte">🛠 Soporte — solo lectura + inbox</option>
+          <option value="viewer">👁 Viewer — solo lectura</option>
+        </select>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btp" onclick="saveUsuario()"><i class="ti ti-check"></i>Guardar</button>
+    </div>
+  </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -759,10 +827,11 @@ let acId=null,acSrc=null,acEstado=null,acCanal=null,acTel=null,acCanalId=null;
 let curLead=null,selSeg_='todos';
 let fbSteps=[],fbSel=null,isNewFlow=false;
 
-const get=async p=>{try{const r=await fetch(API+p,{cache:'no-store'});if(!r.ok)throw new Error(r.status);return r.json();}catch(e){console.error(p,e.message);return null;}};
-const post=async(p,d)=>{try{const r=await fetch(API+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return r.json();}catch(e){console.error(p,e.message);return null;}};
-const patch_=async(p,d)=>{try{const r=await fetch(API+p,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return r.json();}catch(e){console.error(p,e.message);return null;}};
-const del_=async p=>{try{const r=await fetch(API+p,{method:'DELETE'});return r.json();}catch(e){return null;}};
+const authHeaders=()=>({'Content-Type':'application/json','Authorization':'Bearer '+(window._upzyToken||'')});
+const get=async p=>{try{const r=await fetch(API+p,{cache:'no-store',headers:authHeaders()});if(!r.ok)throw new Error(r.status);return r.json();}catch(e){console.error(p,e.message);return null;}};
+const post=async(p,d)=>{try{const r=await fetch(API+p,{method:'POST',headers:authHeaders(),body:JSON.stringify(d)});return r.json();}catch(e){console.error(p,e.message);return null;}};
+const patch_=async(p,d)=>{try{const r=await fetch(API+p,{method:'PATCH',headers:authHeaders(),body:JSON.stringify(d)});return r.json();}catch(e){console.error(p,e.message);return null;}};
+const del_=async p=>{try{const r=await fetch(API+p,{method:'DELETE',headers:authHeaders()});return r.json();}catch(e){return null;}};
 
 function toast(msg,t='ok'){const el=document.getElementById('toast');el.className='toast '+t;el.innerHTML=`<i class="ti ti-${t==='ok'?'check':'alert-circle'}"></i>${msg}`;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3200);}
 function openModal(id,data){document.getElementById('ov').style.display='flex';document.querySelectorAll('.modal').forEach(m=>m.style.display='none');document.getElementById('m-'+id).style.display='flex';if(id==='lead'&&data)fillLead(data);if(id==='new-campaign')initCamp();if(id==='flow'&&data)fillFlow(data);}
@@ -778,6 +847,7 @@ const avc=n=>{const c=['#1a3a2a','#1a2f4a','#3a1a2a','#2a1a3a','#3a2a1a','#1a2a3
 
 /* ── INIT ── */
 async function loadAll(){
+  initUserHeader();
   const [st,fl,lds]=await Promise.all([get('/api/agente/stats'),get('/api/flows'),get('/api/leads')]);
   if(st){
     document.getElementById('s-t').textContent=st.leads?.total??'—';
@@ -1335,6 +1405,68 @@ async function copyTemplate(id) {
 }
 
 
+
+
+/* ── USER SESSION ─────── */
+function initUserHeader() {
+  const user = window._upzyUser;
+  if (!user) return;
+  const ini = (user.nombre||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  document.getElementById('user-nombre').textContent = user.nombre || user.email;
+  document.getElementById('user-rol').textContent    = user.rol || '';
+  document.getElementById('user-avatar').textContent = ini;
+  document.getElementById('menu-email').textContent  = user.email;
+}
+function toggleUserMenu() {
+  const m = document.getElementById('user-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#user-info')) document.getElementById('user-menu').style.display = 'none';
+});
+async function logout() {
+  try { await post('/api/auth/logout', {}); } catch {}
+  sessionStorage.clear();
+  window.location.href = '/login';
+}
+
+/* Agregar tab de usuarios en config */
+async function loadUsuarios() {
+  const d = await get('/api/auth/usuarios');
+  const el = document.getElementById('cfg-usuarios');
+  if (!el) return;
+  if (!d?.length) { el.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:12px">Sin usuarios</div>'; return; }
+  const roles = {admin:'🔑 Admin',agente:'👤 Agente',soporte:'🛠 Soporte',viewer:'👁 Viewer'};
+  el.innerHTML = `<table><thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Último login</th><th></th></tr></thead><tbody>
+  ${d.map(u=>`<tr>
+    <td style="font-weight:600">${u.nombre}</td>
+    <td style="font-size:12px;color:var(--t2)">${u.email}</td>
+    <td><span class="pill ${u.rol==='admin'?'ph':'pc'}" style="font-size:10px">${roles[u.rol]||u.rol}</span></td>
+    <td><span class="pill ${u.activo?'pg':'ph'}" style="font-size:10px">${u.activo?'Activo':'Inactivo'}</span></td>
+    <td style="font-size:11px;color:var(--t3)">${u.ultimo_login?new Date(u.ultimo_login).toLocaleDateString('es-CL'):'Nunca'}</td>
+    <td><button class="btn bts btg bti" onclick="openNuevoUsuario('${u.id}','${u.nombre}','${u.rol}')"><i class="ti ti-pencil"></i></button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+function openNuevoUsuario(id='',nombre='',rol='agente') {
+  document.getElementById('nu-id').value     = id;
+  document.getElementById('nu-nombre').value = nombre;
+  document.getElementById('nu-email').style.display = id ? 'none' : 'block';
+  document.getElementById('nu-pass').style.display  = id ? 'none' : 'block';
+  document.getElementById('nu-rol').value    = rol;
+  openModal('nuevo-usuario');
+}
+async function saveUsuario() {
+  const id = document.getElementById('nu-id').value;
+  if (id) {
+    const r = await patch_(`/api/auth/usuarios/${id}`, { nombre:document.getElementById('nu-nombre').value, rol:document.getElementById('nu-rol').value });
+    if (r&&!r.error) { toast('Usuario actualizado ✓'); closeModal(); loadUsuarios(); }
+    else toast('Error','err');
+  } else {
+    const r = await post('/api/auth/usuarios', { nombre:document.getElementById('nu-nombre').value, email:document.getElementById('nu-email-input').value, password:document.getElementById('nu-pass-input').value, rol:document.getElementById('nu-rol').value });
+    if (r&&!r.error) { toast('Usuario creado ✓'); closeModal(); loadUsuarios(); }
+    else toast(r?.error||'Error','err');
+  }
+}
 
 /* ── BRANDING ──── */
 function setBrandColor(hex) {

@@ -4,6 +4,7 @@ const express = require('express');
 const cors    = require('cors');
 const cron    = require('node-cron');
 const { logger, errorHandler, notFound } = require('./src/middleware/logger');
+const { requireAuth } = require('./src/middleware/auth');
 
 const app = express();
 
@@ -18,19 +19,24 @@ app.use((req, res, next) => {
 });
 
 // ── ROUTES ────────────────────────────────────────────────────
+// Auth (público — no requiere token)
+app.use('/api/auth',          require('./src/routes/api.auth'));
+
+// Webhooks (protegidos por HMAC, no por JWT)
 app.use('/webhook/whatsapp',  require('./src/routes/webhook.whatsapp'));
 app.use('/webhook/instagram', require('./src/routes/webhook.instagram'));
 app.use('/webhook/shopify',   require('./src/routes/webhook.shopify'));
-app.use('/api/leads',         require('./src/routes/api.leads'));
-app.use('/api/campanas',      require('./src/routes/api.campanas'));
-app.use('/api/automations',   require('./src/routes/api.automations'));
-app.use('/api/inbox',         require('./src/routes/api.inbox'));
-app.use('/api/flows',         require('./src/routes/api.flows'));
-app.use('/api/templates',     require('./src/routes/api.templates'));
-app.use('/api/import',        require('./src/routes/api.import'));
-app.use('/api/email',         require('./src/routes/api.email'));
+// API protegida (requiere JWT)
+app.use('/api/leads',         requireAuth, require('./src/routes/api.leads'));
+app.use('/api/campanas',      requireAuth, require('./src/routes/api.campanas'));
+app.use('/api/automations',   requireAuth, require('./src/routes/api.automations'));
+app.use('/api/inbox',         requireAuth, require('./src/routes/api.inbox'));
+app.use('/api/flows',         requireAuth, require('./src/routes/api.flows'));
+app.use('/api/templates',     requireAuth, require('./src/routes/api.templates'));
+app.use('/api/import',        requireAuth, require('./src/routes/api.import'));
+app.use('/api/email',         requireAuth, require('./src/routes/api.email'));
 app.get('/unsubscribe', (req,res)=>res.redirect('/api/email/unsubscribe?'+require('url').parse(req.url).query));
-app.use('/api/agente',        require('./src/routes/api.agente'));
+app.use('/api/agente',        requireAuth, require('./src/routes/api.agente'));
 
 // ── HEALTH CHECK ──────────────────────────────────────────────
 app.get('/health', (req, res) => {
@@ -50,6 +56,7 @@ app.get('/health', (req, res) => {
 
 app.get('/', (req, res) => res.redirect('/dashboard'));
 app.get('/dashboard', (req, res) => res.sendFile('dashboard.html', { root: 'public' }));
+app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
 
 // ── ERROR HANDLERS ────────────────────────────────────────────
 app.use(notFound);
