@@ -3,13 +3,92 @@ window.UPZY_MOCKS = {
     name: 'Klinge',
     product: 'UPZY CRM',
     tagline: 'Todo conectado. Todo medible. Mejora continua.',
-    environment: 'Sprint 3 · Ruleta / Spin to Win'
+    environment: 'Sprint 4 · Email Marketing'
   },
   metrics: [
     { label: 'Leads activos', value: '248', delta: '+18% vs semana anterior', tone: 'blue', icon: 'ti-users' },
-    { label: 'Clientes HOT', value: '37', delta: 'requieren cierre hoy', tone: 'red', icon: 'ti-flame' },
-    { label: 'Capturas web', value: '64', delta: 'modal + popup + form', tone: 'orange', icon: 'ti-forms' },
-    { label: 'Cupones ruleta', value: '29', delta: '45,3% de capturas', tone: 'green', icon: 'ti-ticket' }
+    { label: 'Emails capturados', value: '51', delta: '79,6% de capturas', tone: 'orange', icon: 'ti-mail' },
+    { label: 'Cupones ruleta', value: '29', delta: '45,3% de capturas', tone: 'green', icon: 'ti-ticket' },
+    { label: 'Revenue email', value: '$2,4M', delta: 'mock comercial', tone: 'purple', icon: 'ti-cash' }
+  ],
+  emailMetrics: [
+    { label: 'Campañas activas', value: '8', delta: '4 secuencias + 4 one-shot', tone: 'blue', icon: 'ti-speakerphone' },
+    { label: 'Tasa apertura', value: '42%', delta: '+8 pts vs base', tone: 'green', icon: 'ti-mail-opened' },
+    { label: 'CTR promedio', value: '13,8%', delta: 'CTA compra + WhatsApp', tone: 'orange', icon: 'ti-click' },
+    { label: 'Conversiones', value: '31', delta: '$2,4M atribuido', tone: 'purple', icon: 'ti-chart-arrows-vertical' }
+  ],
+  emailSegments: [
+    { id: 'seg-hot-email', name: 'Leads HOT con email', size: 37, source: 'CRM Comercial', trigger: 'lead.segment_changed', goal: 'Cerrar compra con urgencia y CTA directo' },
+    { id: 'seg-coupon-unused', name: 'Cupón generado no usado', size: 21, source: 'Ruleta', trigger: 'coupon.generated', goal: 'Recordar vencimiento y empujar compra' },
+    { id: 'seg-cart-email', name: 'Carrito abandonado con email', size: 19, source: 'Shopify', trigger: 'cart.abandoned_detected', goal: 'Recuperar compra con producto y checkout_url' },
+    { id: 'seg-post-purchase', name: 'Clientes post compra', size: 84, source: 'Shopify / CRM', trigger: 'purchase.completed', goal: 'Educar, pedir reseña y generar recompra' },
+    { id: 'seg-inactive', name: 'Clientes inactivos', size: 112, source: 'CRM', trigger: 'customer.inactive_detected', goal: 'Reactivar con beneficio y caso de éxito' },
+    { id: 'seg-roulette-leads', name: 'Leads capturados por ruleta', size: 29, source: 'Spin to Win', trigger: 'lead.coupon_assigned', goal: 'Usar cupón antes de vencer' }
+  ],
+  emailTemplates: [
+    {
+      id: 'tpl-coupon-created',
+      name: 'Cupón generado',
+      trigger: 'coupon.generated',
+      subject: '{{nombre}}, tu cupón Klinge vence pronto',
+      preheader: 'Usa {{coupon_code}} en tu panel LED antes de que expire.',
+      cta: 'Usar mi cupón',
+      variables: ['nombre', 'producto', 'coupon_code', 'expires_at', 'checkout_url'],
+      goal: 'Convertir lead de ruleta en compra'
+    },
+    {
+      id: 'tpl-cart-abandoned',
+      name: 'Carrito abandonado',
+      trigger: 'cart.abandoned_detected',
+      subject: 'Tu {{producto}} sigue disponible',
+      preheader: 'Finaliza tu compra o habla con nosotros por WhatsApp.',
+      cta: 'Retomar compra',
+      variables: ['nombre', 'producto', 'checkout_url', 'whatsapp_url'],
+      goal: 'Recuperar checkout incompleto'
+    },
+    {
+      id: 'tpl-quote-sent',
+      name: 'Cotización enviada',
+      trigger: 'quote.sent',
+      subject: '{{nombre}}, revisa tu cotización Klinge',
+      preheader: 'Puedes abonar 30% y pagar el saldo al retiro o despacho.',
+      cta: 'Ver cotización',
+      variables: ['nombre', 'producto', 'quote_url', 'payment_url', 'sales_room_url'],
+      goal: 'Acelerar decisión después de cotizar'
+    },
+    {
+      id: 'tpl-post-purchase',
+      name: 'Post compra',
+      trigger: 'purchase.completed',
+      subject: 'Gracias por comprar en Klinge',
+      preheader: 'Te dejamos recomendaciones para usar mejor tu panel LED.',
+      cta: 'Ver recomendaciones',
+      variables: ['nombre', 'producto', 'order_id', 'review_url'],
+      goal: 'Educar, pedir reseña y abrir recompra'
+    }
+  ],
+  emailSequences: [
+    { step: 'Día 0', title: 'Cupón generado', event: 'coupon.generated', channel: 'Email', objective: 'Entregar código y CTA de compra' },
+    { step: 'Día 1', title: 'Cupón no usado', event: 'coupon.not_used_24h', channel: 'Email + WhatsApp', objective: 'Aumentar urgencia antes del vencimiento' },
+    { step: 'Día 2', title: 'Última oportunidad', event: 'coupon.expiring', channel: 'Email', objective: 'Cerrar con escasez y prueba social' },
+    { step: 'Día 3', title: 'Derivar a Lumi', event: 'lead.no_conversion', channel: 'Lumi', objective: 'Resolver objeciones y recuperar interés' }
+  ],
+  emailEvents: [
+    { time: '13:02', event: 'email.campaign_created', detail: 'Campaña Cupón generado creada desde evento coupon.generated' },
+    { time: '13:04', event: 'email.campaign_scheduled', detail: 'Segmento: Cupón generado no usado · 21 contactos' },
+    { time: '13:05', event: 'email.campaign_sent', detail: 'Envío mock a 21 contactos' },
+    { time: '13:24', event: 'email.opened', detail: 'María González abrió el correo' },
+    { time: '13:26', event: 'email.clicked', detail: 'Click en CTA Usar mi cupón' },
+    { time: '13:41', event: 'email.converted', detail: 'Compra atribuida a email + cupón ruleta' }
+  ],
+  emailCampaignContract: [
+    { name: 'segmentId', required: true, reason: 'Toda campaña debe tener audiencia explícita' },
+    { name: 'triggerEvent', required: false, reason: 'Permite automatizar secuencias por comportamiento' },
+    { name: 'subject', required: true, reason: 'Principal driver de apertura' },
+    { name: 'preheader', required: true, reason: 'Refuerza el asunto antes de abrir' },
+    { name: 'templateId', required: true, reason: 'Define estructura visual y variables disponibles' },
+    { name: 'variables', required: true, reason: 'Permite personalizar producto, cupón, checkout y WhatsApp' },
+    { name: 'metrics', required: false, reason: 'Permite medir apertura, clic, conversión y revenue' }
   ],
   rouletteMetrics: [
     { label: 'Aperturas ruleta', value: '732', delta: 'últimos 7 días', tone: 'blue', icon: 'ti-rosette-discount' },
@@ -56,21 +135,9 @@ window.UPZY_MOCKS = {
     { label: 'WhatsApp obtenidos', value: '44', delta: '68,7% de capturas', tone: 'purple', icon: 'ti-brand-whatsapp' }
   ],
   captureTemplates: [
-    {
-      id: 'capture-modal-quote', type: 'Modal', name: 'Cotización rápida', status: 'Activo Sprint 2',
-      trigger: 'Exit intent + 45 segundos en producto', goal: 'Capturar email y producto de interés para enviar cotización',
-      event: 'lead.email_captured', fields: ['nombre', 'email', 'telefono', 'tipo_negocio', 'producto_interes'], cta: 'Enviar cotización'
-    },
-    {
-      id: 'capture-popup-visit', type: 'Popup lateral', name: 'Agenda sala de ventas', status: 'Activo Sprint 2',
-      trigger: 'Scroll 60% o visita a página de contacto', goal: 'Llevar cliente a WhatsApp o agenda de sala',
-      event: 'popup.cta_clicked', fields: ['nombre', 'telefono', 'tipo_negocio'], cta: 'Agendar visita'
-    },
-    {
-      id: 'capture-form-product', type: 'Formulario embebido', name: 'Asesoría por producto', status: 'Activo Sprint 2',
-      trigger: 'Landing o página de producto', goal: 'Crear lead desde intención explícita en producto',
-      event: 'form.submitted', fields: ['nombre', 'email', 'telefono', 'producto_interes', 'urgencia'], cta: 'Quiero asesoría'
-    }
+    { id: 'capture-modal-quote', type: 'Modal', name: 'Cotización rápida', status: 'Activo Sprint 2', trigger: 'Exit intent + 45 segundos en producto', goal: 'Capturar email y producto de interés para enviar cotización', event: 'lead.email_captured', fields: ['nombre', 'email', 'telefono', 'tipo_negocio', 'producto_interes'], cta: 'Enviar cotización' },
+    { id: 'capture-popup-visit', type: 'Popup lateral', name: 'Agenda sala de ventas', status: 'Activo Sprint 2', trigger: 'Scroll 60% o visita a página de contacto', goal: 'Llevar cliente a WhatsApp o agenda de sala', event: 'popup.cta_clicked', fields: ['nombre', 'telefono', 'tipo_negocio'], cta: 'Agendar visita' },
+    { id: 'capture-form-product', type: 'Formulario embebido', name: 'Asesoría por producto', status: 'Activo Sprint 2', trigger: 'Landing o página de producto', goal: 'Crear lead desde intención explícita en producto', event: 'form.submitted', fields: ['nombre', 'email', 'telefono', 'producto_interes', 'urgencia'], cta: 'Quiero asesoría' }
   ],
   captureEvents: [
     { time: '09:14', event: 'capture.modal_opened', detail: 'Modal cotización rápida · Página Panel LED 60x90' },
@@ -121,7 +188,7 @@ window.UPZY_MOCKS = {
     { id: 'crm', name: 'CRM Comercial', status: 'Activo Sprint 1', icon: 'ti-address-book', description: 'Contactos, termómetro comercial, historial, próxima mejor acción y tareas.' },
     { id: 'capture', name: 'Captación Web', status: 'Activo Sprint 2', icon: 'ti-forms', description: 'Formularios, popup, modal de captura y eventos lead.email_captured.' },
     { id: 'roulette', name: 'Ruleta / Spin to Win', status: 'Activo Sprint 3', icon: 'ti-rosette-discount', description: 'Plantilla de ruleta, premios, reglas, cupón y conversión desde sitio web.' },
-    { id: 'email', name: 'Email Marketing', status: 'Sprint 4', icon: 'ti-mail', description: 'Plantillas, campañas, segmentos, métricas, asunto, preheader y CTA.' },
+    { id: 'email', name: 'Email Marketing', status: 'Activo Sprint 4', icon: 'ti-mail', description: 'Campañas, segmentos, plantillas, métricas, asunto, preheader y CTA.' },
     { id: 'carts', name: 'Carritos Abandonados', status: 'Sprint 5', icon: 'ti-shopping-cart', description: 'Detección, recuperación, email, WhatsApp, producto y checkout_url.' },
     { id: 'lumi-web', name: 'Lumi Sitio Web', status: 'Sprint 6', icon: 'ti-message-chatbot', description: 'Widget web, conversación, captura de correo, recomendación y cotización.' },
     { id: 'lumi-instagram', name: 'Lumi Instagram', status: 'Sprint 7', icon: 'ti-brand-instagram', description: 'Atención Instagram, bandeja omnicanal, normalización de eventos y lead matching.' },
@@ -133,11 +200,11 @@ window.UPZY_MOCKS = {
     { sprint: 'Sprint 1', title: 'Dashboard + CRM base', outcome: 'Vista comercial con leads, estados, termómetro y próxima mejor acción.' },
     { sprint: 'Sprint 2', title: 'Captación Web', outcome: 'Modal, popup y formularios conectados a eventos.' },
     { sprint: 'Sprint 3', title: 'Ruleta', outcome: 'Spin to Win con reglas, premios y cupón.' },
-    { sprint: 'Sprint 4', title: 'Email Marketing', outcome: 'Campañas, plantillas, segmentos y métricas.' },
+    { sprint: 'Sprint 4', title: 'Email Marketing', outcome: 'Campañas, plantillas, segmentos, métricas y secuencias.' },
     { sprint: 'Sprint 5', title: 'Carritos Abandonados', outcome: 'Recuperación por email/WhatsApp con producto y checkout.' },
     { sprint: 'Sprint 6', title: 'Lumi Web', outcome: 'Atención conversacional en sitio web.' },
     { sprint: 'Sprint 7', title: 'Lumi Instagram', outcome: 'Omnicanalidad real con bandeja unificada.' },
     { sprint: 'Sprint 8', title: 'Automatizaciones', outcome: 'Flujos comerciales medibles.' },
-    { sprint: 'Sprint 9', title: 'Reportes', outcome: 'Funnel, atribución, campañas, canales, conversión, revenue y mejora continua.' }
+    { sprint: 'Sprint 9', title: 'Reportes', outcome: 'Funnel, atribución y mejora continua.' }
   ]
 };
