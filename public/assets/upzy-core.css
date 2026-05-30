@@ -136,6 +136,9 @@ button { cursor: pointer; }
   background: rgba(21,29,43,.78);
 }
 .upzy-badge.ok { color: var(--upzy-green); border-color: rgba(63,185,80,.35); background: rgba(63,185,80,.08); }
+.upzy-badge.hot { color: var(--upzy-red); border-color: rgba(248,81,73,.35); background: rgba(248,81,73,.08); }
+.upzy-badge.warm { color: var(--upzy-orange); border-color: rgba(227,179,65,.35); background: rgba(227,179,65,.08); }
+.upzy-badge.cold { color: var(--upzy-blue); border-color: rgba(88,166,255,.35); background: rgba(88,166,255,.08); }
 
 .upzy-content { padding: 28px; display: grid; gap: 22px; }
 .upzy-hero {
@@ -162,6 +165,7 @@ button { cursor: pointer; }
 .upzy-hero p { margin: 14px 0 0; color: var(--upzy-muted); max-width: 760px; line-height: 1.6; }
 
 .upzy-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.upzy-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .upzy-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .upzy-card {
   border: 1px solid var(--upzy-border);
@@ -206,8 +210,43 @@ button { cursor: pointer; }
 .upzy-panel.is-active { display: block; }
 .upzy-empty-state { color: var(--upzy-muted); line-height: 1.7; }
 
+.upzy-funnel { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.upzy-funnel-card { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.026); border: 1px solid var(--upzy-border); }
+.upzy-funnel-stage { font-weight: 850; margin-bottom: 8px; }
+.upzy-funnel-count { font-size: 28px; font-weight: 900; letter-spacing: -.04em; }
+.upzy-funnel-value { color: var(--upzy-muted); font-size: 12px; margin-top: 4px; }
+.upzy-progress { margin-top: 12px; height: 7px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+.upzy-progress span { display: block; height: 100%; width: var(--value); background: linear-gradient(90deg, var(--upzy-cyan), var(--upzy-green)); border-radius: inherit; }
+
+.upzy-table-wrap { overflow-x: auto; }
+.upzy-table { width: 100%; border-collapse: collapse; min-width: 980px; }
+.upzy-table th { text-align: left; color: var(--upzy-faint); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; padding: 12px 10px; border-bottom: 1px solid var(--upzy-border); }
+.upzy-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,.055); vertical-align: top; font-size: 13px; }
+.upzy-table tr:hover td { background: rgba(255,255,255,.025); }
+.upzy-lead-name { font-weight: 850; }
+.upzy-lead-meta { color: var(--upzy-muted); font-size: 12px; margin-top: 4px; }
+.upzy-score { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+.upzy-score-bar { flex: 1; height: 7px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+.upzy-score-bar span { display: block; height: 100%; width: var(--score); border-radius: inherit; }
+.upzy-score.hot span { background: var(--upzy-red); }
+.upzy-score.warm span { background: var(--upzy-orange); }
+.upzy-score.cold span { background: var(--upzy-blue); }
+.upzy-action-text { color: var(--upzy-text); line-height: 1.45; max-width: 290px; }
+.upzy-channel { color: var(--upzy-muted); }
+
+.upzy-list { display: grid; gap: 10px; }
+.upzy-list-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px; border: 1px solid var(--upzy-border); border-radius: 12px; background: rgba(255,255,255,.024); }
+.upzy-list-title { font-weight: 800; }
+.upzy-list-meta { color: var(--upzy-muted); font-size: 12px; margin-top: 4px; line-height: 1.45; }
+.upzy-priority { font-size: 11px; color: var(--upzy-orange); border: 1px solid rgba(227,179,65,.28); background: rgba(227,179,65,.08); padding: 5px 8px; border-radius: 999px; white-space: nowrap; }
+.upzy-time { color: var(--upzy-cyan); font-size: 12px; font-weight: 850; }
+
+.upzy-filterbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.upzy-filter-btn { border: 1px solid var(--upzy-border); background: rgba(255,255,255,.035); color: var(--upzy-muted); border-radius: 999px; padding: 8px 12px; font-size: 12px; font-weight: 750; }
+.upzy-filter-btn.is-active { color: var(--upzy-green); border-color: rgba(63,185,80,.35); background: rgba(63,185,80,.08); }
+
 @media (max-width: 1080px) {
   .upzy-shell { grid-template-columns: 1fr; }
   .upzy-sidebar { position: relative; height: auto; }
-  .upzy-grid-4, .upzy-grid-2 { grid-template-columns: 1fr; }
+  .upzy-grid-4, .upzy-grid-3, .upzy-grid-2, .upzy-funnel { grid-template-columns: 1fr; }
 }
