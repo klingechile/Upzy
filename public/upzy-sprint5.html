@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 5</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-capture.css">
+  <link rel="stylesheet" href="/assets/upzy-carts.css">
+</head>
+<body>
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 5</strong><br>
+        Carritos Abandonados: producto, checkout, email, WhatsApp, Lumi y recuperación medible.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Carritos Abandonados</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 5 · Recuperación ecommerce</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 5</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-shopping-cart"></i>Sprint 5 activo</span>
+          <h1>Recuperar carritos con producto, contexto y próxima mejor acción.</h1>
+          <p>UPZY prioriza carritos por monto, contacto disponible, temperatura comercial y canal. La recuperación puede activar email, WhatsApp o Lumi.</p>
+        </section>
+
+        <section class="upzy-grid-4" id="upzy-cart-metrics"></section>
+
+        <section class="upzy-carts-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Preview</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Recuperación de checkout</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-shopping-cart-dollar"></i></div>
+            </div>
+            <div class="upzy-cart-preview">
+              <div class="upzy-checkout-card">
+                <div class="upzy-checkout-head">
+                  <span class="upzy-badge hot">Carrito HOT</span>
+                  <div class="upzy-checkout-title">Tu Panel LED 80x120 sigue disponible</div>
+                </div>
+                <div class="upzy-checkout-body">
+                  <div class="upzy-product-box">
+                    <div class="upzy-product-title">Panel LED 80x120</div>
+                    <div class="upzy-product-meta">Muro / Vitrina · Cantidad 1 · Stock disponible</div>
+                  </div>
+                  <div class="upzy-checkout-total">
+                    <span>Total estimado</span>
+                    <strong>$189.990</strong>
+                  </div>
+                  <div class="upzy-cart-actions">
+                    <div class="upzy-cart-button">Retomar compra</div>
+                    <div class="upzy-cart-button secondary">Hablar por WhatsApp</div>
+                  </div>
+                  <p class="upzy-empty-state">Incluye producto, checkout, alternativa WhatsApp y contexto para que Lumi pueda resolver objeciones.</p>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Carritos priorizados</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Oportunidades de recuperación</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-list-details"></i></div>
+          </div>
+          <div class="upzy-cart-list" id="upzy-cart-list"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Secuencia sugerida</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Recuperación omnicanal</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-route"></i></div>
+          </div>
+          <div class="upzy-cart-sequence" id="upzy-cart-sequence"></div>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Contrato de carrito</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Datos mínimos</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-database"></i></div>
+            </div>
+            <div class="upzy-cart-contract" id="upzy-cart-contract"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Eventos comerciales</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Timeline de carrito</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-timeline-event"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-cart-events"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Principio del sprint</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Recuperar intención, no perseguir clientes</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-target-arrow"></i></div>
+          </div>
+          <p class="upzy-empty-state">Cada carrito debe conservar producto, monto, checkout, canal, contacto disponible y siguiente acción. Email, WhatsApp y Lumi se activan según datos y prioridad.</p>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-carts-data.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-carts.js"></script>
+</body>
+</html>
