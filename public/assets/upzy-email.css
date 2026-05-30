@@ -1,0 +1,29 @@
+.upzy-email-grid { display: grid; grid-template-columns: 1fr .9fr; gap: 16px; align-items: stretch; }
+.upzy-email-segment-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.upzy-email-template-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.upzy-email-card { min-height: 190px; display: flex; flex-direction: column; gap: 12px; }
+.upzy-email-card-name { font-size: 20px; font-weight: 950; letter-spacing: -.04em; }
+.upzy-email-card-meta { color: var(--upzy-muted); font-size: 13px; line-height: 1.5; }
+.upzy-email-size { margin-top: auto; color: var(--upzy-cyan); font-weight: 900; }
+.upzy-email-preview-shell { border: 1px solid var(--upzy-border); border-radius: 24px; background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.016)); padding: 24px; min-height: 600px; display: grid; place-items: center; }
+.upzy-email-preview { width: min(100%, 520px); border-radius: 22px; overflow: hidden; background: #f6f8fb; color: #111827; box-shadow: var(--upzy-shadow); border: 1px solid rgba(255,255,255,.08); }
+.upzy-email-preview-head { background: #0b1019; color: white; padding: 22px; }
+.upzy-email-logo { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, var(--upzy-green), var(--upzy-cyan)); color: #061017; font-weight: 950; margin-bottom: 18px; }
+.upzy-email-subject { font-size: 28px; line-height: 1.03; font-weight: 950; letter-spacing: -.05em; }
+.upzy-email-preheader { margin-top: 10px; color: #b8c3d4; line-height: 1.45; }
+.upzy-email-preview-body { padding: 24px; }
+.upzy-email-product { border: 1px solid #d9e0ea; border-radius: 18px; background: white; padding: 16px; margin: 18px 0; }
+.upzy-email-product-title { font-weight: 900; margin-bottom: 8px; }
+.upzy-email-product-line { height: 9px; border-radius: 999px; background: #e8edf5; margin-top: 8px; }
+.upzy-email-product-line.short { width: 58%; }
+.upzy-email-cta { display: inline-flex; align-items: center; justify-content: center; border-radius: 14px; padding: 13px 18px; background: #18b66a; color: #061017; font-weight: 950; text-decoration: none; margin-top: 8px; }
+.upzy-email-secondary { color: #516070; font-size: 13px; line-height: 1.55; margin-top: 18px; }
+.upzy-sequence { display: grid; gap: 10px; }
+.upzy-sequence-step { display: grid; grid-template-columns: 90px minmax(0, 1fr) 120px; gap: 12px; align-items: start; padding: 14px; border: 1px solid var(--upzy-border); border-radius: 14px; background: rgba(255,255,255,.025); }
+.upzy-sequence-day { color: var(--upzy-cyan); font-weight: 950; }
+.upzy-sequence-title { font-weight: 900; }
+.upzy-sequence-meta { color: var(--upzy-muted); font-size: 12px; line-height: 1.45; margin-top: 4px; }
+.upzy-email-contract { display: grid; gap: 10px; }
+.upzy-variable-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.upzy-email-trigger { color: var(--upzy-cyan); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
+@media (max-width: 1180px) { .upzy-email-grid, .upzy-email-segment-grid, .upzy-email-template-grid, .upzy-sequence-step { grid-template-columns: 1fr; } .upzy-email-preview-shell { min-height: 680px; } }
