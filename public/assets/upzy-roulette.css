@@ -1,0 +1,36 @@
+.upzy-roulette-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 16px; align-items: stretch; }
+.upzy-roulette-stage { border: 1px solid var(--upzy-border); border-radius: 24px; min-height: 600px; padding: 28px; background: radial-gradient(circle at center, rgba(63,185,80,.12), transparent 19rem), linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.015)); display: grid; place-items: center; overflow: hidden; position: relative; }
+.upzy-wheel-wrap { position: relative; width: min(420px, 88vw); aspect-ratio: 1; display: grid; place-items: center; }
+.upzy-wheel-pointer { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 34px solid var(--upzy-green); z-index: 5; filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
+.upzy-wheel { width: 100%; height: 100%; border-radius: 50%; border: 10px solid rgba(255,255,255,.08); box-shadow: 0 30px 90px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.06); background: conic-gradient(from -20deg, rgba(63,185,80,.95) 0 60deg, rgba(57,208,216,.95) 60deg 120deg, rgba(227,179,65,.95) 120deg 180deg, rgba(188,140,255,.95) 180deg 240deg, rgba(88,166,255,.95) 240deg 300deg, rgba(248,81,73,.95) 300deg 360deg); position: relative; animation: upzyWheelIdle 14s linear infinite; }
+.upzy-wheel::after { content: ''; position: absolute; inset: 70px; border-radius: 50%; background: #0d1420; border: 1px solid rgba(255,255,255,.12); box-shadow: inset 0 0 40px rgba(0,0,0,.55); }
+.upzy-wheel-label { position: absolute; z-index: 2; width: 112px; text-align: center; font-size: 12px; font-weight: 900; color: #061017; line-height: 1.1; text-shadow: 0 1px 0 rgba(255,255,255,.22); }
+.upzy-wheel-label.l1 { top: 52px; left: 50%; transform: translateX(-50%); }
+.upzy-wheel-label.l2 { top: 126px; right: 24px; transform: rotate(58deg); }
+.upzy-wheel-label.l3 { bottom: 114px; right: 28px; transform: rotate(118deg); }
+.upzy-wheel-label.l4 { bottom: 52px; left: 50%; transform: translateX(-50%) rotate(180deg); }
+.upzy-wheel-label.l5 { bottom: 116px; left: 26px; transform: rotate(238deg); }
+.upzy-wheel-label.l6 { top: 126px; left: 20px; transform: rotate(298deg); }
+.upzy-wheel-center { position: absolute; z-index: 4; width: 126px; height: 126px; border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 14px; background: linear-gradient(135deg, var(--upzy-green), var(--upzy-cyan)); color: #061017; font-size: 18px; font-weight: 950; letter-spacing: -.04em; box-shadow: 0 16px 45px rgba(0,0,0,.45); }
+@keyframes upzyWheelIdle { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.upzy-roulette-form { margin-top: 22px; border: 1px solid var(--upzy-border); border-radius: 18px; background: rgba(8,11,18,.72); padding: 18px; width: min(100%, 460px); }
+.upzy-roulette-form h3 { margin: 0 0 8px; font-size: 22px; letter-spacing: -.04em; }
+.upzy-roulette-form p { margin: 0 0 14px; color: var(--upzy-muted); line-height: 1.45; font-size: 13px; }
+.upzy-prize-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.upzy-prize-card { min-height: 160px; display: flex; flex-direction: column; gap: 10px; }
+.upzy-prize-label { font-size: 20px; font-weight: 950; letter-spacing: -.04em; }
+.upzy-prize-meta { color: var(--upzy-muted); font-size: 13px; line-height: 1.45; }
+.upzy-prize-prob { margin-top: auto; color: var(--upzy-cyan); font-weight: 900; }
+.upzy-rule-grid { display: grid; gap: 10px; }
+.upzy-contract-grid { display: grid; gap: 10px; }
+.upzy-coupon-preview { border: 1px solid rgba(63,185,80,.35); border-radius: 20px; background: linear-gradient(135deg, rgba(63,185,80,.12), rgba(57,208,216,.06)); padding: 22px; position: relative; overflow: hidden; }
+.upzy-coupon-preview::after { content: ''; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; border: 20px solid rgba(255,255,255,.045); }
+.upzy-coupon-kicker { color: var(--upzy-green); font-size: 12px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.upzy-coupon-code { margin: 10px 0; font-size: clamp(30px, 4vw, 54px); line-height: .95; font-weight: 950; letter-spacing: -.06em; }
+.upzy-coupon-desc { color: var(--upzy-muted); line-height: 1.55; max-width: 560px; }
+.upzy-roulette-flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.upzy-flow-step { border: 1px solid var(--upzy-border); border-radius: 14px; padding: 12px; background: rgba(255,255,255,.025); min-height: 118px; }
+.upzy-flow-num { color: var(--upzy-cyan); font-weight: 950; margin-bottom: 8px; }
+.upzy-flow-title { font-weight: 850; font-size: 13px; line-height: 1.25; }
+.upzy-flow-detail { color: var(--upzy-muted); font-size: 12px; line-height: 1.4; margin-top: 6px; }
+@media (max-width: 1180px) { .upzy-roulette-grid, .upzy-prize-grid, .upzy-roulette-flow { grid-template-columns: 1fr; } .upzy-roulette-stage { min-height: 760px; } }
