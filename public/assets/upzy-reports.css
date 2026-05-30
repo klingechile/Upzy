@@ -1,0 +1,27 @@
+.upzy-report-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 16px; align-items: stretch; }
+.upzy-funnel-report { display: grid; gap: 12px; }
+.upzy-funnel-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 110px 120px; gap: 14px; align-items: center; padding: 14px; border: 1px solid var(--upzy-border); border-radius: 14px; background: rgba(255,255,255,.024); }
+.upzy-funnel-name { font-weight: 950; }
+.upzy-funnel-meta { color: var(--upzy-muted); font-size: 12px; margin-top: 4px; }
+.upzy-bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+.upzy-bar span { display: block; height: 100%; width: var(--value); border-radius: inherit; background: linear-gradient(90deg, var(--upzy-cyan), var(--upzy-green)); }
+.upzy-attribution-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.upzy-channel-card { min-height: 180px; display: flex; flex-direction: column; gap: 10px; }
+.upzy-channel-title { font-size: 20px; font-weight: 950; letter-spacing: -.04em; text-transform: capitalize; }
+.upzy-channel-revenue { font-size: 30px; font-weight: 950; letter-spacing: -.05em; margin-top: auto; }
+.upzy-channel-meta { color: var(--upzy-muted); font-size: 12px; line-height: 1.45; }
+.upzy-report-table-wrap { overflow-x: auto; }
+.upzy-report-table { width: 100%; border-collapse: collapse; min-width: 840px; }
+.upzy-report-table th { text-align: left; color: var(--upzy-faint); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; padding: 12px 10px; border-bottom: 1px solid var(--upzy-border); }
+.upzy-report-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,.055); vertical-align: top; font-size: 13px; }
+.upzy-health { display: inline-flex; border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 900; }
+.upzy-health.ok { color: var(--upzy-green); border: 1px solid rgba(63,185,80,.35); background: rgba(63,185,80,.08); }
+.upzy-health.warn { color: var(--upzy-orange); border: 1px solid rgba(227,179,65,.35); background: rgba(227,179,65,.08); }
+.upzy-report-summary { border: 1px solid var(--upzy-border); border-radius: 24px; padding: 22px; background: linear-gradient(135deg, rgba(63,185,80,.12), rgba(57,208,216,.05)); min-height: 420px; display: grid; align-content: center; gap: 18px; }
+.upzy-report-big { font-size: clamp(44px, 6vw, 82px); font-weight: 950; letter-spacing: -.07em; line-height: .9; }
+.upzy-report-label { color: var(--upzy-muted); line-height: 1.5; max-width: 580px; }
+.upzy-insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.upzy-insight { min-height: 150px; display: flex; flex-direction: column; gap: 10px; }
+.upzy-insight-title { font-weight: 950; font-size: 18px; letter-spacing: -.03em; }
+.upzy-contract-grid { display: grid; gap: 10px; }
+@media (max-width: 1180px) { .upzy-report-grid, .upzy-funnel-row, .upzy-attribution-grid, .upzy-insight-grid { grid-template-columns: 1fr; } }
