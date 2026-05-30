@@ -3,13 +3,51 @@ window.UPZY_MOCKS = {
     name: 'Klinge',
     product: 'UPZY CRM',
     tagline: 'Todo conectado. Todo medible. Mejora continua.',
-    environment: 'Sprint 2 · Captación Web'
+    environment: 'Sprint 3 · Ruleta / Spin to Win'
   },
   metrics: [
     { label: 'Leads activos', value: '248', delta: '+18% vs semana anterior', tone: 'blue', icon: 'ti-users' },
     { label: 'Clientes HOT', value: '37', delta: 'requieren cierre hoy', tone: 'red', icon: 'ti-flame' },
-    { label: 'Monto estimado', value: '$18,6M', delta: 'pipeline abierto', tone: 'green', icon: 'ti-cash' },
-    { label: 'Capturas web', value: '64', delta: 'modal + popup + form', tone: 'orange', icon: 'ti-forms' }
+    { label: 'Capturas web', value: '64', delta: 'modal + popup + form', tone: 'orange', icon: 'ti-forms' },
+    { label: 'Cupones ruleta', value: '29', delta: '45,3% de capturas', tone: 'green', icon: 'ti-ticket' }
+  ],
+  rouletteMetrics: [
+    { label: 'Aperturas ruleta', value: '732', delta: 'últimos 7 días', tone: 'blue', icon: 'ti-rosette-discount' },
+    { label: 'Giros completados', value: '186', delta: '25,4% interacción', tone: 'green', icon: 'ti-refresh' },
+    { label: 'Cupones generados', value: '29', delta: '15,6% sobre giros', tone: 'orange', icon: 'ti-ticket' },
+    { label: 'Ventas atribuidas', value: '$1,2M', delta: 'mock comercial', tone: 'purple', icon: 'ti-cash' }
+  ],
+  roulettePrizes: [
+    { label: '5% descuento', probability: '35%', type: 'percentage', value: 5, event: 'coupon.generated', color: 'green' },
+    { label: '10% descuento', probability: '15%', type: 'percentage', value: 10, event: 'coupon.generated', color: 'cyan' },
+    { label: 'Impresión gratis', probability: '20%', type: 'benefit', value: null, event: 'coupon.generated', color: 'orange' },
+    { label: 'Despacho preferente', probability: '10%', type: 'benefit', value: null, event: 'coupon.generated', color: 'purple' },
+    { label: 'Asesoría prioritaria', probability: '15%', type: 'benefit', value: null, event: 'lead.coupon_assigned', color: 'blue' },
+    { label: 'Agenda sala ventas', probability: '5%', type: 'benefit', value: null, event: 'lead.coupon_assigned', color: 'red' }
+  ],
+  rouletteRules: [
+    { title: 'Email obligatorio', detail: 'La ruleta debe capturar email antes de revelar el premio.' },
+    { title: 'Teléfono recomendado', detail: 'Permite recuperación por WhatsApp si el cupón no se usa.' },
+    { title: 'Vigencia corta', detail: 'Cupón válido por 24 a 72 horas para aumentar urgencia comercial.' },
+    { title: 'Control por email', detail: 'Un mismo email no debe girar infinitamente.' },
+    { title: 'Producto de interés', detail: 'Debe viajar desde página de producto o campaña cuando exista contexto.' },
+    { title: 'Evento medible', detail: 'Cada giro exitoso debe emitir coupon.generated y lead.coupon_assigned.' }
+  ],
+  rouletteEvents: [
+    { time: '12:03', event: 'roulette.opened', detail: 'Trigger exit intent · Página Panel LED 80x120' },
+    { time: '12:04', event: 'roulette.form_started', detail: 'Usuario ingresó email y teléfono' },
+    { time: '12:04', event: 'roulette.spin_started', detail: 'Giro iniciado desde modal Spin to Win' },
+    { time: '12:04', event: 'roulette.spin_completed', detail: 'Premio obtenido: 10% descuento' },
+    { time: '12:04', event: 'coupon.generated', detail: 'Cupón KLG-RLT-10 generado con expiración 48h' },
+    { time: '12:05', event: 'lead.coupon_assigned', detail: 'Cupón asociado al lead y listo para seguimiento' }
+  ],
+  rouletteCouponContract: [
+    { name: 'code', required: true, reason: 'Identificador único del beneficio generado' },
+    { name: 'prize', required: true, reason: 'Premio visible para el cliente y CRM' },
+    { name: 'discountType', required: true, reason: 'Define si es porcentaje, monto fijo o beneficio comercial' },
+    { name: 'expiresAt', required: true, reason: 'Genera urgencia y permite automatizar recordatorios' },
+    { name: 'leadId', required: true, reason: 'Asocia el cupón a un contacto del CRM' },
+    { name: 'campaignId', required: false, reason: 'Permite atribución por campaña o landing' }
   ],
   captureMetrics: [
     { label: 'Impresiones modal', value: '1.842', delta: 'últimos 7 días', tone: 'blue', icon: 'ti-eye' },
@@ -19,37 +57,19 @@ window.UPZY_MOCKS = {
   ],
   captureTemplates: [
     {
-      id: 'capture-modal-quote',
-      type: 'Modal',
-      name: 'Cotización rápida',
-      status: 'Diseño Sprint 2',
-      trigger: 'Exit intent + 45 segundos en producto',
-      goal: 'Capturar email y producto de interés para enviar cotización',
-      event: 'lead.email_captured',
-      fields: ['nombre', 'email', 'telefono', 'tipo_negocio', 'producto_interes'],
-      cta: 'Enviar cotización'
+      id: 'capture-modal-quote', type: 'Modal', name: 'Cotización rápida', status: 'Activo Sprint 2',
+      trigger: 'Exit intent + 45 segundos en producto', goal: 'Capturar email y producto de interés para enviar cotización',
+      event: 'lead.email_captured', fields: ['nombre', 'email', 'telefono', 'tipo_negocio', 'producto_interes'], cta: 'Enviar cotización'
     },
     {
-      id: 'capture-popup-visit',
-      type: 'Popup lateral',
-      name: 'Agenda sala de ventas',
-      status: 'Diseño Sprint 2',
-      trigger: 'Scroll 60% o visita a página de contacto',
-      goal: 'Llevar cliente a WhatsApp o agenda de sala',
-      event: 'popup.cta_clicked',
-      fields: ['nombre', 'telefono', 'tipo_negocio'],
-      cta: 'Agendar visita'
+      id: 'capture-popup-visit', type: 'Popup lateral', name: 'Agenda sala de ventas', status: 'Activo Sprint 2',
+      trigger: 'Scroll 60% o visita a página de contacto', goal: 'Llevar cliente a WhatsApp o agenda de sala',
+      event: 'popup.cta_clicked', fields: ['nombre', 'telefono', 'tipo_negocio'], cta: 'Agendar visita'
     },
     {
-      id: 'capture-form-product',
-      type: 'Formulario embebido',
-      name: 'Asesoría por producto',
-      status: 'Diseño Sprint 2',
-      trigger: 'Landing o página de producto',
-      goal: 'Crear lead desde intención explícita en producto',
-      event: 'form.submitted',
-      fields: ['nombre', 'email', 'telefono', 'producto_interes', 'urgencia'],
-      cta: 'Quiero asesoría'
+      id: 'capture-form-product', type: 'Formulario embebido', name: 'Asesoría por producto', status: 'Activo Sprint 2',
+      trigger: 'Landing o página de producto', goal: 'Crear lead desde intención explícita en producto',
+      event: 'form.submitted', fields: ['nombre', 'email', 'telefono', 'producto_interes', 'urgencia'], cta: 'Quiero asesoría'
     }
   ],
   captureEvents: [
@@ -89,162 +109,24 @@ window.UPZY_MOCKS = {
     ]
   },
   leads: [
-    {
-      id: 'LD-1001',
-      nombre: 'María González',
-      empresa: 'Café Barrio Italia',
-      canal: 'Sitio web',
-      etapa: 'Propuesta',
-      segmento: 'HOT',
-      score: 92,
-      producto_interes: 'Panel LED 60x90 muro',
-      monto_estimado: '$129.990',
-      ultima_interaccion: 'Hace 18 min',
-      proxima_accion: 'Enviar link de pago y reforzar retiro en tienda',
-      owner: 'Carlos'
-    },
-    {
-      id: 'LD-1002',
-      nombre: 'Rodrigo Pérez',
-      empresa: 'Food Truck Norte',
-      canal: 'Instagram',
-      etapa: 'Calificado',
-      segmento: 'WARM',
-      score: 68,
-      producto_interes: 'Panel con soporte 90x60',
-      monto_estimado: '$149.990',
-      ultima_interaccion: 'Hace 46 min',
-      proxima_accion: 'Pedir medida exacta y enviar alternativa con soporte',
-      owner: 'Lumi'
-    },
-    {
-      id: 'LD-1003',
-      nombre: 'Camila Torres',
-      empresa: 'Clínica Dental Smile',
-      canal: 'WhatsApp',
-      etapa: 'Contactado',
-      segmento: 'WARM',
-      score: 61,
-      producto_interes: 'Panel LED colgante',
-      monto_estimado: '$119.990',
-      ultima_interaccion: 'Hace 1 h',
-      proxima_accion: 'Enviar fotos reales y explicar bajo consumo',
-      owner: 'Ejecutivo'
-    },
-    {
-      id: 'LD-1004',
-      nombre: 'José Arriagada',
-      empresa: 'Minimarket El Sol',
-      canal: 'Carrito abandonado',
-      etapa: 'Cierre',
-      segmento: 'HOT',
-      score: 88,
-      producto_interes: 'Panel LED 80x120',
-      monto_estimado: '$189.990',
-      ultima_interaccion: 'Hace 2 h',
-      proxima_accion: 'Ofrecer 30% de abono y saldo al retiro/despacho',
-      owner: 'Carlos'
-    },
-    {
-      id: 'LD-1005',
-      nombre: 'Daniela Muñoz',
-      empresa: 'Boutique Providencia',
-      canal: 'Meta Ads',
-      etapa: 'Nuevo',
-      segmento: 'COLD',
-      score: 34,
-      producto_interes: 'Panel vitrina 50x70',
-      monto_estimado: '$99.990',
-      ultima_interaccion: 'Hace 4 h',
-      proxima_accion: 'Calificar tipo de negocio y urgencia',
-      owner: 'Lumi'
-    },
-    {
-      id: 'LD-1006',
-      nombre: 'Felipe Rojas',
-      empresa: 'Barbería Central',
-      canal: 'WhatsApp',
-      etapa: 'Propuesta',
-      segmento: 'HOT',
-      score: 81,
-      producto_interes: 'Pizarra LED',
-      monto_estimado: '$89.990',
-      ultima_interaccion: 'Ayer',
-      proxima_accion: 'Reenviar cotización y caso de éxito similar',
-      owner: 'Ejecutivo'
-    }
+    { id: 'LD-1001', nombre: 'María González', empresa: 'Café Barrio Italia', canal: 'Sitio web', etapa: 'Propuesta', segmento: 'HOT', score: 92, producto_interes: 'Panel LED 60x90 muro', monto_estimado: '$129.990', ultima_interaccion: 'Hace 18 min', proxima_accion: 'Enviar link de pago y reforzar retiro en tienda', owner: 'Carlos' },
+    { id: 'LD-1002', nombre: 'Rodrigo Pérez', empresa: 'Food Truck Norte', canal: 'Instagram', etapa: 'Calificado', segmento: 'WARM', score: 68, producto_interes: 'Panel con soporte 90x60', monto_estimado: '$149.990', ultima_interaccion: 'Hace 46 min', proxima_accion: 'Pedir medida exacta y enviar alternativa con soporte', owner: 'Lumi' },
+    { id: 'LD-1003', nombre: 'Camila Torres', empresa: 'Clínica Dental Smile', canal: 'WhatsApp', etapa: 'Contactado', segmento: 'WARM', score: 61, producto_interes: 'Panel LED colgante', monto_estimado: '$119.990', ultima_interaccion: 'Hace 1 h', proxima_accion: 'Enviar fotos reales y explicar bajo consumo', owner: 'Ejecutivo' },
+    { id: 'LD-1004', nombre: 'José Arriagada', empresa: 'Minimarket El Sol', canal: 'Carrito abandonado', etapa: 'Cierre', segmento: 'HOT', score: 88, producto_interes: 'Panel LED 80x120', monto_estimado: '$189.990', ultima_interaccion: 'Hace 2 h', proxima_accion: 'Ofrecer 30% de abono y saldo al retiro/despacho', owner: 'Carlos' },
+    { id: 'LD-1005', nombre: 'Daniela Muñoz', empresa: 'Boutique Providencia', canal: 'Meta Ads', etapa: 'Nuevo', segmento: 'COLD', score: 34, producto_interes: 'Panel vitrina 50x70', monto_estimado: '$99.990', ultima_interaccion: 'Hace 4 h', proxima_accion: 'Calificar tipo de negocio y urgencia', owner: 'Lumi' },
+    { id: 'LD-1006', nombre: 'Felipe Rojas', empresa: 'Barbería Central', canal: 'WhatsApp', etapa: 'Propuesta', segmento: 'HOT', score: 81, producto_interes: 'Pizarra LED', monto_estimado: '$89.990', ultima_interaccion: 'Ayer', proxima_accion: 'Reenviar cotización y caso de éxito similar', owner: 'Ejecutivo' }
   ],
   modules: [
-    {
-      id: 'core',
-      name: 'Core Platform',
-      status: 'Activo Sprint 0',
-      icon: 'ti-layout-dashboard',
-      description: 'Layout, navegación, tokens visuales, estructura base y mocks.'
-    },
-    {
-      id: 'crm',
-      name: 'CRM Comercial',
-      status: 'Activo Sprint 1',
-      icon: 'ti-address-book',
-      description: 'Contactos, termómetro comercial, historial, próxima mejor acción y tareas.'
-    },
-    {
-      id: 'capture',
-      name: 'Captación Web',
-      status: 'Activo Sprint 2',
-      icon: 'ti-forms',
-      description: 'Formularios, popup, modal de captura y eventos lead.email_captured.'
-    },
-    {
-      id: 'roulette',
-      name: 'Ruleta / Spin to Win',
-      status: 'Sprint 3',
-      icon: 'ti-rosette-discount',
-      description: 'Plantilla de ruleta, premios, reglas, cupón y conversión desde sitio web.'
-    },
-    {
-      id: 'email',
-      name: 'Email Marketing',
-      status: 'Sprint 4',
-      icon: 'ti-mail',
-      description: 'Plantillas, campañas, segmentos, métricas, asunto, preheader y CTA.'
-    },
-    {
-      id: 'carts',
-      name: 'Carritos Abandonados',
-      status: 'Sprint 5',
-      icon: 'ti-shopping-cart',
-      description: 'Detección, recuperación, email, WhatsApp, producto y checkout_url.'
-    },
-    {
-      id: 'lumi-web',
-      name: 'Lumi Sitio Web',
-      status: 'Sprint 6',
-      icon: 'ti-message-chatbot',
-      description: 'Widget web, conversación, captura de correo, recomendación y cotización.'
-    },
-    {
-      id: 'lumi-instagram',
-      name: 'Lumi Instagram',
-      status: 'Sprint 7',
-      icon: 'ti-brand-instagram',
-      description: 'Atención Instagram, bandeja omnicanal, normalización de eventos y lead matching.'
-    },
-    {
-      id: 'automation',
-      name: 'Automatizaciones',
-      status: 'Sprint 8',
-      icon: 'ti-route',
-      description: 'Disparadores, condiciones, acciones y flujos comerciales entre canales.'
-    },
-    {
-      id: 'reports',
-      name: 'Reportes',
-      status: 'Sprint 9',
-      icon: 'ti-chart-funnel',
-      description: 'Funnel, atribución, campañas, canales, conversión, revenue y mejora continua.'
-    }
+    { id: 'core', name: 'Core Platform', status: 'Activo Sprint 0', icon: 'ti-layout-dashboard', description: 'Layout, navegación, tokens visuales, estructura base y mocks.' },
+    { id: 'crm', name: 'CRM Comercial', status: 'Activo Sprint 1', icon: 'ti-address-book', description: 'Contactos, termómetro comercial, historial, próxima mejor acción y tareas.' },
+    { id: 'capture', name: 'Captación Web', status: 'Activo Sprint 2', icon: 'ti-forms', description: 'Formularios, popup, modal de captura y eventos lead.email_captured.' },
+    { id: 'roulette', name: 'Ruleta / Spin to Win', status: 'Activo Sprint 3', icon: 'ti-rosette-discount', description: 'Plantilla de ruleta, premios, reglas, cupón y conversión desde sitio web.' },
+    { id: 'email', name: 'Email Marketing', status: 'Sprint 4', icon: 'ti-mail', description: 'Plantillas, campañas, segmentos, métricas, asunto, preheader y CTA.' },
+    { id: 'carts', name: 'Carritos Abandonados', status: 'Sprint 5', icon: 'ti-shopping-cart', description: 'Detección, recuperación, email, WhatsApp, producto y checkout_url.' },
+    { id: 'lumi-web', name: 'Lumi Sitio Web', status: 'Sprint 6', icon: 'ti-message-chatbot', description: 'Widget web, conversación, captura de correo, recomendación y cotización.' },
+    { id: 'lumi-instagram', name: 'Lumi Instagram', status: 'Sprint 7', icon: 'ti-brand-instagram', description: 'Atención Instagram, bandeja omnicanal, normalización de eventos y lead matching.' },
+    { id: 'automation', name: 'Automatizaciones', status: 'Sprint 8', icon: 'ti-route', description: 'Disparadores, condiciones, acciones y flujos comerciales entre canales.' },
+    { id: 'reports', name: 'Reportes', status: 'Sprint 9', icon: 'ti-chart-funnel', description: 'Funnel, atribución, campañas, canales, conversión, revenue y mejora continua.' }
   ],
   roadmap: [
     { sprint: 'Sprint 0', title: 'Core Platform', outcome: 'Base frontend revisable sin romper dashboard actual.' },
