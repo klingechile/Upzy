@@ -3,13 +3,120 @@ window.UPZY_MOCKS = {
     name: 'Klinge',
     product: 'UPZY CRM',
     tagline: 'Todo conectado. Todo medible. Mejora continua.',
-    environment: 'Sprint 0 · Frontend Core'
+    environment: 'Sprint 1 · Dashboard Comercial + CRM Base'
   },
   metrics: [
-    { label: 'Leads activos', value: '248', delta: '+18%', tone: 'blue', icon: 'ti-users' },
-    { label: 'Clientes HOT', value: '37', delta: 'requieren cierre', tone: 'red', icon: 'ti-flame' },
-    { label: 'Carritos abiertos', value: '19', delta: '$2.840.000 estimado', tone: 'orange', icon: 'ti-shopping-cart' },
-    { label: 'Automatizaciones', value: '12', delta: '7 activas', tone: 'green', icon: 'ti-bolt' }
+    { label: 'Leads activos', value: '248', delta: '+18% vs semana anterior', tone: 'blue', icon: 'ti-users' },
+    { label: 'Clientes HOT', value: '37', delta: 'requieren cierre hoy', tone: 'red', icon: 'ti-flame' },
+    { label: 'Monto estimado', value: '$18,6M', delta: 'pipeline abierto', tone: 'green', icon: 'ti-cash' },
+    { label: 'Acciones vencidas', value: '11', delta: 'prioridad comercial', tone: 'orange', icon: 'ti-alert-triangle' }
+  ],
+  crm: {
+    funnel: [
+      { stage: 'Nuevo', count: 82, value: '$5,4M', conversion: 100, tone: 'blue' },
+      { stage: 'Contactado', count: 61, value: '$4,8M', conversion: 74, tone: 'cyan' },
+      { stage: 'Calificado', count: 43, value: '$3,7M', conversion: 52, tone: 'orange' },
+      { stage: 'Propuesta', count: 28, value: '$3,1M', conversion: 34, tone: 'purple' },
+      { stage: 'Cierre', count: 14, value: '$1,6M', conversion: 17, tone: 'green' }
+    ],
+    tasks: [
+      { title: 'Llamar leads HOT sin respuesta', qty: 7, priority: 'Alta', channel: 'WhatsApp' },
+      { title: 'Enviar cotización pendiente', qty: 4, priority: 'Alta', channel: 'Email' },
+      { title: 'Reactivar interesados tibios', qty: 13, priority: 'Media', channel: 'Lumi' },
+      { title: 'Completar datos de contacto', qty: 22, priority: 'Media', channel: 'CRM' }
+    ],
+    activity: [
+      { time: '09:42', event: 'Nuevo lead capturado desde sitio web', detail: 'Panel LED 60x90 · Cafetería' },
+      { time: '10:08', event: 'Lead cambió a HOT', detail: 'Restaurant La Plaza solicitó retiro en tienda' },
+      { time: '10:31', event: 'Cotización enviada', detail: 'Panel con soporte 90x60 · $149.990' },
+      { time: '11:12', event: 'Próxima acción creada', detail: 'Seguimiento WhatsApp en 2 horas' }
+    ]
+  },
+  leads: [
+    {
+      id: 'LD-1001',
+      nombre: 'María González',
+      empresa: 'Café Barrio Italia',
+      canal: 'Sitio web',
+      etapa: 'Propuesta',
+      segmento: 'HOT',
+      score: 92,
+      producto_interes: 'Panel LED 60x90 muro',
+      monto_estimado: '$129.990',
+      ultima_interaccion: 'Hace 18 min',
+      proxima_accion: 'Enviar link de pago y reforzar retiro en tienda',
+      owner: 'Carlos'
+    },
+    {
+      id: 'LD-1002',
+      nombre: 'Rodrigo Pérez',
+      empresa: 'Food Truck Norte',
+      canal: 'Instagram',
+      etapa: 'Calificado',
+      segmento: 'WARM',
+      score: 68,
+      producto_interes: 'Panel con soporte 90x60',
+      monto_estimado: '$149.990',
+      ultima_interaccion: 'Hace 46 min',
+      proxima_accion: 'Pedir medida exacta y enviar alternativa con soporte',
+      owner: 'Lumi'
+    },
+    {
+      id: 'LD-1003',
+      nombre: 'Camila Torres',
+      empresa: 'Clínica Dental Smile',
+      canal: 'WhatsApp',
+      etapa: 'Contactado',
+      segmento: 'WARM',
+      score: 61,
+      producto_interes: 'Panel LED colgante',
+      monto_estimado: '$119.990',
+      ultima_interaccion: 'Hace 1 h',
+      proxima_accion: 'Enviar fotos reales y explicar bajo consumo',
+      owner: 'Ejecutivo'
+    },
+    {
+      id: 'LD-1004',
+      nombre: 'José Arriagada',
+      empresa: 'Minimarket El Sol',
+      canal: 'Carrito abandonado',
+      etapa: 'Cierre',
+      segmento: 'HOT',
+      score: 88,
+      producto_interes: 'Panel LED 80x120',
+      monto_estimado: '$189.990',
+      ultima_interaccion: 'Hace 2 h',
+      proxima_accion: 'Ofrecer 30% de abono y saldo al retiro/despacho',
+      owner: 'Carlos'
+    },
+    {
+      id: 'LD-1005',
+      nombre: 'Daniela Muñoz',
+      empresa: 'Boutique Providencia',
+      canal: 'Meta Ads',
+      etapa: 'Nuevo',
+      segmento: 'COLD',
+      score: 34,
+      producto_interes: 'Panel vitrina 50x70',
+      monto_estimado: '$99.990',
+      ultima_interaccion: 'Hace 4 h',
+      proxima_accion: 'Calificar tipo de negocio y urgencia',
+      owner: 'Lumi'
+    },
+    {
+      id: 'LD-1006',
+      nombre: 'Felipe Rojas',
+      empresa: 'Barbería Central',
+      canal: 'WhatsApp',
+      etapa: 'Propuesta',
+      segmento: 'HOT',
+      score: 81,
+      producto_interes: 'Pizarra LED',
+      monto_estimado: '$89.990',
+      ultima_interaccion: 'Ayer',
+      proxima_accion: 'Reenviar cotización y caso de éxito similar',
+      owner: 'Ejecutivo'
+    }
   ],
   modules: [
     {
@@ -22,7 +129,7 @@ window.UPZY_MOCKS = {
     {
       id: 'crm',
       name: 'CRM Comercial',
-      status: 'Sprint 1',
+      status: 'Activo Sprint 1',
       icon: 'ti-address-book',
       description: 'Contactos, termómetro comercial, historial, próxima mejor acción y tareas.'
     },
@@ -85,7 +192,7 @@ window.UPZY_MOCKS = {
   ],
   roadmap: [
     { sprint: 'Sprint 0', title: 'Core Platform', outcome: 'Base frontend revisable sin romper dashboard actual.' },
-    { sprint: 'Sprint 1', title: 'Dashboard + CRM base', outcome: 'Vista comercial con leads, estados y termómetro.' },
+    { sprint: 'Sprint 1', title: 'Dashboard + CRM base', outcome: 'Vista comercial con leads, estados, termómetro y próxima mejor acción.' },
     { sprint: 'Sprint 2', title: 'Captación Web', outcome: 'Modal, popup y formularios conectados a eventos.' },
     { sprint: 'Sprint 3', title: 'Ruleta', outcome: 'Spin to Win con reglas, premios y cupón.' },
     { sprint: 'Sprint 4', title: 'Email Marketing', outcome: 'Campañas, plantillas, segmentos y métricas.' },
