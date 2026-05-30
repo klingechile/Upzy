@@ -1,0 +1,33 @@
+.upzy-carts-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 16px; align-items: stretch; }
+.upzy-cart-preview { border: 1px solid var(--upzy-border); border-radius: 24px; background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.016)); padding: 24px; min-height: 560px; display: grid; place-items: center; }
+.upzy-checkout-card { width: min(100%, 520px); border: 1px solid var(--upzy-border); border-radius: 22px; background: rgba(12,18,29,.96); overflow: hidden; box-shadow: var(--upzy-shadow); }
+.upzy-checkout-head { padding: 22px; border-bottom: 1px solid var(--upzy-border); background: radial-gradient(circle at top right, rgba(63,185,80,.14), transparent 14rem); }
+.upzy-checkout-title { font-size: 28px; line-height: 1.02; letter-spacing: -.05em; font-weight: 950; margin-top: 10px; }
+.upzy-checkout-body { padding: 22px; display: grid; gap: 14px; }
+.upzy-product-box { border: 1px solid var(--upzy-border); border-radius: 18px; padding: 16px; background: rgba(255,255,255,.025); }
+.upzy-product-title { font-size: 18px; font-weight: 950; letter-spacing: -.03em; }
+.upzy-product-meta { color: var(--upzy-muted); font-size: 13px; margin-top: 6px; }
+.upzy-checkout-total { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-radius: 14px; background: rgba(63,185,80,.08); border: 1px solid rgba(63,185,80,.24); }
+.upzy-checkout-total strong { font-size: 24px; letter-spacing: -.04em; }
+.upzy-cart-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.upzy-cart-button { border: 0; border-radius: 12px; padding: 12px 14px; color: #061017; background: linear-gradient(135deg, var(--upzy-green), var(--upzy-cyan)); font-weight: 950; text-align: center; }
+.upzy-cart-button.secondary { color: var(--upzy-text); background: rgba(255,255,255,.06); border: 1px solid var(--upzy-border); }
+.upzy-cart-list { display: grid; gap: 12px; }
+.upzy-cart-item { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 140px 130px; gap: 14px; align-items: start; padding: 16px; border: 1px solid var(--upzy-border); border-radius: 16px; background: rgba(255,255,255,.024); }
+.upzy-cart-item:hover { border-color: var(--upzy-border-strong); background: rgba(255,255,255,.04); }
+.upzy-cart-customer { font-weight: 950; font-size: 16px; }
+.upzy-cart-meta { color: var(--upzy-muted); font-size: 12px; line-height: 1.45; margin-top: 5px; }
+.upzy-cart-product { font-weight: 850; }
+.upzy-cart-amount { font-size: 20px; font-weight: 950; letter-spacing: -.04em; }
+.upzy-priority-badge { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; }
+.upzy-priority-badge.high { color: var(--upzy-red); border: 1px solid rgba(248,81,73,.35); background: rgba(248,81,73,.08); }
+.upzy-priority-badge.medium { color: var(--upzy-orange); border: 1px solid rgba(227,179,65,.35); background: rgba(227,179,65,.08); }
+.upzy-priority-badge.low { color: var(--upzy-blue); border: 1px solid rgba(88,166,255,.35); background: rgba(88,166,255,.08); }
+.upzy-status-badge { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 900; color: var(--upzy-cyan); border: 1px solid rgba(57,208,216,.35); background: rgba(57,208,216,.08); }
+.upzy-cart-sequence { display: grid; gap: 10px; }
+.upzy-cart-step { display: grid; grid-template-columns: 90px minmax(0,1fr) 130px; gap: 12px; align-items: start; padding: 14px; border: 1px solid var(--upzy-border); border-radius: 14px; background: rgba(255,255,255,.025); }
+.upzy-cart-step-time { color: var(--upzy-cyan); font-weight: 950; }
+.upzy-cart-step-title { font-weight: 900; }
+.upzy-cart-step-detail { color: var(--upzy-muted); font-size: 12px; line-height: 1.45; margin-top: 4px; }
+.upzy-cart-contract { display: grid; gap: 10px; }
+@media (max-width: 1180px) { .upzy-carts-grid, .upzy-cart-item, .upzy-cart-step { grid-template-columns: 1fr; } .upzy-cart-actions { grid-template-columns: 1fr; } .upzy-cart-preview { min-height: 640px; } }
