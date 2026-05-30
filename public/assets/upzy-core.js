@@ -1,10 +1,15 @@
 (function () {
   const state = {
-    activeModule: 'core'
+    activeModule: 'crm',
+    leadFilter: 'ALL'
   };
 
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+  function segmentClass(segment) {
+    return String(segment || '').toLowerCase();
+  }
 
   function renderMetrics() {
     const target = $('#upzy-metrics');
@@ -19,6 +24,104 @@
         <div class="upzy-metric-value">${metric.value}</div>
         <div class="upzy-metric-delta">${metric.delta}</div>
       </article>
+    `).join('');
+  }
+
+  function renderFunnel() {
+    const target = $('#upzy-funnel');
+    if (!target) return;
+
+    target.innerHTML = window.UPZY_MOCKS.crm.funnel.map((stage) => `
+      <article class="upzy-funnel-card">
+        <div class="upzy-funnel-stage">${stage.stage}</div>
+        <div class="upzy-funnel-count">${stage.count}</div>
+        <div class="upzy-funnel-value">${stage.value} · ${stage.conversion}%</div>
+        <div class="upzy-progress"><span style="--value:${stage.conversion}%"></span></div>
+      </article>
+    `).join('');
+  }
+
+  function renderLeads() {
+    const target = $('#upzy-leads-table');
+    if (!target) return;
+
+    const leads = window.UPZY_MOCKS.leads.filter((lead) => {
+      return state.leadFilter === 'ALL' || lead.segmento === state.leadFilter;
+    });
+
+    target.innerHTML = `
+      <div class="upzy-table-wrap">
+        <table class="upzy-table">
+          <thead>
+            <tr>
+              <th>Lead</th>
+              <th>Canal</th>
+              <th>Etapa</th>
+              <th>Termómetro</th>
+              <th>Producto</th>
+              <th>Monto</th>
+              <th>Próxima mejor acción</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${leads.map((lead) => {
+              const tone = segmentClass(lead.segmento);
+              return `
+                <tr>
+                  <td>
+                    <div class="upzy-lead-name">${lead.nombre}</div>
+                    <div class="upzy-lead-meta">${lead.empresa} · ${lead.id}</div>
+                  </td>
+                  <td><span class="upzy-channel">${lead.canal}</span><div class="upzy-lead-meta">${lead.ultima_interaccion}</div></td>
+                  <td>${lead.etapa}</td>
+                  <td>
+                    <span class="upzy-badge ${tone}">${lead.segmento}</span>
+                    <div class="upzy-score ${tone}" style="margin-top:8px">
+                      <div class="upzy-score-bar"><span style="--score:${lead.score}%"></span></div>
+                      <strong>${lead.score}</strong>
+                    </div>
+                  </td>
+                  <td>${lead.producto_interes}</td>
+                  <td><strong>${lead.monto_estimado}</strong></td>
+                  <td><div class="upzy-action-text">${lead.proxima_accion}</div></td>
+                  <td>${lead.owner}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function renderTasks() {
+    const target = $('#upzy-tasks');
+    if (!target) return;
+
+    target.innerHTML = window.UPZY_MOCKS.crm.tasks.map((task) => `
+      <div class="upzy-list-item">
+        <div>
+          <div class="upzy-list-title">${task.title}</div>
+          <div class="upzy-list-meta">${task.qty} pendientes · Canal sugerido: ${task.channel}</div>
+        </div>
+        <span class="upzy-priority">${task.priority}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderActivity() {
+    const target = $('#upzy-activity');
+    if (!target) return;
+
+    target.innerHTML = window.UPZY_MOCKS.crm.activity.map((item) => `
+      <div class="upzy-list-item">
+        <div>
+          <div class="upzy-list-title">${item.event}</div>
+          <div class="upzy-list-meta">${item.detail}</div>
+        </div>
+        <span class="upzy-time">${item.time}</span>
+      </div>
     `).join('');
   }
 
@@ -83,7 +186,7 @@
           <div class="upzy-roadmap-sprint">Estado</div>
           <div>
             <div class="upzy-roadmap-title">${module.status}</div>
-            <div class="upzy-roadmap-outcome">En Sprint 0 esta sección funciona como contrato visual. La integración real se implementa cuando corresponda en el roadmap.</div>
+            <div class="upzy-roadmap-outcome">Sprint 1 deja CRM Comercial revisable con datos mock. La integración real se conecta cuando validemos modelo de lead, etapas y acciones por rol.</div>
           </div>
         </div>
       `;
@@ -94,10 +197,22 @@
     $$('.upzy-nav-btn').forEach((button) => {
       button.addEventListener('click', () => setActiveModule(button.dataset.module));
     });
+
+    $$('.upzy-filter-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.leadFilter = button.dataset.filter;
+        $$('.upzy-filter-btn').forEach((item) => item.classList.toggle('is-active', item === button));
+        renderLeads();
+      });
+    });
   }
 
   function boot() {
     renderMetrics();
+    renderFunnel();
+    renderLeads();
+    renderTasks();
+    renderActivity();
     renderModules();
     renderRoadmap();
     bindNavigation();
