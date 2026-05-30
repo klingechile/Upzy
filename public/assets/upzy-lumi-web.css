@@ -1,0 +1,33 @@
+.upzy-lumi-grid { display: grid; grid-template-columns: 1fr .9fr; gap: 16px; align-items: stretch; }
+.upzy-lumi-preview { border: 1px solid var(--upzy-border); border-radius: 24px; background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.016)); padding: 24px; min-height: 640px; display: grid; place-items: center; }
+.upzy-lumi-browser { width: min(100%, 620px); border: 1px solid var(--upzy-border); border-radius: 22px; background: #0b1019; overflow: hidden; box-shadow: var(--upzy-shadow); position: relative; }
+.upzy-lumi-browser-top { height: 42px; display: flex; gap: 7px; align-items: center; padding: 0 14px; border-bottom: 1px solid var(--upzy-border); background: rgba(255,255,255,.035); }
+.upzy-lumi-dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.2); }
+.upzy-lumi-page { min-height: 430px; padding: 24px; background: radial-gradient(circle at top right, rgba(57,208,216,.11), transparent 16rem), #0b1019; }
+.upzy-lumi-page-card { border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; background: rgba(255,255,255,.025); color: var(--upzy-muted); }
+.upzy-lumi-line { height: 10px; border-radius: 999px; background: rgba(255,255,255,.08); margin-top: 10px; }
+.upzy-lumi-line.short { width: 58%; }
+.upzy-widget { position: absolute; right: 18px; bottom: 18px; width: min(360px, calc(100% - 36px)); border: 1px solid rgba(63,185,80,.32); border-radius: 22px; background: rgba(14,21,33,.98); box-shadow: 0 24px 80px rgba(0,0,0,.55); overflow: hidden; }
+.upzy-widget-head { padding: 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--upzy-border); background: rgba(63,185,80,.08); }
+.upzy-widget-avatar { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(135deg, var(--upzy-green), var(--upzy-cyan)); color: #061017; font-weight: 950; }
+.upzy-widget-name { font-weight: 950; }
+.upzy-widget-status { color: var(--upzy-muted); font-size: 12px; margin-top: 2px; }
+.upzy-chat { padding: 16px; display: grid; gap: 10px; max-height: 360px; overflow: hidden; }
+.upzy-bubble { max-width: 88%; padding: 11px 12px; border-radius: 14px; font-size: 13px; line-height: 1.4; }
+.upzy-bubble.bot { background: rgba(255,255,255,.07); color: var(--upzy-text); border-bottom-left-radius: 4px; }
+.upzy-bubble.user { margin-left: auto; background: rgba(63,185,80,.18); color: var(--upzy-text); border: 1px solid rgba(63,185,80,.24); border-bottom-right-radius: 4px; }
+.upzy-widget-input { margin: 0 16px 16px; border: 1px solid var(--upzy-border); border-radius: 14px; padding: 11px 12px; color: var(--upzy-muted); background: rgba(255,255,255,.035); font-size: 13px; }
+.upzy-lumi-usecase-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.upzy-lumi-usecase { min-height: 170px; display: flex; flex-direction: column; gap: 10px; }
+.upzy-lumi-usecase-title { font-size: 18px; font-weight: 950; letter-spacing: -.03em; }
+.upzy-lumi-usecase-intent { color: var(--upzy-cyan); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
+.upzy-lumi-summary { display: grid; gap: 10px; }
+.upzy-summary-row { display: grid; grid-template-columns: 190px minmax(0,1fr); gap: 12px; padding: 12px; border: 1px solid var(--upzy-border); border-radius: 12px; background: rgba(255,255,255,.024); }
+.upzy-summary-label { color: var(--upzy-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; font-weight: 850; }
+.upzy-summary-value { font-weight: 850; line-height: 1.45; }
+.upzy-recommendation-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.upzy-recommendation { min-height: 180px; display: flex; flex-direction: column; gap: 10px; }
+.upzy-recommendation-product { font-size: 20px; font-weight: 950; letter-spacing: -.04em; }
+.upzy-recommendation-fit { color: var(--upzy-green); font-weight: 900; }
+.upzy-lumi-contract { display: grid; gap: 10px; }
+@media (max-width: 1180px) { .upzy-lumi-grid, .upzy-lumi-usecase-grid, .upzy-recommendation-grid, .upzy-summary-row { grid-template-columns: 1fr; } .upzy-lumi-preview { min-height: 780px; } }
