@@ -57,7 +57,7 @@ app.get('/health', (req, res) => {
 
 app.get('/', (req, res) => res.redirect('/dashboard'));
 app.get('/dashboard', (req, res) => res.sendFile('dashboard.html', { root: 'public' }));
-app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint6.html', { root: 'public' }));
+app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint7.html', { root: 'public' }));
 app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
 
 
