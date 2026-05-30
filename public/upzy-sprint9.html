@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 9</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-capture.css">
+  <link rel="stylesheet" href="/assets/upzy-reports.css">
+</head>
+<body>
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 9</strong><br>
+        Reportes: funnel, atribución, performance, revenue y mejora continua.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Reportes, Funnel y Atribución</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 9 · Performance comercial</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 9</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-chart-funnel"></i>Sprint 9 activo</span>
+          <h1>Reportes para saber qué canal, flujo y acción realmente vende.</h1>
+          <p>UPZY convierte eventos comerciales en lectura ejecutiva: funnel, atribución, revenue, automatizaciones y salud por módulo.</p>
+        </section>
+
+        <section class="upzy-grid-4" id="upzy-report-metrics"></section>
+
+        <section class="upzy-report-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Resumen ejecutivo</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Performance del sistema comercial</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-chart-line"></i></div>
+            </div>
+            <div class="upzy-report-summary">
+              <div class="upzy-report-big">$8,7M</div>
+              <div class="upzy-report-label">Revenue atribuido por eventos de CRM, email, carritos, Lumi, omnicanalidad y automatizaciones. Vista mock para validar lectura ejecutiva antes de conectar datos reales.</div>
+              <div class="upzy-insight-grid">
+                <div class="upzy-card upzy-insight"><div class="upzy-insight-title">Canal fuerte</div><p class="upzy-empty-state">WhatsApp convierte mejor, pero depende de capturar contacto.</p></div>
+                <div class="upzy-card upzy-insight"><div class="upzy-insight-title">Punto débil</div><p class="upzy-empty-state">Ruleta requiere optimizar conversión desde apertura a cupón.</p></div>
+                <div class="upzy-card upzy-insight"><div class="upzy-insight-title">Prioridad</div><p class="upzy-empty-state">Conectar carritos HOT y automatizaciones a datos reales.</p></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Funnel comercial</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">De visitante a compra</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-chart-funnel"></i></div>
+          </div>
+          <div class="upzy-funnel-report" id="upzy-report-funnel"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Atribución</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Canales que generan conversión</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-chart-pie"></i></div>
+          </div>
+          <div class="upzy-attribution-grid" id="upzy-report-attribution"></div>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Performance por módulo</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Módulos que aportan revenue</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-apps"></i></div>
+            </div>
+            <div id="upzy-report-modules"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Automatizaciones</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ranking de flujos</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-route"></i></div>
+            </div>
+            <div id="upzy-report-automations"></div>
+          </article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Contrato de reportes</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Datos mínimos</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-database"></i></div>
+            </div>
+            <div class="upzy-contract-grid" id="upzy-report-contract"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Eventos críticos</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Timeline de reportes</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-timeline-event"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-report-events"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Principio del sprint</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Medir para mejorar continuamente</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-target-arrow"></i></div>
+          </div>
+          <p class="upzy-empty-state">Cada evento debe convertirse en aprendizaje: qué canal convierte, qué módulo aporta revenue, qué automatización funciona y dónde se pierde la venta.</p>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-reports-data.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-reports.js"></script>
+</body>
+</html>
