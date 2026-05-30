@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 8</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-capture.css">
+  <link rel="stylesheet" href="/assets/upzy-carts.css">
+  <link rel="stylesheet" href="/assets/upzy-automation.css">
+</head>
+<body>
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 8</strong><br>
+        Automatizaciones: eventos, condiciones, acciones y medición comercial.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Automatizaciones Comerciales</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 8 · Trigger, condición y acción</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 8</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-route"></i>Sprint 8 activo</span>
+          <h1>Automatizaciones comerciales para que cada evento genere una acción medible.</h1>
+          <p>UPZY conecta CRM, captación, ruleta, email, carritos, Lumi e Instagram mediante triggers, condiciones y acciones desacopladas.</p>
+        </section>
+
+        <section class="upzy-grid-4" id="upzy-auto-metrics"></section>
+
+        <section class="upzy-auto-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Builder conceptual</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Trigger → Condiciones → Acciones</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-adjustments-automation"></i></div>
+            </div>
+            <div class="upzy-builder" id="upzy-auto-builder"></div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Flujos comerciales</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Automatizaciones iniciales</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-list-check"></i></div>
+          </div>
+          <div class="upzy-flow-list" id="upzy-auto-flows"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Arquitectura del flujo</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Evento desacoplado</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-plug-connected"></i></div>
+          </div>
+          <div class="upzy-auto-flow-preview">
+            <div class="upzy-auto-box">
+              <div class="upzy-builder-kicker">01 Trigger</div>
+              <h3>Evento comercial</h3>
+              <p class="upzy-empty-state">Ejemplo: cart.abandoned_detected, coupon.generated o instagram.message_received.</p>
+            </div>
+            <div class="upzy-auto-box">
+              <div class="upzy-builder-kicker">02 Condición</div>
+              <h3>Regla de negocio</h3>
+              <p class="upzy-empty-state">Ejemplo: prioridad HOT, email existe, monto mayor a cierto valor.</p>
+            </div>
+            <div class="upzy-auto-box">
+              <div class="upzy-builder-kicker">03 Acción</div>
+              <h3>Ejecución medible</h3>
+              <p class="upzy-empty-state">Ejemplo: enviar email, sugerir WhatsApp, crear tarea o activar Lumi.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Contrato de automatización</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Datos mínimos</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-database"></i></div>
+            </div>
+            <div class="upzy-auto-contract" id="upzy-auto-contract"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Eventos de ejecución</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Timeline automation</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-timeline-event"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-auto-timeline"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Principio del sprint</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Un evento no debe morir sin acción</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-target-arrow"></i></div>
+          </div>
+          <p class="upzy-empty-state">Cada automatización debe tener trigger explícito, condiciones legibles, acciones auditables y métricas de ejecución, error, conversión y revenue.</p>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-automation-data.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-automation.js"></script>
+</body>
+</html>
