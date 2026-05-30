@@ -3,13 +3,69 @@ window.UPZY_MOCKS = {
     name: 'Klinge',
     product: 'UPZY CRM',
     tagline: 'Todo conectado. Todo medible. Mejora continua.',
-    environment: 'Sprint 1 · Dashboard Comercial + CRM Base'
+    environment: 'Sprint 2 · Captación Web'
   },
   metrics: [
     { label: 'Leads activos', value: '248', delta: '+18% vs semana anterior', tone: 'blue', icon: 'ti-users' },
     { label: 'Clientes HOT', value: '37', delta: 'requieren cierre hoy', tone: 'red', icon: 'ti-flame' },
     { label: 'Monto estimado', value: '$18,6M', delta: 'pipeline abierto', tone: 'green', icon: 'ti-cash' },
-    { label: 'Acciones vencidas', value: '11', delta: 'prioridad comercial', tone: 'orange', icon: 'ti-alert-triangle' }
+    { label: 'Capturas web', value: '64', delta: 'modal + popup + form', tone: 'orange', icon: 'ti-forms' }
+  ],
+  captureMetrics: [
+    { label: 'Impresiones modal', value: '1.842', delta: 'últimos 7 días', tone: 'blue', icon: 'ti-eye' },
+    { label: 'Leads capturados', value: '64', delta: '3,47% conversión', tone: 'green', icon: 'ti-user-plus' },
+    { label: 'Emails obtenidos', value: '51', delta: '79,6% de capturas', tone: 'orange', icon: 'ti-mail' },
+    { label: 'WhatsApp obtenidos', value: '44', delta: '68,7% de capturas', tone: 'purple', icon: 'ti-brand-whatsapp' }
+  ],
+  captureTemplates: [
+    {
+      id: 'capture-modal-quote',
+      type: 'Modal',
+      name: 'Cotización rápida',
+      status: 'Diseño Sprint 2',
+      trigger: 'Exit intent + 45 segundos en producto',
+      goal: 'Capturar email y producto de interés para enviar cotización',
+      event: 'lead.email_captured',
+      fields: ['nombre', 'email', 'telefono', 'tipo_negocio', 'producto_interes'],
+      cta: 'Enviar cotización'
+    },
+    {
+      id: 'capture-popup-visit',
+      type: 'Popup lateral',
+      name: 'Agenda sala de ventas',
+      status: 'Diseño Sprint 2',
+      trigger: 'Scroll 60% o visita a página de contacto',
+      goal: 'Llevar cliente a WhatsApp o agenda de sala',
+      event: 'popup.cta_clicked',
+      fields: ['nombre', 'telefono', 'tipo_negocio'],
+      cta: 'Agendar visita'
+    },
+    {
+      id: 'capture-form-product',
+      type: 'Formulario embebido',
+      name: 'Asesoría por producto',
+      status: 'Diseño Sprint 2',
+      trigger: 'Landing o página de producto',
+      goal: 'Crear lead desde intención explícita en producto',
+      event: 'form.submitted',
+      fields: ['nombre', 'email', 'telefono', 'producto_interes', 'urgencia'],
+      cta: 'Quiero asesoría'
+    }
+  ],
+  captureEvents: [
+    { time: '09:14', event: 'capture.modal_opened', detail: 'Modal cotización rápida · Página Panel LED 60x90' },
+    { time: '09:15', event: 'capture.form_started', detail: 'Cliente ingresó nombre y email' },
+    { time: '09:16', event: 'lead.email_captured', detail: 'Email capturado + producto_interes: Panel LED 60x90' },
+    { time: '09:16', event: 'lead.created', detail: 'Lead creado en CRM con origen web/modal' },
+    { time: '09:17', event: 'crm.lead_enriched', detail: 'Tipo negocio: cafetería · Score inicial: WARM' }
+  ],
+  captureFields: [
+    { name: 'nombre', required: true, reason: 'Personalizar atención y saludo de Lumi' },
+    { name: 'email', required: true, reason: 'Enviar cotización, campañas y reducir dependencia de Meta' },
+    { name: 'telefono', required: false, reason: 'Habilitar cierre por WhatsApp' },
+    { name: 'tipo_negocio', required: false, reason: 'Segmentar recomendación comercial' },
+    { name: 'producto_interes', required: false, reason: 'Debe viajar desde página o campaña cuando exista contexto' },
+    { name: 'consentimiento', required: true, reason: 'Base mínima para comunicaciones comerciales' }
   ],
   crm: {
     funnel: [
@@ -136,7 +192,7 @@ window.UPZY_MOCKS = {
     {
       id: 'capture',
       name: 'Captación Web',
-      status: 'Sprint 2',
+      status: 'Activo Sprint 2',
       icon: 'ti-forms',
       description: 'Formularios, popup, modal de captura y eventos lead.email_captured.'
     },
@@ -200,6 +256,6 @@ window.UPZY_MOCKS = {
     { sprint: 'Sprint 6', title: 'Lumi Web', outcome: 'Atención conversacional en sitio web.' },
     { sprint: 'Sprint 7', title: 'Lumi Instagram', outcome: 'Omnicanalidad real con bandeja unificada.' },
     { sprint: 'Sprint 8', title: 'Automatizaciones', outcome: 'Flujos comerciales medibles.' },
-    { sprint: 'Sprint 9', title: 'Reportes', outcome: 'Funnel, atribución y mejora continua.' }
+    { sprint: 'Sprint 9', title: 'Reportes', outcome: 'Funnel, atribución, campañas, canales, conversión, revenue y mejora continua.' }
   ]
 };
