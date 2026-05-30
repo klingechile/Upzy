@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 4</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-capture.css">
+  <link rel="stylesheet" href="/assets/upzy-email.css">
+</head>
+<body>
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 4</strong><br>
+        Email Marketing: segmentos, plantillas, campañas, eventos y métricas.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Email Marketing</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 4 · Segmentos, plantillas y campañas</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 4</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-mail"></i>Sprint 4 activo</span>
+          <h1>Email Marketing para transformar datos propios en ventas medibles.</h1>
+          <p>UPZY usa eventos del CRM, captación web y ruleta para activar campañas, secuencias y mensajes comerciales.</p>
+        </section>
+
+        <section class="upzy-grid-4" id="upzy-email-metrics"></section>
+
+        <section class="upzy-email-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Preview</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Email de cupón generado</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-mail-opened"></i></div>
+            </div>
+            <div class="upzy-email-preview-shell">
+              <div class="upzy-email-preview">
+                <div class="upzy-email-preview-head">
+                  <div class="upzy-email-logo">K</div>
+                  <div class="upzy-email-subject">Carlos, tu cupón Klinge vence pronto</div>
+                  <div class="upzy-email-preheader">Usa KLG-RLT-10 en tu panel LED antes de que expire.</div>
+                </div>
+                <div class="upzy-email-preview-body">
+                  <p>Hola Carlos,</p>
+                  <p>Tu beneficio de la ruleta ya está listo. Puedes usarlo para avanzar con tu panel LED.</p>
+                  <div class="upzy-email-product">
+                    <div class="upzy-email-product-title">Panel LED 80x120</div>
+                    <div class="upzy-email-product-line"></div>
+                    <div class="upzy-email-product-line short"></div>
+                  </div>
+                  <div class="upzy-email-cta">Usar mi cupón</div>
+                  <div class="upzy-email-secondary">También puede comprar por WhatsApp o agendar una visita en sala de ventas.</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Segmentos comerciales</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Audiencias accionables</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-users-group"></i></div>
+          </div>
+          <div class="upzy-email-segment-grid" id="upzy-email-segments"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Plantillas iniciales</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Mensajes conectados a eventos</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-template"></i></div>
+          </div>
+          <div class="upzy-email-template-grid" id="upzy-email-templates"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Secuencia sugerida</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Cupón generado no usado</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-route"></i></div>
+          </div>
+          <div class="upzy-sequence" id="upzy-email-sequence"></div>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Contrato de campaña</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Datos mínimos</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-database"></i></div>
+            </div>
+            <div class="upzy-email-contract" id="upzy-email-contract"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Eventos comerciales</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Timeline de email</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-timeline-event"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-email-events"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Principio del sprint</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Campañas conectadas, no campañas sueltas</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-plug-connected"></i></div>
+          </div>
+          <p class="upzy-empty-state">Email Marketing debe reaccionar a eventos como lead.email_captured, coupon.generated, quote.sent, cart.abandoned_detected y purchase.completed.</p>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-email.js"></script>
+</body>
+</html>
