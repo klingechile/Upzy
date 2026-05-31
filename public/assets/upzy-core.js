@@ -17,6 +17,7 @@
     { label: 'Reportes', route: '/reportes', icon: 'ti-chart-funnel', roles: ['admin', 'agente', 'viewer'] },
     { label: 'Configuración', route: '/configuracion', icon: 'ti-settings', roles: ['admin'] },
     { label: 'Beta Status', route: '/beta', icon: 'ti-shield-check', roles: ['admin', 'agente', 'viewer'] },
+    { label: 'Operación', route: '/operacion', icon: 'ti-activity-heartbeat', roles: ['admin'] },
   ];
 
   function pageContext() {
@@ -56,7 +57,7 @@
         </a>
       `).join('')}
       <div class="upzy-nav-section">Histórico</div>
-      <a class="upzy-nav-btn" href="/upzy-sprint17.html" style="text-decoration:none"><i class="ti ti-history"></i>Último sprint técnico</a>
+      <a class="upzy-nav-btn" href="/upzy-sprint20.html" style="text-decoration:none"><i class="ti ti-history"></i>Último sprint técnico</a>
     `;
 
     const footer = $('.upzy-sidebar-footer');
