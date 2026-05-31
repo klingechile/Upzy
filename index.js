@@ -19,9 +19,10 @@ app.use((req, res, next) => {
 });
 
 // ── ROUTES ────────────────────────────────────────────────────
-// Auth y captura web (públicos — no requieren token)
+// Auth, captura web y widget Lumi Web (públicos — no requieren token)
 app.use('/api/auth',          require('./src/routes/api.auth'));
 app.use('/api/capture',       require('./src/routes/api.capture'));
+app.use('/api/lumi-web',      require('./src/routes/api.lumi-web'));
 
 // Webhooks (protegidos por HMAC, no por JWT)
 app.use('/webhook/whatsapp',  require('./src/routes/webhook.whatsapp'));
@@ -69,6 +70,7 @@ app.get('/',                  (req, res) => res.redirect('/upzy'));
 app.get('/upzy',              (req, res) => res.sendFile('upzy-product.html',  { root: 'public' }));
 app.get('/crm',               (req, res) => res.sendFile('upzy-sprint11.html', { root: 'public' }));
 app.get('/inbox',             (req, res) => res.sendFile('upzy-sprint21.html', { root: 'public' }));
+app.get('/lumi-web',          (req, res) => res.sendFile('upzy-sprint22.html', { root: 'public' }));
 app.get('/captacion',         (req, res) => res.sendFile('upzy-sprint12.html', { root: 'public' }));
 app.get('/carritos',          (req, res) => res.sendFile('upzy-sprint13.html', { root: 'public' }));
 app.get('/email',             (req, res) => res.sendFile('upzy-sprint14.html', { root: 'public' }));
