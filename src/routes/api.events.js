@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const supabase = require('../db/supabase');
 const config = require('../config/env');
+const { auditLog } = require('../services/audit');
 
 const TENANT_ID = config.tenantId;
 
@@ -65,6 +66,12 @@ router.post('/', async (req, res) => {
       .insert(event)
       .select('*')
       .single();
+
+    await auditLog(req, 'event.created', {
+      entity_type: entity_type || 'event',
+      entity_id: entity_id || data?.id,
+      metadata: { event_type, source_module, persisted: !error },
+    });
 
     if (error) {
       console.warn('[events] event not persisted:', error.message);
