@@ -18,7 +18,7 @@
     { label: 'Automatizaciones', route: '/automatizaciones', icon: 'ti-route', roles: ['admin', 'agente'] },
     { label: 'Reportes', route: '/reportes', icon: 'ti-chart-funnel', roles: ['admin', 'agente', 'viewer'] },
     { label: 'Configuración', route: '/configuracion', icon: 'ti-settings', roles: ['admin'] },
-    { label: 'Beta Status', route: '/beta', icon: 'ti-shield-check', roles: ['admin', 'agente', 'viewer'] },
+    { label: 'Estado del sistema', route: '/beta', icon: 'ti-shield-check', roles: ['admin', 'agente', 'viewer'] },
     { label: 'Operación', route: '/operacion', icon: 'ti-activity-heartbeat', roles: ['admin'] },
   ];
 
@@ -52,19 +52,17 @@
     const visible = PRODUCT_NAV.filter((item) => item.roles.includes(role));
 
     nav.innerHTML = `
-      <div class="upzy-nav-section">Producto</div>
+      <div class="upzy-nav-section">Operación comercial</div>
       ${visible.map((item) => `
         <a class="upzy-nav-btn ${path === item.route ? 'is-active' : ''}" href="${item.route}" style="text-decoration:none">
           <i class="ti ${item.icon}"></i>${item.label}
         </a>
       `).join('')}
-      <div class="upzy-nav-section">Histórico</div>
-      <a class="upzy-nav-btn" href="/upzy-sprint22.html" style="text-decoration:none"><i class="ti ti-history"></i>Último sprint técnico</a>
     `;
 
     const footer = $('.upzy-sidebar-footer');
     if (footer) {
-      footer.innerHTML = `<strong>UPZY Producto</strong><br>Rol: ${role}. Navegación final persistente.`;
+      footer.innerHTML = `<strong>UPZY Comercial</strong><br>Rol: ${role}. Clientes, conversaciones y oportunidades.`;
     }
   }
 
@@ -235,7 +233,7 @@
     const statusLabel = liveContext && ctx.upzyModuleStatus ? ctx.upzyModuleStatus : module.status;
     const outcome = liveContext && ctx.upzyModuleOutcome
       ? ctx.upzyModuleOutcome
-      : 'Módulo dentro del roadmap UPZY. La integración se activa por oleadas para mantener contratos, navegación y seguridad estables.';
+      : 'Módulo operativo dentro de UPZY para centralizar gestión comercial, trazabilidad y mejora continua.';
 
     if (title) title.textContent = pageTitle;
     if (kicker) kicker.textContent = pageKicker;
