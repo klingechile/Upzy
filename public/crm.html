@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY · CRM Comercial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+</head>
+<body data-upzy-live-module="crm" data-upzy-page-title="CRM Comercial" data-upzy-page-kicker="Leads, oportunidades y seguimiento comercial" data-upzy-module-status="CRM activo" data-upzy-module-outcome="Centraliza contactos, temperatura comercial, etapa, owner y próxima mejor acción.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+      <div class="upzy-nav"></div>
+      <div class="upzy-sidebar-footer"><strong>UPZY Comercial</strong><br>Clientes, conversaciones y oportunidades.</div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">CRM Comercial</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Leads, oportunidades y seguimiento comercial</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-address-book"></i>CRM activo</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-target-arrow"></i>Gestión comercial</span>
+          <h1>Prioriza clientes, avanza conversaciones y cierra oportunidades.</h1>
+          <p>El CRM muestra leads reales, estado comercial, canal de origen, score, tareas sugeridas y oportunidades que requieren seguimiento del equipo.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">
+            <a class="upzy-form-button" href="/inbox" style="text-decoration:none;display:inline-flex;width:auto">Atender conversaciones</a>
+            <a class="upzy-filter-btn" href="/carritos" style="text-decoration:none;display:inline-flex;align-items:center">Revisar carritos</a>
+            <a class="upzy-filter-btn" href="/reportes" style="text-decoration:none;display:inline-flex;align-items:center">Ver reportes</a>
+          </div>
+        </section>
+
+        <div id="upzy-live-status"></div>
+
+        <section class="upzy-grid-4" id="upzy-metrics"></section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Pipeline comercial</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Oportunidades por etapa</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-chart-funnel"></i></div>
+          </div>
+          <div class="upzy-funnel-grid" id="upzy-funnel"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Leads priorizados</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Seguimiento del equipo</h2>
+            </div>
+            <div class="upzy-filter-group">
+              <button class="upzy-filter-btn is-active" data-filter="ALL">Todos</button>
+              <button class="upzy-filter-btn" data-filter="HOT">HOT</button>
+              <button class="upzy-filter-btn" data-filter="WARM">WARM</button>
+              <button class="upzy-filter-btn" data-filter="COLD">COLD</button>
+            </div>
+          </div>
+          <div id="upzy-leads-table"></div>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Próximas acciones</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Tareas comerciales</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-list-check"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-tasks"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Actividad</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Últimas señales</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-activity"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-activity"></div>
+          </article>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-api.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-live-crm.js"></script>
+</body>
+</html>
