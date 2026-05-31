@@ -29,6 +29,8 @@ app.use('/webhook/instagram', require('./src/routes/webhook.instagram'));
 app.use('/webhook/shopify',   require('./src/routes/webhook.shopify'));
 // API protegida (requiere JWT)
 app.use('/api/leads',         requireAuth, require('./src/routes/api.leads'));
+app.use('/api/carts',         requireAuth, require('./src/routes/api.carts'));
+app.use('/api/events',        requireAuth, require('./src/routes/api.events'));
 app.use('/api/tasks',         requireAuth, require('./src/routes/api.tasks'));
 app.use('/api/campanas',      requireAuth, require('./src/routes/api.campanas'));
 app.use('/api/automations',   requireAuth, require('./src/routes/api.automations'));
@@ -57,7 +59,7 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => res.redirect('/upzy'));
-app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint12.html', { root: 'public' }));
+app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint13.html', { root: 'public' }));
 app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
 
 
