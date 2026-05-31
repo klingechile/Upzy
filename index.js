@@ -71,6 +71,7 @@ app.get('/upzy',              (req, res) => res.sendFile('upzy-product.html',  {
 app.get('/crm',               (req, res) => res.sendFile('upzy-sprint11.html', { root: 'public' }));
 app.get('/inbox',             (req, res) => res.sendFile('upzy-sprint21.html', { root: 'public' }));
 app.get('/lumi-web',          (req, res) => res.sendFile('upzy-sprint22.html', { root: 'public' }));
+app.get('/shopify',           (req, res) => res.sendFile('upzy-sprint23.html', { root: 'public' }));
 app.get('/captacion',         (req, res) => res.sendFile('upzy-sprint12.html', { root: 'public' }));
 app.get('/carritos',          (req, res) => res.sendFile('upzy-sprint13.html', { root: 'public' }));
 app.get('/email',             (req, res) => res.sendFile('upzy-sprint14.html', { root: 'public' }));
