@@ -36,6 +36,7 @@ app.use('/api/beta',          requireAuth, require('./src/routes/api.beta'));
 app.use('/api/ops',           requireAuth, require('./src/routes/api.ops'));
 app.use('/api/users',         requireAuth, require('./src/routes/api.users'));
 app.use('/api/audit',         requireAuth, require('./src/routes/api.audit'));
+app.use('/api/omnichannel',   requireAuth, require('./src/routes/api.omnichannel'));
 app.use('/api/tasks',         requireAuth, require('./src/routes/api.tasks'));
 app.use('/api/campanas',      requireAuth, require('./src/routes/api.campanas'));
 app.use('/api/automations',   requireAuth, require('./src/routes/api.automations'));
@@ -67,6 +68,7 @@ app.get('/health', (req, res) => {
 app.get('/',                  (req, res) => res.redirect('/upzy'));
 app.get('/upzy',              (req, res) => res.sendFile('upzy-product.html',  { root: 'public' }));
 app.get('/crm',               (req, res) => res.sendFile('upzy-sprint11.html', { root: 'public' }));
+app.get('/inbox',             (req, res) => res.sendFile('upzy-sprint21.html', { root: 'public' }));
 app.get('/captacion',         (req, res) => res.sendFile('upzy-sprint12.html', { root: 'public' }));
 app.get('/carritos',          (req, res) => res.sendFile('upzy-sprint13.html', { root: 'public' }));
 app.get('/email',             (req, res) => res.sendFile('upzy-sprint14.html', { root: 'public' }));
