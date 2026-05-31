@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 22</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+  <link rel="stylesheet" href="/assets/upzy-reports.css">
+</head>
+<body data-upzy-live-module="lumi-web" data-upzy-page-title="Widget Lumi Web Producción" data-upzy-page-kicker="Sprint 22 · Widget embebible, lead web y conversación en Inbox" data-upzy-module-status="Sprint 22 · PRODUCCIÓN" data-upzy-module-outcome="Widget Lumi Web crea lead, conversación y mensajes reales para que el equipo responda desde Inbox Omnicanal.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+      <div class="upzy-nav"></div>
+      <div class="upzy-sidebar-footer"><strong>Sprint 22 · PRODUCCIÓN</strong><br>Widget Lumi Web embebible.</div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Widget Lumi Web Producción</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 22 · Widget embebible, lead web y conversación en Inbox</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 22</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-message-chatbot"></i>Sprint 22 activo · PRODUCCIÓN</span>
+          <h1>Prueba el widget Lumi Web en producción.</h1>
+          <p>Abre el botón flotante, escribe un mensaje con tu email o WhatsApp y luego revisa la conversación en /inbox.</p>
+        </section>
+
+        <section class="upzy-grid-4">
+          <article class="upzy-card tone-green"><div class="upzy-card-header"><div class="upzy-card-title">Widget</div><div class="upzy-card-icon"><i class="ti ti-code"></i></div></div><div class="upzy-metric-value">LIVE</div><div class="upzy-metric-delta">/widget/lumi-web.js</div></article>
+          <article class="upzy-card tone-blue"><div class="upzy-card-header"><div class="upzy-card-title">Lead</div><div class="upzy-card-icon"><i class="ti ti-user-plus"></i></div></div><div class="upzy-metric-value">WEB</div><div class="upzy-metric-delta">upzy_leads</div></article>
+          <article class="upzy-card tone-orange"><div class="upzy-card-header"><div class="upzy-card-title">Conversación</div><div class="upzy-card-icon"><i class="ti ti-messages"></i></div></div><div class="upzy-metric-value">INBOX</div><div class="upzy-metric-delta">upzy_conversaciones</div></article>
+          <article class="upzy-card tone-purple"><div class="upzy-card-header"><div class="upzy-card-title">Modo</div><div class="upzy-card-icon"><i class="ti ti-shield-check"></i></div></div><div class="upzy-metric-value">CONTROL</div><div class="upzy-metric-delta">agente responde</div></article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header"><div><div class="upzy-card-title">Snippet Shopify / Web</div><h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Instalación</h2></div><div class="upzy-card-icon"><i class="ti ti-code"></i></div></div>
+            <pre class="upzy-state-box" style="white-space:pre-wrap;overflow:auto"><code>&lt;script
+  src="https://upzy-production.up.railway.app/widget/lumi-web.js"
+  data-upzy-brand="Klinge"
+  data-upzy-api="https://upzy-production.up.railway.app"&gt;
+&lt;/script&gt;</code></pre>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header"><div><div class="upzy-card-title">Cómo probar</div><h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Flujo productivo</h2></div><div class="upzy-card-icon"><i class="ti ti-list-check"></i></div></div>
+          <div class="upzy-list">
+            <div class="upzy-list-item"><div><div class="upzy-list-title">1. Abrir widget</div><div class="upzy-list-meta">Usa el botón flotante inferior derecho.</div></div><span class="upzy-time">/lumi-web</span></div>
+            <div class="upzy-list-item"><div><div class="upzy-list-title">2. Enviar consulta</div><div class="upzy-list-meta">Incluye email o WhatsApp para crear el lead.</div></div><span class="upzy-time">web</span></div>
+            <div class="upzy-list-item"><div><div class="upzy-list-title">3. Revisar Inbox</div><div class="upzy-list-meta">La conversación aparece como canal web.</div></div><span class="upzy-time">/inbox</span></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/widget/lumi-web.js" data-upzy-brand="Klinge" data-upzy-api="https://upzy-production.up.railway.app"></script>
+</body>
+</html>
