@@ -63,18 +63,28 @@
     state.carts = [];
   }
 
+  function loginLink() {
+    return '<a href="/login" style="color:inherit;font-weight:900;text-decoration:underline">Ir a login</a>';
+  }
+
   function renderConnectionStatus() {
     const target = $('#upzy-live-status');
     if (!target) return;
 
     const isLive = state.source === 'live';
     const isError = state.source === 'error';
+    const authState = window.UPZY_API?.getAuthState ? window.UPZY_API.getAuthState() : 'unknown';
+    const hasToken = Boolean(sessionStorage.getItem('upzy_token'));
+    const hasRefresh = Boolean(sessionStorage.getItem('upzy_refresh_token'));
+    const expiresAt = Number(sessionStorage.getItem('upzy_expires_at') || 0);
+    const expiresLabel = expiresAt ? new Date(expiresAt * 1000).toLocaleString('es-CL') : 'sin expiración registrada';
+
     const title = isLive ? 'BD conectada' : isError ? 'API no disponible' : 'Fallback mock activo';
     const detail = isLive
       ? 'Mostrando leads, estadísticas y carritos pendientes desde endpoints protegidos por JWT.'
       : isError
-        ? `${state.error?.message || 'Error desconocido'} · Se mantiene la vista con mock controlado.`
-        : 'No hay sesión activa o todavía no se conectó la API. La demo sigue visible con datos mock.';
+        ? `${state.error?.message || 'Error desconocido'} · Auth: ${authState}. Se mantiene la vista con mock controlado.`
+        : `No hay sesión activa o no fue posible validar token. Auth: ${authState}. ${loginLink()}`;
 
     target.innerHTML = `
       <div class="upzy-live-banner ${isLive ? 'live' : isError ? 'error' : 'fallback'}">
@@ -82,6 +92,7 @@
         <div>
           <div class="upzy-live-title">${title}</div>
           <div class="upzy-live-detail">${detail}</div>
+          <div class="upzy-live-detail">Token: ${hasToken ? 'sí' : 'no'} · Refresh: ${hasRefresh ? 'sí' : 'no'} · Expira: ${expiresLabel}</div>
         </div>
         <span class="upzy-badge ${isLive ? 'ok' : isError ? 'hot' : 'warm'}">${isLive ? 'LIVE' : isError ? 'ERROR' : 'MOCK'}</span>
       </div>
@@ -225,8 +236,10 @@
     if (!target) return;
 
     const sourceLabel = state.source === 'live' ? 'BD real' : 'Mock fallback';
+    const authState = window.UPZY_API?.getAuthState ? window.UPZY_API.getAuthState() : 'unknown';
     const items = [
       { time: 'Ahora', event: `CRM cargado desde ${sourceLabel}`, detail: `${state.leads.length} leads renderizados en UI.` },
+      { time: 'Ahora', event: 'Estado auth/API', detail: authState },
       { time: 'Ahora', event: 'Estadísticas consultadas', detail: state.stats ? 'Métricas reales disponibles.' : 'Métricas mock o no disponibles.' },
       { time: 'Ahora', event: 'Carritos pendientes', detail: `${state.carts.length} registros disponibles.` },
     ];
@@ -252,7 +265,9 @@
     renderConnectionStatus();
 
     if (!window.UPZY_API || !window.UPZY_API.hasSession()) {
-      fallbackData();
+      const err = new Error('No hay token válido ni refresh token disponible. Inicia sesión para cargar BD real.');
+      err.code = window.UPZY_API?.getAuthState ? window.UPZY_API.getAuthState() : 'NO_API_CLIENT';
+      fallbackData(err);
       return;
     }
 
