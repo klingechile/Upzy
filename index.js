@@ -62,9 +62,18 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/', (req, res) => res.redirect('/upzy'));
-app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint17.html', { root: 'public' }));
-app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
+// ── PRODUCT ROUTES ────────────────────────────────────────────
+app.get('/',                  (req, res) => res.redirect('/upzy'));
+app.get('/upzy',              (req, res) => res.sendFile('upzy-product.html',  { root: 'public' }));
+app.get('/crm',               (req, res) => res.sendFile('upzy-sprint11.html', { root: 'public' }));
+app.get('/captacion',         (req, res) => res.sendFile('upzy-sprint12.html', { root: 'public' }));
+app.get('/carritos',          (req, res) => res.sendFile('upzy-sprint13.html', { root: 'public' }));
+app.get('/email',             (req, res) => res.sendFile('upzy-sprint14.html', { root: 'public' }));
+app.get('/automatizaciones',  (req, res) => res.sendFile('upzy-sprint14.html', { root: 'public' }));
+app.get('/reportes',          (req, res) => res.sendFile('upzy-sprint15.html', { root: 'public' }));
+app.get('/beta',              (req, res) => res.sendFile('upzy-sprint16.html', { root: 'public' }));
+app.get('/configuracion',     (req, res) => res.sendFile('upzy-sprint17.html', { root: 'public' }));
+app.get('/login',             (req, res) => res.sendFile('login.html',         { root: 'public' }));
 
 
 // Auto-populate email template HTML on startup
