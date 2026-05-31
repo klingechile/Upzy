@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 16</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+  <link rel="stylesheet" href="/assets/upzy-reports.css">
+</head>
+<body data-upzy-live-module="reports" data-upzy-page-title="QA Final + Beta Operativa" data-upzy-page-kicker="Sprint 16 · Cierre beta, smoke tests y operación" data-upzy-module-status="Sprint 16 · BETA" data-upzy-module-outcome="Beta operativa consolida CRM, captación, carritos, email, automatizaciones, eventos y reportes con checklist de salida y endpoint de estado.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 16 · BETA</strong><br>
+        QA final, rutas críticas, smoke tests y operación inicial.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">QA Final + Beta Operativa</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 16 · Cierre beta, smoke tests y operación</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 16</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-shield-check"></i>Sprint 16 activo · BETA</span>
+          <h1>UPZY queda cerrado como beta operativa controlada.</h1>
+          <p>La beta valida autenticación, módulos live, endpoints críticos, rutas históricas, seguridad y operación diaria mínima.</p>
+        </section>
+
+        <div id="upzy-beta-live-status"></div>
+
+        <section class="upzy-report-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Beta score</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Estado operativo</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-gauge"></i></div>
+            </div>
+            <div id="upzy-beta-score"></div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Checks críticos</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Go / No-Go técnico</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-list-check"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-beta-checks"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Módulos live</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Cobertura beta</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-apps"></i></div>
+            </div>
+            <div id="upzy-beta-modules"></div>
+          </article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Rutas críticas</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Smoke test navegación</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-route"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-beta-routes"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Siguientes acciones</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Backlog post-beta</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-target-arrow"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-beta-next"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Operación diaria beta</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Rutina recomendada</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-calendar-check"></i></div>
+          </div>
+          <div class="upzy-auto-flow-preview">
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">01</div><h3>Revisar /upzy</h3><p class="upzy-empty-state">Validar score beta y warnings antes de operar.</p></div>
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">02</div><h3>Gestionar leads</h3><p class="upzy-empty-state">Revisar nuevos, HOT, WARM y datos faltantes.</p></div>
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">03</div><h3>Recuperar ventas</h3><p class="upzy-empty-state">Revisar carritos, emails, automatizaciones y reportes.</p></div>
+          </div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-beta-status.js"></script>
+</body>
+</html>
