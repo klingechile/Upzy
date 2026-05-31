@@ -58,7 +58,6 @@ router.post('/conversations', async (req, res) => {
     if (!cleanEmail && !cleanPhone) return res.status(400).json({ error: 'email o teléfono requerido' });
 
     const canalId = cleanEmail || cleanPhone || safeText(session_id, 120);
-    const productText = product?.title || product?.name || product || null;
     const leadPayload = {
       tenant_id: TENANT_ID,
       nombre: safeText(name, 160) || 'Cliente Web',
@@ -70,14 +69,13 @@ router.post('/conversations', async (req, res) => {
       segmento: cart?.item_count ? 'hot' : 'warm',
       etapa: 'nuevo',
       tipo_negocio: null,
-      producto_interes: safeText(productText, 180),
       notas: buildNotes({ page_url, product, variant, cart, utm, session_id }),
     };
 
     const { data: lead, error: leadError } = await supabase
       .from('upzy_leads')
       .upsert(leadPayload, { onConflict: 'tenant_id,canal,canal_id', ignoreDuplicates: false })
-      .select('id, nombre, email, telefono, canal, canal_id, segmento, score, etapa, producto_interes')
+      .select('id, nombre, email, telefono, canal, canal_id, segmento, score, etapa, notas')
       .single();
 
     if (leadError) throw leadError;
