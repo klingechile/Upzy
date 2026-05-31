@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 15</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+  <link rel="stylesheet" href="/assets/upzy-reports.css">
+</head>
+<body data-upzy-live-module="reports" data-upzy-page-title="Reportes Reales + Atribución" data-upzy-page-kicker="Sprint 15 · Funnel real, atribución y salud por módulo" data-upzy-module-status="Sprint 15 · LIVE" data-upzy-module-outcome="Reportes consolidados consumen un endpoint único protegido que cruza CRM, carritos, email y eventos comerciales.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 15 · LIVE</strong><br>
+        Reportes reales, atribución simple y salud operacional.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Reportes Reales + Atribución</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 15 · Funnel real, atribución y salud por módulo</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 15</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-chart-funnel"></i>Sprint 15 activo · LIVE</span>
+          <h1>Reportes reales para saber qué parte del sistema está vendiendo.</h1>
+          <p>UPZY consolida CRM, captación, carritos, email, automatizaciones y eventos en una lectura ejecutiva única para priorizar mejora continua.</p>
+        </section>
+
+        <div id="upzy-live-reports-status"></div>
+
+        <section class="upzy-grid-4" id="upzy-live-report-metrics"></section>
+
+        <section class="upzy-report-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Endpoint consolidado</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">GET /api/reports/overview</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-api"></i></div>
+            </div>
+            <div class="upzy-report-summary">
+              <div class="upzy-report-big">LIVE</div>
+              <div class="upzy-report-label">El frontend ya no calcula reportes llamando pantallas sueltas. Consume un overview protegido que cruza leads, carritos, eventos y email.</div>
+              <div class="upzy-insight-grid">
+                <div class="upzy-card upzy-insight"><div class="upzy-insight-title">Atribución simple</div><p class="upzy-empty-state">Canal del lead como origen inicial de conversión.</p></div>
+                <div class="upzy-card upzy-insight"><div class="upzy-insight-title">Funnel real</div><p class="upzy-empty-state">Etapas reales: nuevo, contactado, calificado, propuesta, cerrado.</p></div>
+                <div class="upzy-card upzy-insight"><div class="upzy-insight-title">Warnings</div><p class="upzy-empty-state">Si falta una tabla, el reporte avisa y no rompe.</p></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Funnel real</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Pipeline por etapa CRM</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-chart-funnel"></i></div>
+          </div>
+          <div class="upzy-funnel-report" id="upzy-live-funnel"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Atribución</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Conversión por canal</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-chart-pie"></i></div>
+          </div>
+          <div class="upzy-attribution-grid" id="upzy-live-attribution"></div>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Salud operacional</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Estado por módulo</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-heartbeat"></i></div>
+            </div>
+            <div id="upzy-live-module-health"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Eventos recientes</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Timeline comercial</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-timeline-event"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-live-report-events"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Warnings</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Fuentes incompletas</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-alert-triangle"></i></div>
+          </div>
+          <div class="upzy-list" id="upzy-live-report-warnings"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-live-reports.js"></script>
+</body>
+</html>
