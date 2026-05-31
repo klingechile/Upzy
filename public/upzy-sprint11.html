@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 11</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+</head>
+<body>
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 11</strong><br>
+        CRM conectado a backend real con fallback mock controlado.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">CRM Comercial Live</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 11 · Leads reales + fallback mock</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 11</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-database"></i>Sprint 11 activo</span>
+          <h1>Primer módulo conectado a BD real: CRM Comercial.</h1>
+          <p>La UI consume endpoints protegidos del backend para leads, estadísticas y carritos pendientes. Si no hay sesión o falla API, se mantiene la demo con fallback mock.</p>
+        </section>
+
+        <div id="upzy-live-status"></div>
+
+        <section class="upzy-grid-4" id="upzy-metrics"></section>
+
+        <section class="upzy-live-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Conexión BD</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Backend primero, Supabase protegido</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-shield-lock"></i></div>
+            </div>
+            <div class="upzy-live-panel">
+              <div class="upzy-live-big">LIVE</div>
+              <div class="upzy-live-detail">Sprint 11 no expone credenciales Supabase en frontend. Usa token de sesión y endpoints Express protegidos por JWT.</div>
+              <div class="upzy-state-box">
+                <div class="upzy-state-title">Regla crítica</div>
+                <div class="upzy-state-text">Nunca usar SUPABASE_SERVICE_ROLE_KEY en navegador. Toda lectura real pasa por backend.</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Endpoints conectados</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Primera oleada real</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-api"></i></div>
+          </div>
+          <div class="upzy-api-list">
+            <div class="upzy-api-item"><span class="upzy-api-method">GET</span><span class="upzy-api-path">/api/leads</span><span class="upzy-api-status">Live ready</span></div>
+            <div class="upzy-api-item"><span class="upzy-api-method">GET</span><span class="upzy-api-path">/api/leads/estadisticas</span><span class="upzy-api-status">Live ready</span></div>
+            <div class="upzy-api-item"><span class="upzy-api-method">GET</span><span class="upzy-api-path">/api/leads/carritos</span><span class="upzy-api-status">Live ready</span></div>
+          </div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Funnel comercial</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Pipeline por etapa</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-chart-funnel"></i></div>
+          </div>
+          <div class="upzy-funnel" id="upzy-funnel"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">CRM Comercial</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Leads priorizados</h2>
+            </div>
+            <div class="upzy-filterbar">
+              <button class="upzy-filter-btn is-active" data-filter="ALL">Todos</button>
+              <button class="upzy-filter-btn" data-filter="HOT">HOT</button>
+              <button class="upzy-filter-btn" data-filter="WARM">WARM</button>
+              <button class="upzy-filter-btn" data-filter="COLD">COLD</button>
+            </div>
+          </div>
+          <div id="upzy-leads-table"></div>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Próximas acciones</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Tareas comerciales</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-list-check"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-tasks"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Actividad</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Estado de carga</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-activity"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-activity"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-api-client.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-live-crm.js"></script>
+</body>
+</html>
