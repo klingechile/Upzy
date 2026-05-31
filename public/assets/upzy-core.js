@@ -7,6 +7,18 @@
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
+  const PRODUCT_NAV = [
+    { label: 'Inicio', route: '/upzy', icon: 'ti-home', roles: ['admin', 'agente', 'viewer'] },
+    { label: 'CRM Comercial', route: '/crm', icon: 'ti-address-book', roles: ['admin', 'agente'] },
+    { label: 'Captación', route: '/captacion', icon: 'ti-forms', roles: ['admin', 'agente'] },
+    { label: 'Carritos', route: '/carritos', icon: 'ti-shopping-cart', roles: ['admin', 'agente'] },
+    { label: 'Email Marketing', route: '/email', icon: 'ti-mail', roles: ['admin', 'agente'] },
+    { label: 'Automatizaciones', route: '/automatizaciones', icon: 'ti-route', roles: ['admin', 'agente'] },
+    { label: 'Reportes', route: '/reportes', icon: 'ti-chart-funnel', roles: ['admin', 'agente', 'viewer'] },
+    { label: 'Configuración', route: '/configuracion', icon: 'ti-settings', roles: ['admin'] },
+    { label: 'Beta Status', route: '/beta', icon: 'ti-shield-check', roles: ['admin', 'agente', 'viewer'] },
+  ];
+
   function pageContext() {
     return document.body?.dataset || {};
   }
@@ -16,13 +28,50 @@
     return Boolean(ctx.upzyLiveModule && ctx.upzyLiveModule === moduleId);
   }
 
+  function getUser() {
+    try {
+      return JSON.parse(sessionStorage.getItem('upzy_user') || '{}');
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function getRole() {
+    const user = getUser();
+    return String(user.rol || user.role || 'admin').toLowerCase();
+  }
+
+  function renderProductNavigation() {
+    const nav = $('.upzy-nav');
+    if (!nav) return;
+    const role = getRole();
+    const path = window.location.pathname;
+    const visible = PRODUCT_NAV.filter((item) => item.roles.includes(role));
+
+    nav.innerHTML = `
+      <div class="upzy-nav-section">Producto</div>
+      ${visible.map((item) => `
+        <a class="upzy-nav-btn ${path === item.route ? 'is-active' : ''}" href="${item.route}" style="text-decoration:none">
+          <i class="ti ${item.icon}"></i>${item.label}
+        </a>
+      `).join('')}
+      <div class="upzy-nav-section">Histórico</div>
+      <a class="upzy-nav-btn" href="/upzy-sprint17.html" style="text-decoration:none"><i class="ti ti-history"></i>Último sprint técnico</a>
+    `;
+
+    const footer = $('.upzy-sidebar-footer');
+    if (footer) {
+      footer.innerHTML = `<strong>UPZY Producto</strong><br>Rol: ${role}. Navegación final persistente.`;
+    }
+  }
+
   function segmentClass(segment) {
     return String(segment || '').toLowerCase();
   }
 
   function renderMetrics() {
     const target = $('#upzy-metrics');
-    if (!target) return;
+    if (!target || !window.UPZY_MOCKS?.metrics) return;
 
     target.innerHTML = window.UPZY_MOCKS.metrics.map((metric) => `
       <article class="upzy-card tone-${metric.tone}">
@@ -38,7 +87,7 @@
 
   function renderFunnel() {
     const target = $('#upzy-funnel');
-    if (!target) return;
+    if (!target || !window.UPZY_MOCKS?.crm?.funnel) return;
 
     target.innerHTML = window.UPZY_MOCKS.crm.funnel.map((stage) => `
       <article class="upzy-funnel-card">
@@ -52,7 +101,7 @@
 
   function renderLeads() {
     const target = $('#upzy-leads-table');
-    if (!target) return;
+    if (!target || !window.UPZY_MOCKS?.leads) return;
 
     const leads = window.UPZY_MOCKS.leads.filter((lead) => {
       return state.leadFilter === 'ALL' || lead.segmento === state.leadFilter;
@@ -106,7 +155,7 @@
 
   function renderTasks() {
     const target = $('#upzy-tasks');
-    if (!target) return;
+    if (!target || !window.UPZY_MOCKS?.crm?.tasks) return;
 
     target.innerHTML = window.UPZY_MOCKS.crm.tasks.map((task) => `
       <div class="upzy-list-item">
@@ -121,7 +170,7 @@
 
   function renderActivity() {
     const target = $('#upzy-activity');
-    if (!target) return;
+    if (!target || !window.UPZY_MOCKS?.crm?.activity) return;
 
     target.innerHTML = window.UPZY_MOCKS.crm.activity.map((item) => `
       <div class="upzy-list-item">
@@ -136,7 +185,7 @@
 
   function renderModules() {
     const target = $('#upzy-modules');
-    if (!target) return;
+    if (!target || !window.UPZY_MOCKS?.modules) return;
 
     target.innerHTML = window.UPZY_MOCKS.modules.map((module) => `
       <article class="upzy-card upzy-module-card" data-module-card="${module.id}">
@@ -154,7 +203,7 @@
 
   function renderRoadmap() {
     const target = $('#upzy-roadmap');
-    if (!target) return;
+    if (!target || !window.UPZY_MOCKS?.roadmap) return;
 
     target.innerHTML = window.UPZY_MOCKS.roadmap.map((item) => `
       <div class="upzy-roadmap-item">
@@ -168,14 +217,11 @@
   }
 
   function setActiveModule(moduleId) {
+    if (!window.UPZY_MOCKS?.modules) return;
     state.activeModule = moduleId;
     const module = window.UPZY_MOCKS.modules.find((item) => item.id === moduleId) || window.UPZY_MOCKS.modules[0];
     const ctx = pageContext();
     const liveContext = isLivePageModule(moduleId);
-
-    $$('.upzy-nav-btn').forEach((button) => {
-      button.classList.toggle('is-active', button.dataset.module === moduleId);
-    });
 
     const title = $('#upzy-page-title');
     const kicker = $('#upzy-page-kicker');
@@ -212,10 +258,6 @@
   }
 
   function bindNavigation() {
-    $$('.upzy-nav-btn').forEach((button) => {
-      button.addEventListener('click', () => setActiveModule(button.dataset.module));
-    });
-
     $$('.upzy-filter-btn').forEach((button) => {
       button.addEventListener('click', () => {
         state.leadFilter = button.dataset.filter;
@@ -226,6 +268,7 @@
   }
 
   function boot() {
+    renderProductNavigation();
     renderMetrics();
     renderFunnel();
     renderLeads();
@@ -234,7 +277,7 @@
     renderModules();
     renderRoadmap();
     bindNavigation();
-    setActiveModule(state.activeModule);
+    setActiveModule(pageContext().upzyLiveModule || state.activeModule);
   }
 
   document.addEventListener('DOMContentLoaded', boot);
