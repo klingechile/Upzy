@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 12</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-capture.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+</head>
+<body data-upzy-live-module="capture" data-upzy-page-title="Captación Web Live" data-upzy-page-kicker="Sprint 12 · Modal conectado a BD real · Beta operativa" data-upzy-module-status="Sprint 12 · LIVE" data-upzy-module-outcome="Captación Web ya puede crear o actualizar leads reales en BD mediante endpoint público controlado, sin exponer credenciales Supabase en frontend.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 12 · LIVE</strong><br>
+        Captación Web crea leads reales con email desde modal.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Captación Web Live</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 12 · Modal conectado a BD real · Beta operativa</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 12</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-forms"></i>Sprint 12 activo · LIVE</span>
+          <h1>El modal de captación ya puede crear leads reales en BD.</h1>
+          <p>El primer flujo real es simple: pedir email, registrar origen web y crear/actualizar el contacto en CRM como lead nuevo y frío.</p>
+        </section>
+
+        <div id="upzy-capture-live-status"></div>
+
+        <section class="upzy-capture-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Modal Live</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Captura simple por email</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-mail-plus"></i></div>
+            </div>
+
+            <div class="upzy-preview-stage">
+              <div class="upzy-browser-shell">
+                <div class="upzy-browser-top">
+                  <span class="upzy-browser-dot"></span>
+                  <span class="upzy-browser-dot"></span>
+                  <span class="upzy-browser-dot"></span>
+                </div>
+                <div class="upzy-browser-content">
+                  <div class="upzy-product-placeholder">
+                    <strong>Producto Klinge</strong>
+                    <div class="upzy-product-line"></div>
+                    <div class="upzy-product-line short"></div>
+                    <div class="upzy-product-line"></div>
+                  </div>
+
+                  <div class="upzy-capture-modal-preview">
+                    <h3>Obtén $5.000 para tu compra web</h3>
+                    <p>Déjanos tu correo y recibe el beneficio para avanzar con tu panel LED.</p>
+                    <form class="upzy-form-grid" id="upzy-live-capture-form">
+                      <input class="upzy-form-input" id="capture-email" type="email" placeholder="tu correo" autocomplete="email" required>
+                      <input class="upzy-form-input" id="capture-product" type="text" placeholder="producto de interés" value="Panel LED 80x120">
+                      <input class="upzy-form-input" id="capture-business-type" type="text" placeholder="tipo de negocio">
+                      <input class="upzy-form-input" id="capture-website" type="text" tabindex="-1" autocomplete="off" style="display:none">
+                      <button class="upzy-form-button" type="submit">Crear lead real</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Endpoint público</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">POST /api/capture/leads</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-api"></i></div>
+            </div>
+            <div class="upzy-api-list">
+              <div class="upzy-api-item"><span class="upzy-api-method">POST</span><span class="upzy-api-path">/api/capture/leads</span><span class="upzy-api-status">Live ready</span></div>
+            </div>
+            <p class="upzy-empty-state">El endpoint es público porque será usado por modal web. Valida email, aplica honeypot y hace upsert server-side contra Supabase.</p>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Última captura</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Resultado BD</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-user-plus"></i></div>
+            </div>
+            <div id="upzy-last-capture">
+              <div class="upzy-live-empty">Todavía no se ha enviado un lead en esta sesión.</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Contrato de captura</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Datos que viajan a CRM</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-database"></i></div>
+          </div>
+          <div class="upzy-field-table">
+            <div class="upzy-field-row"><div class="upzy-field-name">email</div><span class="upzy-chip required">Requerido</span><div class="upzy-field-reason">Identificador principal para crear o actualizar lead web.</div></div>
+            <div class="upzy-field-row"><div class="upzy-field-name">producto_interes</div><span class="upzy-chip">Opcional</span><div class="upzy-field-reason">Permite nutrir futuras cotizaciones, emails y carritos.</div></div>
+            <div class="upzy-field-row"><div class="upzy-field-name">tipo_negocio</div><span class="upzy-chip">Opcional</span><div class="upzy-field-reason">Ayuda a personalizar recomendación y segmentación.</div></div>
+            <div class="upzy-field-row"><div class="upzy-field-name">source</div><span class="upzy-chip required">Requerido</span><div class="upzy-field-reason">Permite identificar que el origen fue modal web.</div></div>
+            <div class="upzy-field-row"><div class="upzy-field-name">campaign</div><span class="upzy-chip">Opcional</span><div class="upzy-field-reason">Permite medición posterior por campaña.</div></div>
+          </div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Regla de seguridad</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Frontend sin credenciales Supabase</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-shield-lock"></i></div>
+          </div>
+          <p class="upzy-empty-state">La UI solo llama al backend. El backend usa Supabase del lado servidor. No se expone service role ni conexión directa desde navegador.</p>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-live-capture.js"></script>
+</body>
+</html>
