@@ -5,7 +5,7 @@
   const currentScript = document.currentScript;
   const API_BASE = (currentScript?.dataset?.upzyApi || window.location.origin).replace(/\/$/, '');
   const BRAND = currentScript?.dataset?.upzyBrand || 'Klinge';
-  const PRODUCT = currentScript?.dataset?.upzyProduct || document.title || 'Producto web';
+  const PRODUCT_FALLBACK = currentScript?.dataset?.upzyProduct || document.title || 'Producto web';
   const SESSION_KEY = 'upzy_lumi_web_session';
   const CONVERSATION_KEY = 'upzy_lumi_web_conversation_id';
 
@@ -14,6 +14,7 @@
     loading: false,
     conversationId: localStorage.getItem(CONVERSATION_KEY),
     messages: [],
+    context: null,
   };
 
   function sessionId() {
@@ -23,6 +24,84 @@
       localStorage.setItem(SESSION_KEY, id);
     }
     return id;
+  }
+
+  function collectUtm() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      source: params.get('utm_source'),
+      medium: params.get('utm_medium'),
+      campaign: params.get('utm_campaign'),
+      content: params.get('utm_content'),
+      term: params.get('utm_term'),
+    };
+  }
+
+  async function collectCart() {
+    if (!window.Shopify && !location.pathname.includes('/products')) return null;
+    try {
+      const res = await fetch('/cart.js', { credentials: 'same-origin' });
+      if (!res.ok) return null;
+      const cart = await res.json();
+      return {
+        token: cart.token,
+        item_count: cart.item_count,
+        total_price: cart.total_price,
+        currency: cart.currency,
+        items: (cart.items || []).slice(0, 6).map((item) => ({
+          id: item.id,
+          product_id: item.product_id,
+          variant_id: item.variant_id,
+          title: item.product_title || item.title,
+          quantity: item.quantity,
+          price: item.price,
+          url: item.url,
+        })),
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function collectProduct() {
+    const productJson = document.querySelector('script[type="application/json"][data-product-json], script[type="application/json"][id*="ProductJson"], script[type="application/json"][id*="product-json"]');
+    let parsed = null;
+    if (productJson?.textContent) {
+      try { parsed = JSON.parse(productJson.textContent); } catch (_) {}
+    }
+
+    const title = parsed?.title || document.querySelector('h1')?.textContent?.trim() || PRODUCT_FALLBACK;
+    const priceMeta = document.querySelector('meta[property="product:price:amount"]')?.content;
+    const selectedVariantId = new URLSearchParams(window.location.search).get('variant');
+
+    return {
+      title,
+      handle: location.pathname.includes('/products/') ? location.pathname.split('/products/')[1]?.split(/[?#/]/)[0] : null,
+      url: window.location.href,
+      price: priceMeta || null,
+      id: parsed?.id || null,
+      vendor: parsed?.vendor || null,
+      type: parsed?.type || null,
+      selected_variant_id: selectedVariantId,
+    };
+  }
+
+  async function collectContext() {
+    const product = collectProduct();
+    const cart = await collectCart();
+    const context = {
+      session_id: sessionId(),
+      page_url: window.location.href,
+      referrer: document.referrer || null,
+      product,
+      variant: product?.selected_variant_id ? { id: product.selected_variant_id } : null,
+      cart,
+      utm: collectUtm(),
+    };
+    state.context = context;
+    track('lumi_web.page_view', context);
+    if (cart?.item_count) track('lumi_web.cart_detected', context);
+    return context;
   }
 
   function injectStyles() {
@@ -36,7 +115,7 @@
       .upzy-lumi-title{font-weight:900;font-size:15px}.upzy-lumi-sub{font-size:12px;color:#9ca3af;margin-top:3px}.upzy-lumi-close{background:rgba(255,255,255,.08);border:0;color:#fff;border-radius:10px;padding:8px;cursor:pointer}
       .upzy-lumi-body{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:10px;background:#0b1120}
       .upzy-lumi-msg{max-width:84%;padding:10px 12px;border-radius:16px;font-size:13px;line-height:1.42;white-space:pre-wrap}.upzy-lumi-msg.bot{align-self:flex-start;background:#182235;color:#e5e7eb}.upzy-lumi-msg.cliente,.upzy-lumi-msg.customer{align-self:flex-end;background:#39d0d8;color:#06252a}.upzy-lumi-msg.agente,.upzy-lumi-msg.agent{align-self:flex-start;background:#17351f;color:#e5e7eb}
-      .upzy-lumi-form{padding:12px;border-top:1px solid rgba(255,255,255,.1);background:#0f172a;display:grid;gap:8px}.upzy-lumi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.upzy-lumi-input,.upzy-lumi-text{width:100%;box-sizing:border-box;background:#111827;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px;font-size:13px;outline:none}.upzy-lumi-text{resize:none;min-height:62px}.upzy-lumi-send{border:0;border-radius:12px;background:#39d0d8;color:#05282c;padding:11px;font-weight:900;cursor:pointer}.upzy-lumi-note{font-size:11px;color:#94a3b8;text-align:center}
+      .upzy-lumi-form{padding:12px;border-top:1px solid rgba(255,255,255,.1);background:#0f172a;display:grid;gap:8px}.upzy-lumi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.upzy-lumi-input,.upzy-lumi-text{width:100%;box-sizing:border-box;background:#111827;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px;font-size:13px;outline:none}.upzy-lumi-text{resize:none;min-height:62px}.upzy-lumi-send{border:0;border-radius:12px;background:#39d0d8;color:#05282c;padding:11px;font-weight:900;cursor:pointer}.upzy-lumi-note{font-size:11px;color:#94a3b8;text-align:center}.upzy-lumi-context{font-size:11px;color:#9ca3af;background:rgba(57,208,216,.08);border:1px solid rgba(57,208,216,.18);border-radius:12px;padding:8px}
       .upzy-lumi-hidden{display:none!important}
     `;
     document.head.appendChild(style);
@@ -57,6 +136,7 @@
       </header>
       <div class="upzy-lumi-body" data-upzy-lumi-body></div>
       <form class="upzy-lumi-form" data-upzy-lumi-form>
+        <div class="upzy-lumi-context" data-upzy-lumi-context></div>
         <div class="upzy-lumi-row" data-upzy-contact-row>
           <input class="upzy-lumi-input" name="name" placeholder="Nombre" autocomplete="name">
           <input class="upzy-lumi-input" name="contact" placeholder="Email o WhatsApp" autocomplete="email">
@@ -74,14 +154,23 @@
     document.body.appendChild(button);
     document.body.appendChild(panel);
     renderMessages();
+    renderContext();
   }
 
   function bodyEl() { return document.querySelector('[data-upzy-lumi-body]'); }
   function panelEl() { return document.querySelector('.upzy-lumi-panel'); }
 
   function toggle() { state.open ? close() : open(); }
-  function open() { state.open = true; panelEl().classList.add('is-open'); refreshMessages(); }
+  function open() { state.open = true; panelEl().classList.add('is-open'); track('lumi_web.opened', state.context); refreshMessages(); }
   function close() { state.open = false; panelEl().classList.remove('is-open'); }
+
+  function renderContext() {
+    const target = document.querySelector('[data-upzy-lumi-context]');
+    if (!target) return;
+    const product = state.context?.product?.title || PRODUCT_FALLBACK;
+    const cartItems = state.context?.cart?.item_count || 0;
+    target.textContent = cartItems ? `Viendo: ${product} · Carrito: ${cartItems} producto(s)` : `Viendo: ${product}`;
+  }
 
   function renderMessages() {
     const body = bodyEl();
@@ -104,6 +193,7 @@
 
     state.loading = true;
     try {
+      const context = state.context || await collectContext();
       if (!state.conversationId) {
         const isEmail = contact.includes('@');
         const payload = await request('/api/lumi-web/conversations', {
@@ -112,7 +202,10 @@
           phone: isEmail ? null : contact,
           message,
           page_url: window.location.href,
-          product: PRODUCT,
+          product: context.product || PRODUCT_FALLBACK,
+          variant: context.variant,
+          cart: context.cart,
+          utm: context.utm,
           session_id: sessionId(),
           website,
         });
@@ -147,6 +240,22 @@
     } catch (_) {}
   }
 
+  async function track(eventType, context) {
+    try {
+      const c = context || state.context || {};
+      await request('/api/lumi-web/track', {
+        event_type: eventType,
+        session_id: sessionId(),
+        page_url: window.location.href,
+        product: c.product,
+        variant: c.variant,
+        cart: c.cart,
+        utm: c.utm || collectUtm(),
+        referrer: document.referrer || null,
+      });
+    } catch (_) {}
+  }
+
   async function request(path, body, method) {
     const res = await fetch(`${API_BASE}${path}`, {
       method: method || 'POST',
@@ -164,4 +273,5 @@
 
   injectStyles();
   renderShell();
+  collectContext().then(renderContext).catch(renderContext);
 })();
