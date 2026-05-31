@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 20</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+  <link rel="stylesheet" href="/assets/upzy-reports.css">
+</head>
+<body data-upzy-live-module="reports" data-upzy-page-title="Producción, Monitoreo y Smoke Tests" data-upzy-page-kicker="Sprint 20 · Operación productiva controlada" data-upzy-module-status="Sprint 20 · OPS" data-upzy-module-outcome="Operación productiva agrega monitoreo, smoke tests, checklist de deploy y recomendación Go / No-Go.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav"></div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 20 · OPS</strong><br>
+        Monitoreo, smoke tests y checklist productivo.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Producción, Monitoreo y Smoke Tests</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 20 · Operación productiva controlada</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 20</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-activity-heartbeat"></i>Sprint 20 activo · OPS</span>
+          <h1>UPZY queda preparado para operación productiva controlada.</h1>
+          <p>Monitorea salud del sistema, rutas críticas, endpoints, canales, tablas base y ejecuta smoke tests manuales después de cada deploy.</p>
+        </section>
+
+        <div id="upzy-ops-status"></div>
+
+        <section class="upzy-report-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Score operativo</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Go / No-Go</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-gauge"></i></div>
+            </div>
+            <div id="upzy-ops-score"></div>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Smoke Test</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Validación manual</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-test-pipe"></i></div>
+            </div>
+            <button id="upzy-run-smoke" class="upzy-form-button">Ejecutar smoke test</button>
+            <div id="upzy-ops-smoke-result" style="margin-top:16px"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Canales</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Configuración entorno</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-plug-connected"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-ops-channels"></div>
+          </article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Checks DB</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Fuentes críticas</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-database"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-ops-checks"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Endpoints</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">APIs críticas</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-api"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-ops-endpoints"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Rutas críticas</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Navegación productiva</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-route"></i></div>
+          </div>
+          <div class="upzy-list" id="upzy-ops-routes"></div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Checklist deploy</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Validación posterior a release</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-clipboard-check"></i></div>
+          </div>
+          <div class="upzy-auto-flow-preview">
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">01</div><h3>Health + Login</h3><p class="upzy-empty-state">Validar /health, /login y sesión JWT.</p></div>
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">02</div><h3>Datos reales</h3><p class="upzy-empty-state">Validar CRM, reportes, beta, eventos y carritos.</p></div>
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">03</div><h3>Smoke test</h3><p class="upzy-empty-state">Ejecutar POST /api/ops/smoke-test y revisar score.</p></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-ops.js"></script>
+</body>
+</html>
