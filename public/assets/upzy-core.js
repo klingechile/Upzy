@@ -7,6 +7,15 @@
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
+  function pageContext() {
+    return document.body?.dataset || {};
+  }
+
+  function isLivePageModule(moduleId) {
+    const ctx = pageContext();
+    return Boolean(ctx.upzyLiveModule && ctx.upzyLiveModule === moduleId);
+  }
+
   function segmentClass(segment) {
     return String(segment || '').toLowerCase();
   }
@@ -161,6 +170,8 @@
   function setActiveModule(moduleId) {
     state.activeModule = moduleId;
     const module = window.UPZY_MOCKS.modules.find((item) => item.id === moduleId) || window.UPZY_MOCKS.modules[0];
+    const ctx = pageContext();
+    const liveContext = isLivePageModule(moduleId);
 
     $$('.upzy-nav-btn').forEach((button) => {
       button.classList.toggle('is-active', button.dataset.module === moduleId);
@@ -170,8 +181,15 @@
     const kicker = $('#upzy-page-kicker');
     const detail = $('#upzy-module-detail');
 
-    if (title) title.textContent = module.name;
-    if (kicker) kicker.textContent = `${module.status} · ${module.description}`;
+    const pageTitle = liveContext && ctx.upzyPageTitle ? ctx.upzyPageTitle : module.name;
+    const pageKicker = liveContext && ctx.upzyPageKicker ? ctx.upzyPageKicker : `${module.status} · ${module.description}`;
+    const statusLabel = liveContext && ctx.upzyModuleStatus ? ctx.upzyModuleStatus : module.status;
+    const outcome = liveContext && ctx.upzyModuleOutcome
+      ? ctx.upzyModuleOutcome
+      : 'Módulo dentro del roadmap UPZY. La integración se activa por oleadas para mantener contratos, navegación y seguridad estables.';
+
+    if (title) title.textContent = pageTitle;
+    if (kicker) kicker.textContent = pageKicker;
     if (detail) {
       detail.innerHTML = `
         <div class="upzy-card-header">
@@ -185,8 +203,8 @@
         <div class="upzy-roadmap-item" style="margin-top:16px">
           <div class="upzy-roadmap-sprint">Estado</div>
           <div>
-            <div class="upzy-roadmap-title">${module.status}</div>
-            <div class="upzy-roadmap-outcome">Sprint 1 deja CRM Comercial revisable con datos mock. La integración real se conecta cuando validemos modelo de lead, etapas y acciones por rol.</div>
+            <div class="upzy-roadmap-title">${statusLabel}</div>
+            <div class="upzy-roadmap-outcome">${outcome}</div>
           </div>
         </div>
       `;
