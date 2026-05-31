@@ -5,6 +5,37 @@ const config = require('../config/env');
 
 const TENANT_ID = config.tenantId;
 
+// GET /api/events
+router.get('/', async (req, res) => {
+  try {
+    const limit = Math.min(Number(req.query.limit || 50), 100);
+    const sourceModule = req.query.source_module;
+    const eventType = req.query.event_type;
+
+    let query = supabase
+      .from('upzy_events')
+      .select('*')
+      .eq('tenant_id', TENANT_ID)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (sourceModule) query = query.eq('source_module', sourceModule);
+    if (eventType) query = query.eq('event_type', eventType);
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.warn('[events] read unavailable:', error.message);
+      return res.json({ ok: true, persisted: false, events: [], warning: error.message });
+    }
+
+    res.json({ ok: true, persisted: true, events: data || [] });
+  } catch (err) {
+    console.error('[events] read error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/events
 router.post('/', async (req, res) => {
   try {
