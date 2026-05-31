@@ -5,6 +5,7 @@ const supabase     = require('../db/supabase');
 const config       = require('../config/env');
 const cartRecovery = require('../services/cart-recovery');
 const { detectarCarritosAbandonados } = require('../jobs/carritos');
+const { auditLog } = require('../services/audit');
 const TENANT_ID    = config.tenantId;
 
 // GET /api/automations
@@ -56,6 +57,11 @@ router.patch('/cart-recovery', async (req, res) => {
     }
     const setting = await cartRecovery.setCartRecoveryEnabled(TENANT_ID, req.body.activo);
     const stats = await cartRecovery.getCartRecoveryStats(TENANT_ID);
+    await auditLog(req, 'automation.cart_recovery_toggled', {
+      entity_type: 'automation',
+      entity_id: 'cart-recovery',
+      metadata: { activo: req.body.activo },
+    });
     res.json({ ok: true, ...setting, stats });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -71,6 +77,11 @@ router.post('/cart-recovery/run', async (req, res) => {
       cartRecovery.getCartRecoverySetting(TENANT_ID),
       cartRecovery.getCartRecoveryStats(TENANT_ID),
     ]);
+    await auditLog(req, 'automation.cart_recovery_run', {
+      entity_type: 'automation',
+      entity_id: 'cart-recovery',
+      metadata: { stats },
+    });
     res.json({ ok: true, message: 'Revisión de carritos ejecutada', ...setting, stats });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -84,6 +95,11 @@ router.post('/', async (req, res) => {
       .insert({ tenant_id: TENANT_ID, nombre, trigger, canal: canal||'whatsapp', pasos: pasos||[] })
       .select().single();
     if (error) throw error;
+    await auditLog(req, 'automation.created', {
+      entity_type: 'automation',
+      entity_id: data.id,
+      metadata: { nombre, trigger, canal },
+    });
     res.json(data);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -101,6 +117,11 @@ router.patch('/:id', async (req, res) => {
     const { data, error } = await supabase.from('upzy_automatizaciones')
       .update(updates).eq('id', req.params.id).eq('tenant_id', TENANT_ID).select().single();
     if (error) throw error;
+    await auditLog(req, 'automation.updated', {
+      entity_type: 'automation',
+      entity_id: req.params.id,
+      metadata: { updates },
+    });
     res.json(data);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -110,6 +131,11 @@ router.delete('/:id', async (req, res) => {
   try {
     await supabase.from('upzy_automatizaciones')
       .delete().eq('id', req.params.id).eq('tenant_id', TENANT_ID);
+    await auditLog(req, 'automation.deleted', {
+      entity_type: 'automation',
+      entity_id: req.params.id,
+      metadata: {},
+    });
     res.json({ ok: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -119,6 +145,11 @@ router.post('/trigger', async (req, res) => {
   const { lead_id, trigger, contexto } = req.body;
   if (!lead_id || !trigger) return res.status(400).json({ error: 'lead_id y trigger requeridos' });
   await automations.dispararPorTrigger(TENANT_ID, lead_id, trigger, contexto||{});
+  await auditLog(req, 'automation.triggered', {
+    entity_type: 'lead',
+    entity_id: lead_id,
+    metadata: { trigger, contexto: contexto || {} },
+  });
   res.json({ ok: true, mensaje: `Flow '${trigger}' disparado` });
 });
 
