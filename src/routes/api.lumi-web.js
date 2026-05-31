@@ -85,7 +85,7 @@ router.post('/conversations', async (req, res) => {
       .insert({
         tenant_id: TENANT_ID,
         lead_id: lead.id,
-        canal: 'web',
+        canal: 'whatsapp',
         estado: 'agente',
       })
       .select('id, canal, estado, created_at, updated_at')
@@ -94,7 +94,7 @@ router.post('/conversations', async (req, res) => {
     if (convError) throw convError;
 
     const contextLine = buildContextLine({ product, variant, cart, page_url });
-    const messageWithContext = contextLine ? `${cleanMessage}\n\nContexto web: ${contextLine}` : cleanMessage;
+    const messageWithContext = contextLine ? `${cleanMessage}\n\nOrigen: Lumi Web\nContexto web: ${contextLine}` : `${cleanMessage}\n\nOrigen: Lumi Web`;
 
     await supabase.from('upzy_mensajes').insert({
       tenant_id: TENANT_ID,
@@ -225,7 +225,7 @@ function sanitizeObject(value) {
 }
 
 function buildNotes({ page_url, product, variant, cart, utm, session_id }) {
-  const parts = [];
+  const parts = ['origin:web'];
   if (page_url) parts.push(`page_url:${safeText(page_url, 300)}`);
   if (product?.title || product?.name || product) parts.push(`product:${safeText(product.title || product.name || product, 180)}`);
   if (variant?.id || variant?.title) parts.push(`variant:${safeText(variant.id || variant.title, 120)}`);
