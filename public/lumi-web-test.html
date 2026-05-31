@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sandbox Lumi Web · UPZY</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top right, rgba(57,208,216,.18), transparent 34%), #07111f;
+      color: #e5e7eb;
+      min-height: 100vh;
+    }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 42px 20px 120px; }
+    .badge { display:inline-flex; gap:8px; align-items:center; border:1px solid rgba(57,208,216,.35); background:rgba(57,208,216,.1); color:#9ff6fb; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:800; }
+    h1 { font-size: clamp(34px, 6vw, 66px); line-height: .95; letter-spacing: -.06em; margin: 22px 0 18px; max-width: 850px; }
+    p { color:#a7b1c2; line-height:1.7; font-size:16px; max-width:760px; }
+    .grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:16px; margin-top:28px; }
+    .card { border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.045); border-radius:22px; padding:20px; box-shadow: 0 22px 70px rgba(0,0,0,.18); }
+    .card h3 { margin:0 0 10px; font-size:18px; }
+    .card p { margin:0; font-size:14px; }
+    .product { display:grid; grid-template-columns: 1fr 1fr; gap:22px; margin-top:28px; align-items: stretch; }
+    .fake-product { min-height: 360px; border-radius:28px; border:1px solid rgba(57,208,216,.2); background: linear-gradient(135deg, rgba(57,208,216,.12), rgba(255,255,255,.04)); display:flex; align-items:center; justify-content:center; text-align:center; padding:30px; }
+    .fake-product strong { font-size:44px; letter-spacing:-.05em; display:block; }
+    .price { color:#39d0d8; font-weight:900; font-size:34px; margin-top:14px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    pre { white-space: pre-wrap; overflow:auto; background:#020617; border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:18px; color:#dbeafe; font-size:13px; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:22px; }
+    .btn { color:#06161b; background:#39d0d8; text-decoration:none; border-radius:14px; padding:12px 16px; font-weight:900; }
+    .btn.secondary { background:rgba(255,255,255,.08); color:#e5e7eb; border:1px solid rgba(255,255,255,.12); }
+    .warning { margin-top:24px; border:1px solid rgba(245,158,11,.35); background:rgba(245,158,11,.08); color:#fde68a; border-radius:18px; padding:16px; max-width:760px; line-height:1.6; }
+    @media (max-width: 860px) { .grid, .product { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <span class="badge">SANDBOX CERTIFICACIÓN · NO KLINGE.CL</span>
+    <h1>Prueba Lumi Web fuera de la tienda real.</h1>
+    <p>Esta página vive en UPZY y simula una ficha de producto Shopify. Permite validar el widget, el tracking, la creación de lead y la aparición en Inbox sin instalar código en Klinge.cl.</p>
+
+    <div class="actions">
+      <a class="btn" href="/inbox" target="_blank" rel="noopener">Abrir Inbox</a>
+      <a class="btn secondary" href="/shopify" target="_blank" rel="noopener">Ver guía Shopify</a>
+      <a class="btn secondary" href="/operacion" target="_blank" rel="noopener">Ver operación</a>
+    </div>
+
+    <section class="grid">
+      <article class="card"><h3>Producto simulado</h3><p>Panel LED 80x120 · variante test · precio demo.</p></article>
+      <article class="card"><h3>Carrito simulado</h3><p>2 ítems · total demo para validar contexto comercial.</p></article>
+      <article class="card"><h3>Canal seguro</h3><p>No se instala nada en Shopify. La prueba queda aislada en UPZY.</p></article>
+    </section>
+
+    <section class="product">
+      <div class="fake-product">
+        <div>
+          <strong>Panel LED 80x120</strong>
+          <div class="price">$189.990</div>
+          <p style="margin:16px auto 0">Producto demo para validar intención, widget, lead e Inbox.</p>
+        </div>
+      </div>
+      <article class="card">
+        <h3>Contexto que enviará el widget</h3>
+        <pre><code>{
+  "test_mode": true,
+  "product": "Panel LED 80x120 · Sandbox",
+  "variant": "VARIANT-SANDBOX-80120",
+  "cart_items": 2,
+  "cart_total": 379980,
+  "utm_source": "sandbox",
+  "utm_campaign": "certificacion_lumi_web"
+}</code></pre>
+        <p>Abre el botón flotante “¿Te ayudo?”, escribe una consulta con email o WhatsApp y revisa la conversación en <strong>/inbox</strong>.</p>
+      </article>
+    </section>
+
+    <div class="warning">
+      Esta prueba usa la API productiva de UPZY y puede crear datos reales marcados como sandbox/test. No modifica Klinge.cl ni instala código en Shopify.
+    </div>
+  </main>
+
+  <script
+    src="https://upzy-production.up.railway.app/widget/lumi-web.js"
+    data-upzy-brand="Klinge Sandbox"
+    data-upzy-api="https://upzy-production.up.railway.app"
+    data-upzy-test-mode="true"
+    data-upzy-product="Panel LED 80x120 · Sandbox"
+    data-upzy-product-id="SANDBOX-PANEL-80120"
+    data-upzy-variant-id="VARIANT-SANDBOX-80120"
+    data-upzy-cart-items="2"
+    data-upzy-cart-total="379980">
+  </script>
+</body>
+</html>
