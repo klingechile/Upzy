@@ -68,7 +68,7 @@ app.get('/health', (req, res) => {
 // ── PRODUCT ROUTES ────────────────────────────────────────────
 app.get('/',                  (req, res) => res.redirect('/upzy'));
 app.get('/upzy',              (req, res) => res.sendFile('upzy-product.html',  { root: 'public' }));
-app.get('/crm',               (req, res) => res.sendFile('upzy-sprint11.html', { root: 'public' }));
+app.get('/crm',               (req, res) => res.sendFile('crm.html',           { root: 'public' }));
 app.get('/inbox',             (req, res) => res.sendFile('upzy-sprint21.html', { root: 'public' }));
 app.get('/lumi-web',          (req, res) => res.sendFile('upzy-sprint22.html', { root: 'public' }));
 app.get('/shopify',           (req, res) => res.sendFile('upzy-sprint23.html', { root: 'public' }));
