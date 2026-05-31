@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const supabase = require('../db/supabase');
 const config = require('../config/env');
+const { auditLog } = require('../services/audit');
 
 const TENANT_ID = config.tenantId;
 
@@ -47,12 +48,20 @@ router.patch('/:id/status', async (req, res) => {
 
     if (error) throw error;
 
+    const eventType = normalized === 'recuperado' ? 'cart.recovered' : normalized === 'expirado' ? 'cart.expired' : 'cart.status_updated';
+
     await registerEvent({
-      event_type: normalized === 'recuperado' ? 'cart.recovered' : normalized === 'expirado' ? 'cart.expired' : 'cart.status_updated',
+      event_type: eventType,
       source_module: 'carts',
       entity_type: 'cart',
       entity_id: req.params.id,
       payload: { status: normalized },
+    });
+
+    await auditLog(req, eventType, {
+      entity_type: 'cart',
+      entity_id: req.params.id,
+      metadata: { status: normalized },
     });
 
     res.json({ ok: true, cart: normalizeCart(data) });
