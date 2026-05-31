@@ -11,6 +11,7 @@
     { label: 'Inicio', route: '/upzy', icon: 'ti-home', roles: ['admin', 'agente', 'viewer'] },
     { label: 'CRM Comercial', route: '/crm', icon: 'ti-address-book', roles: ['admin', 'agente'] },
     { label: 'Inbox Omnicanal', route: '/inbox', icon: 'ti-inbox', roles: ['admin', 'agente'] },
+    { label: 'Lumi Web', route: '/lumi-web', icon: 'ti-message-chatbot', roles: ['admin', 'agente'] },
     { label: 'Captación', route: '/captacion', icon: 'ti-forms', roles: ['admin', 'agente'] },
     { label: 'Carritos', route: '/carritos', icon: 'ti-shopping-cart', roles: ['admin', 'agente'] },
     { label: 'Email Marketing', route: '/email', icon: 'ti-mail', roles: ['admin', 'agente'] },
@@ -58,7 +59,7 @@
         </a>
       `).join('')}
       <div class="upzy-nav-section">Histórico</div>
-      <a class="upzy-nav-btn" href="/upzy-sprint21.html" style="text-decoration:none"><i class="ti ti-history"></i>Último sprint técnico</a>
+      <a class="upzy-nav-btn" href="/upzy-sprint22.html" style="text-decoration:none"><i class="ti ti-history"></i>Último sprint técnico</a>
     `;
 
     const footer = $('.upzy-sidebar-footer');
