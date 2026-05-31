@@ -19,8 +19,9 @@ app.use((req, res, next) => {
 });
 
 // ── ROUTES ────────────────────────────────────────────────────
-// Auth (público — no requiere token)
+// Auth y captura web (públicos — no requieren token)
 app.use('/api/auth',          require('./src/routes/api.auth'));
+app.use('/api/capture',       require('./src/routes/api.capture'));
 
 // Webhooks (protegidos por HMAC, no por JWT)
 app.use('/webhook/whatsapp',  require('./src/routes/webhook.whatsapp'));
@@ -56,7 +57,7 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => res.redirect('/upzy'));
-app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint11.html', { root: 'public' }));
+app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint12.html', { root: 'public' }));
 app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
 
 
