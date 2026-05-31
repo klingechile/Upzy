@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 14</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+  <link rel="stylesheet" href="/assets/upzy-automation.css">
+</head>
+<body data-upzy-live-module="automation" data-upzy-page-title="Email + Automatizaciones Live" data-upzy-page-kicker="Sprint 14 · Email Marketing y flujos reales sobre eventos" data-upzy-module-status="Sprint 14 · LIVE" data-upzy-module-outcome="Email Marketing, automatizaciones, cart recovery y eventos comerciales se leen desde backend protegido para preparar ejecución real por eventos.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+
+      <div class="upzy-nav">
+        <div class="upzy-nav-section">Core</div>
+        <button class="upzy-nav-btn" data-module="core"><i class="ti ti-layout-dashboard"></i>Core Platform</button>
+        <button class="upzy-nav-btn" data-module="crm"><i class="ti ti-address-book"></i>CRM Comercial</button>
+        <div class="upzy-nav-section">Captación</div>
+        <button class="upzy-nav-btn" data-module="capture"><i class="ti ti-forms"></i>Modal / Popup</button>
+        <button class="upzy-nav-btn" data-module="roulette"><i class="ti ti-rosette-discount"></i>Ruleta</button>
+        <div class="upzy-nav-section">Activación</div>
+        <button class="upzy-nav-btn" data-module="email"><i class="ti ti-mail"></i>Email Marketing</button>
+        <button class="upzy-nav-btn" data-module="carts"><i class="ti ti-shopping-cart"></i>Carritos Abandonados</button>
+        <div class="upzy-nav-section">Omnicanal</div>
+        <button class="upzy-nav-btn" data-module="lumi-web"><i class="ti ti-message-chatbot"></i>Lumi Sitio Web</button>
+        <button class="upzy-nav-btn" data-module="lumi-instagram"><i class="ti ti-brand-instagram"></i>Lumi Instagram</button>
+        <div class="upzy-nav-section">Operación</div>
+        <button class="upzy-nav-btn" data-module="automation"><i class="ti ti-route"></i>Automatizaciones</button>
+        <button class="upzy-nav-btn" data-module="reports"><i class="ti ti-chart-funnel"></i>Reportes</button>
+      </div>
+
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 14 · LIVE</strong><br>
+        Email, automatizaciones y eventos comerciales conectados a backend.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Email + Automatizaciones Live</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 14 · Email Marketing y flujos reales sobre eventos</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 14</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-route"></i>Sprint 14 activo · LIVE</span>
+          <h1>Email Marketing y Automatizaciones empiezan a operar sobre eventos reales.</h1>
+          <p>La vista consume métricas, plantillas, flows, cart recovery y eventos comerciales desde backend protegido. No dispara campañas masivas por accidente.</p>
+        </section>
+
+        <div id="upzy-email-auto-status"></div>
+
+        <section class="upzy-grid-4" id="upzy-email-auto-metrics"></section>
+
+        <section class="upzy-auto-grid">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Cart Recovery</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Recuperación controlada</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-shopping-cart-check"></i></div>
+            </div>
+            <div id="upzy-cart-recovery-state"></div>
+            <button id="upzy-run-cart-recovery" class="upzy-form-button" style="margin-top:16px">Ejecutar revisión de carritos</button>
+            <p class="upzy-empty-state">Acción manual controlada para testing. No envía campañas masivas; ejecuta la revisión configurada de carritos.</p>
+          </article>
+
+          <article class="upzy-card" id="upzy-module-detail"></article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Email Marketing</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Plantillas reales</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-mail"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-live-email-templates"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Flows Email</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Secuencias disponibles</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-route"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-live-email-flows"></div>
+          </article>
+        </section>
+
+        <section class="upzy-grid-2">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Automatizaciones</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Triggers activos</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-adjustments-automation"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-live-automations"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Eventos comerciales</div>
+                <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Timeline real</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-timeline-event"></i></div>
+            </div>
+            <div class="upzy-list" id="upzy-live-events"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Mapa de eventos</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">De evento a acción comercial</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-plug-connected"></i></div>
+          </div>
+          <div class="upzy-auto-flow-preview">
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">Evento</div><h3>lead.email_captured</h3><p class="upzy-empty-state">Captación web crea lead y habilita bienvenida email.</p></div>
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">Evento</div><h3>cart.abandoned_detected</h3><p class="upzy-empty-state">Carrito real activa recuperación por email/WhatsApp/Lumi.</p></div>
+            <div class="upzy-auto-box"><div class="upzy-builder-kicker">Evento</div><h3>cart.recovered</h3><p class="upzy-empty-state">Recuperación alimenta reportes, revenue y próximas campañas.</p></div>
+          </div>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Roadmap</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Ejecución por sprint</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-timeline"></i></div>
+          </div>
+          <div class="upzy-roadmap" id="upzy-roadmap"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-live-email-automation.js"></script>
+</body>
+</html>
