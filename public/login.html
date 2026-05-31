@@ -136,8 +136,8 @@ async function login() {
     sessionStorage.setItem('upzy_user',          JSON.stringify(data.user));
     sessionStorage.setItem('upzy_expires_at',    data.expires_at);
 
-    // Redirigir al dashboard
-    window.location.href = '/dashboard';
+    // Redirigir a la vista viva de UPZY
+    window.location.href = '/upzy';
 
   } catch (err) {
     showError('No se pudo conectar al servidor');
@@ -158,7 +158,7 @@ function showForgot() {
 const token    = sessionStorage.getItem('upzy_token');
 const expiresAt= sessionStorage.getItem('upzy_expires_at');
 if (token && expiresAt && Date.now() / 1000 < parseInt(expiresAt)) {
-  window.location.href = '/dashboard';
+  window.location.href = '/upzy';
 }
 </script>
 </body>
