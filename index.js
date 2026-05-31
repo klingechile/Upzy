@@ -33,6 +33,8 @@ app.use('/api/carts',         requireAuth, require('./src/routes/api.carts'));
 app.use('/api/events',        requireAuth, require('./src/routes/api.events'));
 app.use('/api/reports',       requireAuth, require('./src/routes/api.reports'));
 app.use('/api/beta',          requireAuth, require('./src/routes/api.beta'));
+app.use('/api/users',         requireAuth, require('./src/routes/api.users'));
+app.use('/api/audit',         requireAuth, require('./src/routes/api.audit'));
 app.use('/api/tasks',         requireAuth, require('./src/routes/api.tasks'));
 app.use('/api/campanas',      requireAuth, require('./src/routes/api.campanas'));
 app.use('/api/automations',   requireAuth, require('./src/routes/api.automations'));
@@ -61,7 +63,7 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => res.redirect('/upzy'));
-app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint16.html', { root: 'public' }));
+app.get('/upzy',      (req, res) => res.sendFile('upzy-sprint17.html', { root: 'public' }));
 app.get('/login',     (req, res) => res.sendFile('login.html',     { root: 'public' }));
 
 
