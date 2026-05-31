@@ -6,8 +6,10 @@
   const API_BASE = (currentScript?.dataset?.upzyApi || window.location.origin).replace(/\/$/, '');
   const BRAND = currentScript?.dataset?.upzyBrand || 'Klinge';
   const PRODUCT_FALLBACK = currentScript?.dataset?.upzyProduct || document.title || 'Producto web';
-  const SESSION_KEY = 'upzy_lumi_web_session';
-  const CONVERSATION_KEY = 'upzy_lumi_web_conversation_id';
+  const TEST_MODE = currentScript?.dataset?.upzyTestMode === 'true';
+  const DATASET = currentScript?.dataset || {};
+  const SESSION_KEY = TEST_MODE ? 'upzy_lumi_web_session_sandbox' : 'upzy_lumi_web_session';
+  const CONVERSATION_KEY = TEST_MODE ? 'upzy_lumi_web_conversation_id_sandbox' : 'upzy_lumi_web_conversation_id';
 
   const state = {
     open: false,
@@ -20,7 +22,7 @@
   function sessionId() {
     let id = localStorage.getItem(SESSION_KEY);
     if (!id) {
-      id = `web_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      id = `${TEST_MODE ? 'sandbox' : 'web'}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
       localStorage.setItem(SESSION_KEY, id);
     }
     return id;
@@ -29,15 +31,33 @@
   function collectUtm() {
     const params = new URLSearchParams(window.location.search);
     return {
-      source: params.get('utm_source'),
-      medium: params.get('utm_medium'),
-      campaign: params.get('utm_campaign'),
+      source: params.get('utm_source') || (TEST_MODE ? 'sandbox' : null),
+      medium: params.get('utm_medium') || (TEST_MODE ? 'certificacion' : null),
+      campaign: params.get('utm_campaign') || (TEST_MODE ? 'certificacion_lumi_web' : null),
       content: params.get('utm_content'),
       term: params.get('utm_term'),
     };
   }
 
   async function collectCart() {
+    if (DATASET.upzyCartItems || DATASET.upzyCartTotal) {
+      return {
+        token: TEST_MODE ? 'sandbox-cart' : null,
+        item_count: Number(DATASET.upzyCartItems || 0),
+        total_price: Number(DATASET.upzyCartTotal || 0),
+        currency: 'CLP',
+        items: [{
+          id: DATASET.upzyVariantId || 'sandbox-variant',
+          product_id: DATASET.upzyProductId || 'sandbox-product',
+          variant_id: DATASET.upzyVariantId || 'sandbox-variant',
+          title: PRODUCT_FALLBACK,
+          quantity: Number(DATASET.upzyCartItems || 1),
+          price: Number(DATASET.upzyCartTotal || 0),
+          url: window.location.href,
+        }],
+      };
+    }
+
     if (!window.Shopify && !location.pathname.includes('/products')) return null;
     try {
       const res = await fetch('/cart.js', { credentials: 'same-origin' });
@@ -70,19 +90,20 @@
       try { parsed = JSON.parse(productJson.textContent); } catch (_) {}
     }
 
-    const title = parsed?.title || document.querySelector('h1')?.textContent?.trim() || PRODUCT_FALLBACK;
+    const title = parsed?.title || PRODUCT_FALLBACK || document.querySelector('h1')?.textContent?.trim();
     const priceMeta = document.querySelector('meta[property="product:price:amount"]')?.content;
-    const selectedVariantId = new URLSearchParams(window.location.search).get('variant');
+    const selectedVariantId = DATASET.upzyVariantId || new URLSearchParams(window.location.search).get('variant');
 
     return {
       title,
-      handle: location.pathname.includes('/products/') ? location.pathname.split('/products/')[1]?.split(/[?#/]/)[0] : null,
+      handle: location.pathname.includes('/products/') ? location.pathname.split('/products/')[1]?.split(/[?#/]/)[0] : (TEST_MODE ? 'sandbox-panel-led-80x120' : null),
       url: window.location.href,
-      price: priceMeta || null,
-      id: parsed?.id || null,
-      vendor: parsed?.vendor || null,
-      type: parsed?.type || null,
+      price: priceMeta || DATASET.upzyCartTotal || null,
+      id: parsed?.id || DATASET.upzyProductId || null,
+      vendor: parsed?.vendor || (TEST_MODE ? 'Klinge Sandbox' : null),
+      type: parsed?.type || (TEST_MODE ? 'sandbox' : null),
       selected_variant_id: selectedVariantId,
+      test_mode: TEST_MODE,
     };
   }
 
@@ -90,17 +111,18 @@
     const product = collectProduct();
     const cart = await collectCart();
     const context = {
+      test_mode: TEST_MODE,
       session_id: sessionId(),
       page_url: window.location.href,
       referrer: document.referrer || null,
       product,
-      variant: product?.selected_variant_id ? { id: product.selected_variant_id } : null,
+      variant: product?.selected_variant_id ? { id: product.selected_variant_id, test_mode: TEST_MODE } : null,
       cart,
       utm: collectUtm(),
     };
     state.context = context;
-    track('lumi_web.page_view', context);
-    if (cart?.item_count) track('lumi_web.cart_detected', context);
+    track(TEST_MODE ? 'lumi_web.sandbox_page_view' : 'lumi_web.page_view', context);
+    if (cart?.item_count) track(TEST_MODE ? 'lumi_web.sandbox_cart_detected' : 'lumi_web.cart_detected', context);
     return context;
   }
 
@@ -115,7 +137,7 @@
       .upzy-lumi-title{font-weight:900;font-size:15px}.upzy-lumi-sub{font-size:12px;color:#9ca3af;margin-top:3px}.upzy-lumi-close{background:rgba(255,255,255,.08);border:0;color:#fff;border-radius:10px;padding:8px;cursor:pointer}
       .upzy-lumi-body{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:10px;background:#0b1120}
       .upzy-lumi-msg{max-width:84%;padding:10px 12px;border-radius:16px;font-size:13px;line-height:1.42;white-space:pre-wrap}.upzy-lumi-msg.bot{align-self:flex-start;background:#182235;color:#e5e7eb}.upzy-lumi-msg.cliente,.upzy-lumi-msg.customer{align-self:flex-end;background:#39d0d8;color:#06252a}.upzy-lumi-msg.agente,.upzy-lumi-msg.agent{align-self:flex-start;background:#17351f;color:#e5e7eb}
-      .upzy-lumi-form{padding:12px;border-top:1px solid rgba(255,255,255,.1);background:#0f172a;display:grid;gap:8px}.upzy-lumi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.upzy-lumi-input,.upzy-lumi-text{width:100%;box-sizing:border-box;background:#111827;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px;font-size:13px;outline:none}.upzy-lumi-text{resize:none;min-height:62px}.upzy-lumi-send{border:0;border-radius:12px;background:#39d0d8;color:#05282c;padding:11px;font-weight:900;cursor:pointer}.upzy-lumi-note{font-size:11px;color:#94a3b8;text-align:center}.upzy-lumi-context{font-size:11px;color:#9ca3af;background:rgba(57,208,216,.08);border:1px solid rgba(57,208,216,.18);border-radius:12px;padding:8px}
+      .upzy-lumi-form{padding:12px;border-top:1px solid rgba(255,255,255,.1);background:#0f172a;display:grid;gap:8px}.upzy-lumi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.upzy-lumi-input,.upzy-lumi-text{width:100%;box-sizing:border-box;background:#111827;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px;font-size:13px;outline:none}.upzy-lumi-text{resize:none;min-height:62px}.upzy-lumi-send{border:0;border-radius:12px;background:#39d0d8;color:#05282c;padding:11px;font-weight:900;cursor:pointer}.upzy-lumi-note{font-size:11px;color:#94a3b8;text-align:center}.upzy-lumi-context{font-size:11px;color:#9ca3af;background:rgba(57,208,216,.08);border:1px solid rgba(57,208,216,.18);border-radius:12px;padding:8px}.upzy-lumi-test{color:#fde68a;margin-top:5px}
       .upzy-lumi-hidden{display:none!important}
     `;
     document.head.appendChild(style);
@@ -131,7 +153,7 @@
     panel.className = 'upzy-lumi-panel';
     panel.innerHTML = `
       <header class="upzy-lumi-head">
-        <div><div class="upzy-lumi-title">Lumi · ${BRAND}</div><div class="upzy-lumi-sub">Asesoría rápida para tu negocio</div></div>
+        <div><div class="upzy-lumi-title">Lumi · ${BRAND}</div><div class="upzy-lumi-sub">Asesoría rápida para tu negocio</div>${TEST_MODE ? '<div class="upzy-lumi-test">Modo sandbox / certificación</div>' : ''}</div>
         <button class="upzy-lumi-close" type="button">✕</button>
       </header>
       <div class="upzy-lumi-body" data-upzy-lumi-body></div>
@@ -161,7 +183,7 @@
   function panelEl() { return document.querySelector('.upzy-lumi-panel'); }
 
   function toggle() { state.open ? close() : open(); }
-  function open() { state.open = true; panelEl().classList.add('is-open'); track('lumi_web.opened', state.context); refreshMessages(); }
+  function open() { state.open = true; panelEl().classList.add('is-open'); track(TEST_MODE ? 'lumi_web.sandbox_opened' : 'lumi_web.opened', state.context); refreshMessages(); }
   function close() { state.open = false; panelEl().classList.remove('is-open'); }
 
   function renderContext() {
@@ -200,13 +222,14 @@
           name,
           email: isEmail ? contact : null,
           phone: isEmail ? null : contact,
-          message,
+          message: TEST_MODE ? `[SANDBOX] ${message}` : message,
           page_url: window.location.href,
           product: context.product || PRODUCT_FALLBACK,
           variant: context.variant,
           cart: context.cart,
           utm: context.utm,
           session_id: sessionId(),
+          test_mode: TEST_MODE,
           website,
         });
         state.conversationId = payload.conversation.id;
@@ -215,8 +238,8 @@
         const row = document.querySelector('[data-upzy-contact-row]');
         if (row) row.classList.add('upzy-lumi-hidden');
       } else {
-        await request(`/api/lumi-web/conversations/${state.conversationId}/messages`, { message });
-        state.messages.push({ origen: 'cliente', contenido: message });
+        await request(`/api/lumi-web/conversations/${state.conversationId}/messages`, { message: TEST_MODE ? `[SANDBOX] ${message}` : message });
+        state.messages.push({ origen: 'cliente', contenido: TEST_MODE ? `[SANDBOX] ${message}` : message });
       }
       form.elements.message.value = '';
       renderMessages();
@@ -252,6 +275,7 @@
         cart: c.cart,
         utm: c.utm || collectUtm(),
         referrer: document.referrer || null,
+        test_mode: TEST_MODE,
       });
     } catch (_) {}
   }
