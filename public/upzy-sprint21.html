@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UPZY CRM · Sprint 21</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/assets/upzy-core.css">
+  <link rel="stylesheet" href="/assets/upzy-live-crm.css">
+  <link rel="stylesheet" href="/assets/upzy-reports.css">
+  <link rel="stylesheet" href="/assets/upzy-inbox.css">
+</head>
+<body data-upzy-live-module="lumi-web" data-upzy-page-title="Inbox Omnicanal + Lumi Web Base" data-upzy-page-kicker="Sprint 21 · Conversaciones, handoff y agent assist" data-upzy-module-status="Sprint 21 · INBOX" data-upzy-module-outcome="Inbox unifica conversaciones Lumi/UPZY para WhatsApp, Instagram y web, con handoff humano/bot y sugerencia asistida sin auto-envío.">
+  <div class="upzy-shell">
+    <aside class="upzy-sidebar">
+      <div class="upzy-brand">
+        <div class="upzy-brand-mark">U</div>
+        <div>
+          <div class="upzy-brand-title">UPZY</div>
+          <div class="upzy-brand-subtitle">CRM Omnicanal</div>
+        </div>
+      </div>
+      <div class="upzy-nav"></div>
+      <div class="upzy-sidebar-footer">
+        <strong>Sprint 21 · INBOX</strong><br>
+        Bandeja omnicanal, handoff y sugerencia Lumi para agentes.
+      </div>
+    </aside>
+
+    <main class="upzy-main">
+      <header class="upzy-topbar">
+        <div>
+          <div class="upzy-page-title" id="upzy-page-title">Inbox Omnicanal + Lumi Web Base</div>
+          <div class="upzy-page-kicker" id="upzy-page-kicker">Sprint 21 · Conversaciones, handoff y agent assist</div>
+        </div>
+        <span class="upzy-badge ok"><i class="ti ti-git-branch"></i>main · sprint 21</span>
+      </header>
+
+      <section class="upzy-content">
+        <section class="upzy-hero">
+          <span class="upzy-badge ok"><i class="ti ti-inbox"></i>Sprint 21 activo · INBOX</span>
+          <h1>Una bandeja única para atender WhatsApp, Instagram y Web.</h1>
+          <p>El inbox lee conversaciones existentes de Lumi y UPZY, permite tomar control, devolver al bot y generar respuestas sugeridas para el agente sin envío automático.</p>
+        </section>
+
+        <div id="upzy-inbox-status"></div>
+
+        <section class="upzy-grid-4" id="upzy-inbox-metrics"></section>
+
+        <section class="upzy-inbox-layout">
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Conversaciones</div>
+                <h2 style="margin:8px 0 0;font-size:24px;letter-spacing:-.04em">Bandeja</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-inbox"></i></div>
+            </div>
+            <div class="upzy-conv-list" id="upzy-conversation-list"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Historial</div>
+                <h2 style="margin:8px 0 0;font-size:24px;letter-spacing:-.04em">Mensajes</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-messages"></i></div>
+            </div>
+            <div class="upzy-message-thread" id="upzy-message-thread"></div>
+          </article>
+
+          <article class="upzy-card">
+            <div class="upzy-card-header">
+              <div>
+                <div class="upzy-card-title">Control</div>
+                <h2 style="margin:8px 0 0;font-size:24px;letter-spacing:-.04em">Handoff</h2>
+              </div>
+              <div class="upzy-card-icon"><i class="ti ti-user-check"></i></div>
+            </div>
+            <div id="upzy-selected-conversation"></div>
+            <div class="upzy-inbox-actions" style="margin-top:14px">
+              <button id="upzy-take-conversation" class="upzy-form-button">Tomar conversación</button>
+              <button id="upzy-return-bot" class="upzy-filter-btn">Devolver a bot</button>
+              <select id="upzy-intent-select" class="upzy-form-input">
+                <option value="general">General</option>
+                <option value="precio">Precio / cotización</option>
+                <option value="envio">Envío</option>
+                <option value="retiro">Retiro</option>
+                <option value="garantia">Garantía</option>
+              </select>
+              <button id="upzy-suggest-reply" class="upzy-form-button">Sugerir respuesta Lumi</button>
+            </div>
+            <div id="upzy-lumi-suggestion" style="margin-top:14px"></div>
+          </article>
+        </section>
+
+        <section class="upzy-card">
+          <div class="upzy-card-header">
+            <div>
+              <div class="upzy-card-title">Regla operativa</div>
+              <h2 style="margin:8px 0 0;font-size:26px;letter-spacing:-.04em">Agent assist, no auto-envío</h2>
+            </div>
+            <div class="upzy-card-icon"><i class="ti ti-shield-check"></i></div>
+          </div>
+          <p class="upzy-empty-state">Sprint 21 solo sugiere respuestas para agentes. No activa respuestas automáticas masivas ni envía mensajes sin acción humana explícita.</p>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/assets/upzy-mocks.js"></script>
+  <script src="/assets/upzy-core.js"></script>
+  <script src="/assets/upzy-inbox.js"></script>
+</body>
+</html>
