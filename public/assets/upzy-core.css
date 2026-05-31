@@ -51,6 +51,7 @@ button { cursor: pointer; }
   display: flex;
   flex-direction: column;
   gap: 18px;
+  overflow: hidden;
 }
 
 .upzy-brand {
@@ -59,6 +60,7 @@ button { cursor: pointer; }
   gap: 12px;
   padding: 8px 8px 18px;
   border-bottom: 1px solid var(--upzy-border);
+  flex: 0 0 auto;
 }
 
 .upzy-brand-mark {
@@ -77,7 +79,19 @@ button { cursor: pointer; }
 .upzy-brand-subtitle { margin-top: 4px; font-size: 11px; color: var(--upzy-muted); text-transform: uppercase; letter-spacing: .12em; }
 
 .upzy-nav-section { color: var(--upzy-faint); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; padding: 12px 10px 4px; }
-.upzy-nav { display: grid; gap: 6px; overflow-y: auto; padding-right: 2px; }
+.upzy-nav {
+  display: grid;
+  gap: 6px;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(147,163,184,.55) rgba(255,255,255,.035);
+}
+.upzy-nav::-webkit-scrollbar { width: 8px; }
+.upzy-nav::-webkit-scrollbar-track { background: rgba(255,255,255,.035); border-radius: 999px; }
+.upzy-nav::-webkit-scrollbar-thumb { background: rgba(147,163,184,.55); border-radius: 999px; }
+.upzy-nav::-webkit-scrollbar-thumb:hover { background: rgba(238,244,255,.7); }
 .upzy-nav-btn {
   width: 100%;
   border: 1px solid transparent;
@@ -96,7 +110,7 @@ button { cursor: pointer; }
 .upzy-nav-btn i { font-size: 18px; width: 20px; text-align: center; }
 
 .upzy-sidebar-footer {
-  margin-top: auto;
+  flex: 0 0 auto;
   padding: 14px;
   border: 1px solid var(--upzy-border);
   background: rgba(21,29,43,.7);
@@ -108,12 +122,13 @@ button { cursor: pointer; }
 
 .upzy-main { min-width: 0; display: flex; flex-direction: column; }
 .upzy-topbar {
-  height: 72px;
+  min-height: 72px;
   border-bottom: 1px solid var(--upzy-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 28px;
+  gap: 16px;
+  padding: 12px 28px;
   background: rgba(8, 11, 18, .58);
   backdrop-filter: blur(18px);
   position: sticky;
@@ -122,7 +137,7 @@ button { cursor: pointer; }
 }
 
 .upzy-page-title { font-size: 18px; font-weight: 820; }
-.upzy-page-kicker { font-size: 12px; color: var(--upzy-muted); margin-top: 2px; }
+.upzy-page-kicker { font-size: 12px; color: var(--upzy-muted); margin-top: 2px; line-height: 1.4; }
 .upzy-badge {
   display: inline-flex;
   align-items: center;
@@ -134,6 +149,7 @@ button { cursor: pointer; }
   border: 1px solid var(--upzy-border);
   color: var(--upzy-muted);
   background: rgba(21,29,43,.78);
+  white-space: nowrap;
 }
 .upzy-badge.ok { color: var(--upzy-green); border-color: rgba(63,185,80,.35); background: rgba(63,185,80,.08); }
 .upzy-badge.hot { color: var(--upzy-red); border-color: rgba(248,81,73,.35); background: rgba(248,81,73,.08); }
@@ -161,8 +177,9 @@ button { cursor: pointer; }
   background: rgba(57,208,216,.13);
   filter: blur(2px);
 }
-.upzy-hero h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: .98; letter-spacing: -.05em; max-width: 840px; }
-.upzy-hero p { margin: 14px 0 0; color: var(--upzy-muted); max-width: 760px; line-height: 1.6; }
+.upzy-hero h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: .98; letter-spacing: -.05em; max-width: 840px; position: relative; z-index: 1; }
+.upzy-hero p { margin: 14px 0 0; color: var(--upzy-muted); max-width: 760px; line-height: 1.6; position: relative; z-index: 1; }
+.upzy-hero .upzy-badge { position: relative; z-index: 1; }
 
 .upzy-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .upzy-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
@@ -247,6 +264,8 @@ button { cursor: pointer; }
 
 @media (max-width: 1080px) {
   .upzy-shell { grid-template-columns: 1fr; }
-  .upzy-sidebar { position: relative; height: auto; }
+  .upzy-sidebar { position: relative; height: auto; overflow: visible; }
+  .upzy-nav { max-height: 420px; }
+  .upzy-topbar { align-items: flex-start; flex-direction: column; }
   .upzy-grid-4, .upzy-grid-3, .upzy-grid-2, .upzy-funnel { grid-template-columns: 1fr; }
 }
