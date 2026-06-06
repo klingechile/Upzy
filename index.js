@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 app.use('/api/auth',          require('./src/routes/api.auth'));
 app.use('/api/capture',       require('./src/routes/api.capture'));
 app.use('/api/lumi-web',      require('./src/routes/api.lumi-web'));
+app.use('/api/lumi-assistant', require('./src/routes/api.lumi-assistant'));
 
 // Webhooks (protegidos por HMAC, no por JWT)
 app.use('/webhook/whatsapp',  require('./src/routes/webhook.whatsapp'));
